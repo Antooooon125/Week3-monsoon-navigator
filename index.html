@@ -20,6 +20,8 @@
     .harbor-art { background: #0f172a url('./harbor-atlas.jpg') no-repeat; background-size: 200% 300%; aspect-ratio: 3 / 2; }
     .condition-meter { display:block; width:100%; height:.8rem; accent-color:#22d3ee; }
     #hull-meter { accent-color:#34d399; }
+    #glossary-dialog { width: calc(100% - 2rem); max-height: 88dvh; }
+    #glossary-dialog::backdrop { background: rgba(2, 6, 23, .84); }
     @keyframes windFlow {
       0% { stroke-dashoffset: 64; }
       100% { stroke-dashoffset: 0; }
@@ -73,6 +75,9 @@
       </div>
 
       <!-- LIVE HUD TELEMETRY -->
+      <button type="button" aria-haspopup="dialog" aria-controls="glossary-dialog"
+        onclick="document.getElementById('glossary-dialog').showModal()"
+        class="rounded-lg border border-cyan-800 bg-cyan-950 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-900">Glossary</button>
       <div id="hud-bar" class="hidden flex-wrap items-center gap-2 text-xs font-mono">
         <div class="bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-md">
           <span class="text-slate-400">MONTH:</span>
@@ -103,6 +108,59 @@
       </div>
     </div>
   </header>
+
+  <dialog id="glossary-dialog" aria-labelledby="glossary-title"
+    class="no-print m-auto max-w-3xl overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 p-0 text-slate-100 shadow-2xl">
+    <div class="sticky top-0 z-10 border-b border-slate-700 bg-slate-900 p-4">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="glossary-title" class="text-lg font-bold">Voyage Glossary</h2>
+        <form method="dialog">
+          <button autofocus class="rounded-lg border border-slate-600 px-3 py-1.5 text-sm hover:bg-slate-800">Close</button>
+        </form>
+      </div>
+      <label for="glossary-search" class="mt-3 block text-xs font-semibold text-slate-300">Find a term</label>
+      <input id="glossary-search" type="search" oninput="filterGlossary(this.value)" placeholder="Try headwind, tariff, or hull"
+        class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-950 px-3 py-2 text-sm">
+      <p id="glossary-empty" hidden role="status" class="mt-2 text-sm text-amber-200">No matching terms. Try a shorter search.</p>
+    </div>
+    <div class="space-y-6 p-4 text-sm">
+      <section data-glossary-group>
+        <h3 class="mb-2 font-semibold text-cyan-300">Winds and navigation</h3>
+        <dl class="space-y-3 text-slate-300">
+          <div data-glossary-entry><dt class="font-semibold text-white">Monsoon</dt><dd>A seasonal shift in prevailing winds. In the game, the southwest monsoon blows from southwest toward northeast in June–September. The northeast monsoon blows in the opposite direction in November–February. <a class="underline" href="https://www.weather.gov/twc/MonsoonInfo" target="_blank" rel="noopener noreferrer">National Weather Service</a></dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Heading and bearing</dt><dd>A heading is the direction the ship points. A route bearing is the compass direction toward the next port. North is 0°, east 90°, south 180°, and west 270°. The game uses the route bearing as the heading.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Tailwind, crosswind, and headwind</dt><dd>A tailwind blows mostly along your route. A crosswind blows across it. A headwind blows mostly against it and can slow, damage, or turn back your ship in the game.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Transition months and doldrums</dt><dd>March–May and October are transition months in the game, marked as a dead zone for sailing. You can still depart, but cyclones or doldrums, periods of weak wind that may leave a vessel becalmed, can make the voyage more costly.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Nautical mile (nm) and knot (kt)</dt><dd>A nautical mile measures distance at sea and equals 1.852 km. A knot is one nautical mile per hour. The game shows wind in knots and your estimated ship speed in nautical miles per day.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Transit time and forecast</dt><dd>Transit time is the estimated time at sea for one leg. The forecast lets you compare departure months without advancing the voyage. Only <strong>Sail now</strong> departs.</dd></div>
+        </dl>
+      </section>
+      <section data-glossary-group>
+        <h3 class="mb-2 font-semibold text-cyan-300">Ships, cargo, and crew</h3>
+        <dl class="space-y-3 text-slate-300">
+          <div data-glossary-entry><dt class="font-semibold text-white">Dhow and lateen sail</dt><dd>A dhow is a traditional sailing vessel associated with the western Indian Ocean. A lateen sail is triangular and set on a long angled spar. The game’s dhow is the smaller vessel and costs less to crew.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Junk and watertight bulkhead</dt><dd>A junk is a traditional Chinese sailing vessel. A watertight bulkhead is a partition that limits flooding between compartments. The game’s junk carries more cargo and takes less hull damage. <a class="underline" href="https://ich.unesco.org/en/USL/watertight-bulkhead-technology-of-chinese-junks-00321" target="_blank" rel="noopener noreferrer">UNESCO</a></dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Hull integrity and careening</dt><dd>The hull is the ship’s outer body. Hull integrity measures its condition. Historically, careening meant tilting a vessel to expose its underside for work. In the game, the shipyard repair raises hull integrity.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Hold, payload, and tonnage</dt><dd>The hold is the space for cargo. Payload is how much weight the vessel can carry. Tonnage in the cargo panel is the weight of goods aboard, shown in tons.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Bulk, semi-bulk, and luxury goods</dt><dd>Bulk goods such as timber take up much more of your weight allowance per lot. The game labels pepper semi-bulk and cloves and ivory luxury goods. Compare the likely sale margin per ton as well as the margin per lot.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Crew wages, crew health, and mutiny</dt><dd>Wages are monthly crew pay. Sailing lowers crew health, and rest in port restores it. A mutiny is a revolt by the crew. Below 50% health, the game may trigger one at the end of a voyage and charge two months of wages to settle it.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Tarpaulin and jettison</dt><dd>A tarpaulin is a cover that protects cargo from rain and spray. To jettison cargo means to throw it overboard, usually to lighten the ship in an emergency.</dd></div>
+        </dl>
+      </section>
+      <section data-glossary-group>
+        <h3 class="mb-2 font-semibold text-cyan-300">Trade and the voyage ledger</h3>
+        <dl class="space-y-3 text-slate-300">
+          <div data-glossary-entry><dt class="font-semibold text-white">Emporium, entrepôt, and port layover</dt><dd>An emporium is a major trading center. An entrepôt is a port where goods are brought in and sent on to other markets. A layover is time spent in port while waiting for the next departure.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Merchant diaspora and standing</dt><dd>A merchant diaspora is a network of traders who live away from their places of origin and maintain ties across ports. Standing is the game’s measure of your local relationships. Higher standing can lower port fees, tariffs, or piracy risk.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Tariff and dirham (D)</dt><dd>A tariff is a tax on traded goods. In the game it is added to your purchase price. The dirham is the game’s unit of money, shown as D.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Arbitrage and cost basis</dt><dd>Arbitrage means taking advantage of price differences, such as buying pepper where it is cheap and selling it at a higher-priced port. Cost basis in the game is the average amount paid per held lot, including tariffs.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Commenda and interest</dt><dd>A commenda was a medieval partnership in which an investor financed a trader’s venture, often for a share of the profit. The game simplifies this as a loan. Interest is the amount added to the debt every six months. <a class="underline" href="https://academic.oup.com/princeton-scholarship-online/book/34203/chapter-abstract/289624439" target="_blank" rel="noopener noreferrer">The Commenda</a></dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Net profit and return on equity</dt><dd>Net profit is the money left after final cargo sales and debt settlement, minus your starting equity. Return on equity expresses that gain or loss as a percentage of starting equity.</dd></div>
+          <div data-glossary-entry><dt class="font-semibold text-white">Liquidation and audit</dt><dd>Liquidation turns leftover cargo into cash at the end of the campaign. The audit is the final record of your voyage, decisions, finances, and reflection.</dd></div>
+        </dl>
+      </section>
+    </div>
+  </dialog>
 
   <!-- ===================================================================== -->
   <!-- PHASE 1: MANDATORY PRE-RUN HYPOTHESIS & CHARTER SETUP                 -->
@@ -1093,6 +1151,21 @@
 
     function toggleModal(id) {
       document.getElementById(id).classList.toggle("hidden");
+    }
+
+    function filterGlossary(query) {
+      const search = query.trim().toLowerCase();
+      let matches = 0;
+      for (const group of document.querySelectorAll("[data-glossary-group]")) {
+        let groupMatches = 0;
+        for (const entry of group.querySelectorAll("[data-glossary-entry]")) {
+          entry.hidden = !entry.textContent.toLowerCase().includes(search);
+          if (!entry.hidden) groupMatches++;
+        }
+        group.hidden = groupMatches === 0;
+        matches += groupMatches;
+      }
+      document.getElementById("glossary-empty").hidden = matches > 0;
     }
 
     function populateIntelModal() {
