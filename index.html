@@ -17,6 +17,9 @@
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
+    .harbor-art { background: #0f172a url('./harbor-atlas.jpg') no-repeat; background-size: 200% 300%; aspect-ratio: 3 / 2; }
+    .condition-meter { display:block; width:100%; height:.8rem; accent-color:#22d3ee; }
+    #hull-meter { accent-color:#34d399; }
     @keyframes windFlow {
       0% { stroke-dashoffset: 64; }
       100% { stroke-dashoffset: 0; }
@@ -259,6 +262,13 @@
     <div class="lg:col-span-7 space-y-4">
 
       <!-- Interactive Indian Ocean Vector Map & Polar Wind Clock -->
+      <figure class="overflow-hidden rounded-xl border border-slate-700 bg-slate-900">
+        <div id="harbor-art" class="harbor-art" role="img"></div>
+        <figcaption class="flex flex-wrap justify-between gap-2 px-4 py-3 text-xs text-slate-300">
+          <strong id="harbor-name" class="text-white"></strong>
+          <span>AI-generated historical reconstruction</span>
+        </figcaption>
+      </figure>
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div>
@@ -277,7 +287,7 @@
 
         <!-- SVG MAP + INTERACTIVE 12-MONTH POLAR WIND CLOCK -->
         <div class="relative w-full aspect-[16/9] bg-slate-950 rounded-lg border border-slate-800 overflow-hidden">
-          <svg id="ocean-svg" viewBox="0 0 800 450" class="w-full h-full">
+          <svg role="group" aria-label="Indian Ocean route map with Kilwa, Aden, Calicut, Malacca and Quanzhou" id="ocean-svg" viewBox="0 0 800 450" class="w-full h-full">
             <defs>
               <radialGradient id="oceanGrad" cx="50%" cy="50%" r="75%">
                 <stop offset="0%" stop-color="#0c4a6e" stop-opacity="0.42" />
@@ -305,18 +315,23 @@
               <line x1="500" y1="0" x2="500" y2="450" />
             </g>
 
-            <!-- Stylized Continents -->
-            <path d="M 0,120 L 115,130 L 145,190 L 125,290 L 95,450 L 0,450 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-            <path d="M 110,0 L 295,0 L 285,115 L 220,165 L 155,145 L 130,85 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-            <path d="M 355,0 L 495,0 L 470,130 L 425,245 L 395,240 L 365,125 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-            <path d="M 535,0 L 675,0 L 655,145 L 610,215 L 635,275 L 615,290 L 575,215 L 555,120 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-            <path d="M 555,265 L 625,335 L 605,350 L 535,280 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-            <path d="M 675,0 L 800,0 L 800,175 L 715,165 L 675,115 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <g fill="#243950" stroke="#526c84" stroke-width="1.25">
+              <path d="M0,0 L40,38 L48,60 L64,90 L80,120 L112,158 L120,180 L160,188 L184,188 L176,210 L152,240 L120,270 L104,293 L96,323 L88,353 L104,383 L64,413 L56,450 L0,450 Z" />
+              <path d="M56,0 L800,0 L800,75 L752,45 L744,53 L736,83 L720,90 L696,105 L672,113 L648,113 L640,128 L648,158 L648,180 L624,203 L608,195 L600,173 L584,180 L576,210 L592,240 L608,263 L592,255 L576,225 L560,203 L560,173 L544,150 L528,143 L512,113 L488,105 L472,113 L456,128 L424,150 L416,180 L408,203 L392,210 L376,180 L368,158 L360,128 L352,113 L328,105 L320,90 L272,83 L240,83 L232,60 L200,68 L176,53 L168,68 L192,83 L224,75 L240,98 L248,105 L224,128 L200,143 L176,158 L144,173 L120,180 L112,150 L88,105 L64,60 Z" />
+              <path d="M416,195 L432,210 L424,225 L408,225 L408,210 Z" />
+              <path d="M536,225 L560,233 L584,255 L608,285 L624,315 L600,308 L584,293 L560,270 L544,248 Z" />
+              <path d="M616,315 L648,323 L688,330 L688,338 L648,330 L624,323 Z" />
+              <path d="M648,255 L680,240 L712,218 L728,233 L720,263 L712,300 L672,300 L648,285 Z" />
+              <path d="M736,135 L752,135 L760,158 L744,173 L736,158 Z" />
+              <path d="M744,188 L776,180 L784,203 L768,225 L752,210 Z" />
+              <path d="M168,360 L184,390 L168,420 L144,458 L128,458 L120,435 L136,398 L160,383 Z" />
+              <path d="M744,83 L752,98 L744,105 L736,98 Z" />
+            </g>
 
             <!-- Oceanic Circuit Labels -->
-            <text x="268" y="220" fill="#475569" font-size="10" font-family="monospace" letter-spacing="2">ARABIAN SEA</text>
-            <text x="472" y="192" fill="#475569" font-size="10" font-family="monospace" letter-spacing="2">BAY OF BENGAL</text>
-            <text x="672" y="238" fill="#475569" font-size="10" font-family="monospace" letter-spacing="2">SOUTH CHINA SEA</text>
+            <text x="232" y="228" fill="#8da5bc" font-size="10" font-family="monospace" letter-spacing="2">ARABIAN SEA</text>
+            <text x="454" y="190" fill="#8da5bc" font-size="10" font-family="monospace" letter-spacing="2">BAY OF BENGAL</text>
+            <text x="624" y="153" fill="#8da5bc" font-size="10" font-family="monospace" letter-spacing="2">SOUTH CHINA SEA</text>
 
             <!-- Dynamic Wind Vector Streamlines -->
             <g id="svg-wind-field"></g>
@@ -331,7 +346,7 @@
             <g id="svg-ports"></g>
 
             <!-- Interactive 12-Month Polar Wind Clock (Bottom Left Overlay) -->
-            <g transform="translate(88, 358)">
+            <g transform="translate(710, 365)">
               <circle cx="0" cy="0" r="72" fill="#0f172a" fill-opacity="0.95" stroke="#334155" stroke-width="1.5" />
               <!-- Shaded Monsoon Sectors -->
               <path d="M 0,0 L 31,-53 A 61,61 0 0,1 31,53 Z" fill="#10b981" fill-opacity="0.16" />
@@ -397,6 +412,25 @@
     <div class="lg:col-span-5 space-y-4">
 
       <!-- Port Commodity Arbitrage Market -->
+      <section class="overflow-hidden rounded-xl border border-slate-700 bg-slate-900">
+        <img id="ship-photo" loading="lazy" class="h-48 w-full object-cover object-center" alt="">
+        <div class="space-y-3 p-4">
+          <h3 id="ship-name" class="font-bold text-white"></h3>
+          <a id="ship-credit" target="_blank" rel="noopener noreferrer" class="block text-xs text-cyan-300 underline"></a>
+          <label for="hull-meter" class="block text-xs text-slate-200">Hull integrity <strong id="hull-meter-value"></strong></label>
+          <progress id="hull-meter" max="100" class="condition-meter"></progress>
+          <label for="crew-meter" class="block text-xs text-slate-200">Crew health <strong id="crew-meter-value"></strong></label>
+          <progress id="crew-meter" max="100" class="condition-meter"></progress>
+        </div>
+      </section>
+      <section class="overflow-hidden rounded-xl border border-slate-700 bg-slate-900">
+        <div class="harbor-art" style="background-position:100% 100%" role="img" aria-label="Illustrated timber cargo hold"></div>
+        <div class="p-4">
+          <h3 class="font-bold text-white">Cargo Hold</h3>
+          <p id="cargo-shelf-weight" class="mb-3 text-xs text-slate-400"></p>
+          <ul id="cargo-shelves" class="grid grid-cols-2 gap-2"></ul>
+        </div>
+      </section>
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg">
         <div class="flex items-center justify-between mb-2">
           <div>
@@ -706,12 +740,49 @@
   <script>
     const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+    const HARBOR_TILES = { kilwa: "0% 0%", aden: "100% 0%", calicut: "0% 50%", malacca: "100% 50%", quanzhou: "0% 100%" };
+    const SHIP_PHOTOS = {
+      dhow: ["6/64", "Jewel_of_Muscat%2C_Maritime_Experiential_Museum_%26_Aquarium%2C_Singapore_-_20120102-08.jpg", "Jewel of Muscat reconstruction", "Jacklee · CC BY-SA 3.0"],
+      junk: ["c/ce", "Zheng_He%27s_Treasure_Ship_1.jpg", "Zheng He treasure ship model", "Mike Peel · CC BY-SA 4.0"]
+    };
+    const CARGO_ICONS = { teak: "🪵", porcelain: "🏺", textiles: "🧵", pepper: "🫙", cloves: "🌿", ivory: "📦" };
+
+    function renderVoyageVisuals(port, vessel, usedTonnage) {
+      const harbor = document.getElementById("harbor-art");
+      harbor.style.backgroundPosition = HARBOR_TILES[port.id];
+      harbor.setAttribute("aria-label", `Illustrated harbor at ${port.name}`);
+      document.getElementById("harbor-name").textContent = `${port.name} · ${port.region}`;
+      const [folder, file, alt, credit] = SHIP_PHOTOS[state.vesselKey];
+      const photo = document.getElementById("ship-photo");
+      if (photo.alt !== alt) {
+        photo.src = `https://thumb.wikimedia.org/wikipedia/commons/thumb/${folder}/${file}/960px-${file}`;
+        photo.alt = alt;
+      }
+      document.getElementById("ship-name").textContent = vessel.name;
+      const photoCredit = document.getElementById("ship-credit");
+      photoCredit.href = `https://commons.wikimedia.org/wiki/File:${file}`;
+      photoCredit.textContent = credit;
+      document.getElementById("hull-meter").value = state.hull;
+      document.getElementById("hull-meter-value").textContent = `${state.hull}%`;
+      document.getElementById("crew-meter").value = state.crewHealth;
+      document.getElementById("crew-meter-value").textContent = `${state.crewHealth}%`;
+      document.getElementById("cargo-shelf-weight").textContent = `${usedTonnage} / ${vessel.capacity} tons loaded`;
+      document.getElementById("cargo-shelves").innerHTML = COMMODITIES.map(item => {
+        const units = state.cargo[item.id];
+        return `<li class="rounded-lg border border-slate-700 bg-slate-950 p-2 ${units ? "text-slate-100" : "text-slate-400"}">
+          <span aria-hidden="true" class="text-xl">${CARGO_ICONS[item.id]}</span>
+          <strong class="block text-xs">${item.name}</strong>
+          <span class="text-xs font-mono">${units ? `${units} units · ${units * item.weight} t` : "Empty"}</span>
+        </li>`;
+      }).join("");
+    }
+
     const PORTS = {
       kilwa: {
         id: "kilwa",
         name: "Kilwa",
         region: "Swahili Coast",
-        x: 155, y: 295,
+        x: 92, y: 335,
         tariff: 0.05,
         layoverBase: 20,
         trait: "5% Tariff — Swahili-Arab merchant guilds reduce port layover fees.",
@@ -725,7 +796,7 @@
         id: "aden",
         name: "Aden",
         region: "Red Sea / Arabia",
-        x: 225, y: 152,
+        x: 136, y: 174,
         tariff: 0.08,
         layoverBase: 35,
         trait: "8% Tariff — High Red Sea transit tax; gateway to Mediterranean markets.",
@@ -739,7 +810,7 @@
         id: "calicut",
         name: "Calicut",
         region: "Malabar Coast",
-        x: 405, y: 215,
+        x: 376, y: 186,
         tariff: 0.04,
         layoverBase: 25,
         trait: "4% Tariff — Zamorin royal protection; zero piracy risk near harbor.",
@@ -753,7 +824,7 @@
         id: "malacca",
         name: "Malacca",
         region: "Strait of Malacca",
-        x: 605, y: 262,
+        x: 593, y: 254,
         tariff: 0.03,
         layoverBase: 25,
         trait: "3% Tariff — Premier entrepôt; rapid seasonal wind convergence.",
@@ -767,7 +838,7 @@
         id: "quanzhou",
         name: "Quanzhou",
         region: "Southern China",
-        x: 715, y: 138,
+        x: 733, y: 83,
         tariff: 0.06,
         layoverBase: 30,
         trait: "6% Tariff — Imperial Shibosi (Maritime Trade Bureau) customs audit.",
@@ -1545,6 +1616,7 @@
       const wind = getWindState(activeDisplayIdx);
       const usedTonnage = getUsedTonnage();
       const { bulk, luxury } = getBulkAndLuxuryTonnage();
+      renderVoyageVisuals(port, vessel, usedTonnage);
 
       // HUD Bar
       const mName = MONTHS[state.monthIndex % 12];
@@ -1754,11 +1826,11 @@
       // 2. Curved Sea Lanes
       const lanesGroup = document.getElementById("svg-sea-lanes");
       const uniquePairs = [
-        ["kilwa", "aden", 170, 215],
-        ["kilwa", "calicut", 295, 285],
-        ["aden", "calicut", 315, 165],
-        ["calicut", "malacca", 505, 265],
-        ["malacca", "quanzhou", 675, 210]
+        ["kilwa", "aden", 215, 228],
+        ["kilwa", "calicut", 250, 314],
+        ["aden", "calicut", 247, 198],
+        ["calicut", "malacca", 394, 265],
+        ["malacca", "quanzhou", 709, 189]
       ];
       lanesGroup.innerHTML = uniquePairs.map(([a, b, cx, cy]) => {
         const p1 = PORTS[a];
