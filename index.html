@@ -276,9 +276,6 @@
             <h2 id="map-port-title" class="text-base font-bold text-white">Docked at Calicut (Malabar Coast)</h2>
           </div>
           <div class="flex items-center gap-2">
-            <button id="btn-reset-clock" onclick="resetClockPreview()" class="hidden px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 transition">
-              ↺ Return to Active Month
-            </button>
             <div id="wind-regime-badge" class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-cyan-950 border border-cyan-700 text-cyan-300">
               NE Monsoon • 18 kts (225° SW)
             </div>
@@ -345,15 +342,15 @@
             <!-- Port Nodes -->
             <g id="svg-ports"></g>
 
-            <!-- Interactive 12-Month Polar Wind Clock (Bottom Left Overlay) -->
+            <!-- Seasonal wind clock -->
             <g transform="translate(710, 365)">
               <circle cx="0" cy="0" r="72" fill="#0f172a" fill-opacity="0.95" stroke="#334155" stroke-width="1.5" />
               <!-- Shaded Monsoon Sectors -->
               <path d="M 0,0 L 31,-53 A 61,61 0 0,1 31,53 Z" fill="#10b981" fill-opacity="0.16" />
               <path d="M 0,0 L -31,53 A 61,61 0 0,1 -31,-53 Z" fill="#06b6d4" fill-opacity="0.16" />
               <circle cx="0" cy="0" r="46" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="2 2" />
-              <text x="0" y="-56" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="monospace" font-weight="bold">CLICK MONTH</text>
-              <g id="svg-clock-months"></g>
+              <text x="0" y="-56" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="monospace" font-weight="bold">SEASONAL WIND CLOCK</text>
+              <g id="svg-clock-months" aria-hidden="true"></g>
               <!-- Active Wind Vector Needle -->
               <g id="svg-clock-needle">
                 <line x1="0" y1="18" x2="0" y2="-24" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round" />
@@ -363,6 +360,11 @@
             </g>
           </svg>
         </div>
+        <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-300">
+          <span><span aria-hidden="true" class="text-cyan-300">⇢</span> Current wind</span>
+          <span><span aria-hidden="true" class="text-amber-300">→</span> Selected route</span>
+          <span>Choose a month on the clock or in Wind comparison.</span>
+        </p>
 
         <!-- Port Diaspora Standing & Tariff Status Bar -->
         <div class="mt-3 p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -395,6 +397,25 @@
           <!-- Populated dynamically -->
         </div>
       </div>
+
+      <section aria-labelledby="wind-comparison-heading" class="rounded-xl border border-slate-700 bg-slate-900 p-4 shadow-lg">
+        <h3 id="wind-comparison-heading" class="font-bold text-white">Wind comparison</h3>
+        <p class="mt-1 text-xs text-slate-300">Compare the same route now and in a future month. The forecast leaves your date, cash and location as they are. Only a <strong>Sail now</strong> button starts a voyage.</p>
+        <div class="my-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label class="block text-xs font-semibold text-slate-200" for="wind-route">Route to compare
+            <select id="wind-route" onchange="selectWindRoute(this.value)" class="mt-1 block w-full rounded-lg border border-slate-600 bg-slate-950 p-2 text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"></select>
+          </label>
+          <label class="block text-xs font-semibold text-slate-200" for="wind-month">Future departure month
+            <select id="wind-month" onchange="previewClockMonth(Number(this.value))" class="mt-1 block w-full rounded-lg border border-slate-600 bg-slate-950 p-2 text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300 disabled:opacity-60"></select>
+          </label>
+        </div>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <article id="wind-now" class="rounded-lg border border-cyan-800 bg-slate-950 p-3"></article>
+          <article id="wind-future" class="rounded-lg border border-amber-800 bg-slate-950 p-3"></article>
+        </div>
+        <p id="wind-comparison-summary" aria-live="polite" class="mt-3 text-xs text-slate-100"></p>
+        <p class="mt-2 text-xs text-slate-400">Costs include crew wages and scheduled port fees, before trading, debt interest and random events. Estimates use wind at departure.</p>
+      </section>
 
       <!-- CHRONOLOGICAL CAPTAIN'S LOGBOOK -->
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg">
@@ -728,7 +749,7 @@
           <strong class="text-white">1. Sewn-Plank Dhow vs. Bulkhead Junk:</strong> Arab/Indian dhows stitched teak planks with coconut coir rope, allowing hulls to flex over coral reefs and tack efficiently across winds (α = 0.85). Chinese junks used iron nails and watertight bulkheads—reducing storm/reef losses by 50% and hauling 300 Tons of bulk timber/porcelain.
         </p>
         <p>
-          <strong class="text-white">2. The Monsoon Calendar as Social Architect (Chaudhuri & Abu-Lughod):</strong> Because the SW Monsoon (Jun–Sep, 045° NE) and NE Monsoon (Nov–Feb, 225° SW) reverse every six months—separated by Cyclone/Doldrum dead zones (Apr–May & Oct)—merchants wintered for months in ports, creating cosmopolitan diaspora quarters (<em>Pardesi</em>, <em>Fanfang</em>, <em>Shahbandar</em>).
+          <strong class="text-white">2. Monsoons and merchant communities (Chaudhuri & Abu-Lughod):</strong> The game models winds blowing from the southwest toward the northeast in Jun–Sep and from the northeast toward the southwest in Nov–Feb. Mar–May and Oct are transition months in this simulation. Seasonal layovers helped create opportunities for merchants to build relationships in port communities.
         </p>
       </div>
     </div>
@@ -739,6 +760,8 @@
   <!-- ===================================================================== -->
   <script>
     const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const CAMPAIGN_MONTHS = 24;
+    const COMPASS_POINTS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
 
     const HARBOR_TILES = { kilwa: "0% 0%", aden: "100% 0%", calicut: "0% 50%", malacca: "100% 50%", quanzhou: "0% 100%" };
     const SHIP_PHOTOS = {
@@ -944,6 +967,7 @@
       reflection: "",
       monthIndex: 0,
       previewMonthOffset: null, // For interactive Wind Clock inspection
+      windRouteTo: null,
       hoveredLaneTo: null,
       currentPort: "calicut",
       cash: 1500,
@@ -1143,10 +1167,9 @@
       return Math.max(0.01, baseTariff - discount);
     }
 
-    function getEffectiveLayoverFee(portId) {
+    function getEffectiveLayoverFee(portId, standing = state.diaspora[portId] || 0) {
       const port = PORTS[portId];
       const diff = DIFFICULTIES[state.diffKey];
-      const standing = state.diaspora[portId] || 0;
       let diasporaMult = 1.0;
       if (standing >= 50) diasporaMult = 0.5;
       else if (standing >= 20) diasporaMult = 0.75;
@@ -1167,17 +1190,19 @@
       const effSpeed = Math.round(vessel.speed * effFactor);
       const rawDays = Math.round(lane.dist / (vessel.speed * effFactor));
       const monthsElapsed = Math.max(1, Math.ceil(rawDays / 30));
+      const stormProbability = state.specialists.navigator ? 0.18 : 0.35;
 
       let alignmentStatus = "Crosswind Reach";
       if (!wind.isDeadZone && cosAlignment >= 0.4) alignmentStatus = "Tailwind (Optimal)";
       else if (!wind.isDeadZone && cosAlignment < -0.5) alignmentStatus = "Headwind (Hazard)";
-      else if (wind.isDeadZone) alignmentStatus = "Dead Zone (35% Storm)";
+      else if (wind.isDeadZone) alignmentStatus = `Dead Zone (${Math.round(stormProbability * 100)}% Storm)`;
 
       return {
         days: rawDays,
         months: monthsElapsed,
         effSpeed,
         cosAlignment,
+        stormProbability,
         alignmentStatus,
         isHeadwind: !wind.isDeadZone && cosAlignment < -0.5,
         isTailwind: !wind.isDeadZone && cosAlignment >= 0.4,
@@ -1279,7 +1304,6 @@
     // CORE GAMEPLAY ACTIONS: DIASPORA LAYOVER OR SAIL
     function waitInPort() {
       if (state.ended) return;
-      state.previewMonthOffset = null;
       const port = PORTS[state.currentPort];
       const vessel = VESSELS[state.vesselKey];
 
@@ -1308,11 +1332,11 @@
 
     function sailTo(destId) {
       if (state.ended) return;
-      state.previewMonthOffset = null;
-      state.hoveredLaneTo = null;
-
       const lane = SEA_LANES.find(l => l.from === state.currentPort && l.to === destId);
       if (!lane) return;
+      state.previewMonthOffset = null;
+      state.windRouteTo = null;
+      state.hoveredLaneTo = null;
 
       const calc = computeTransit(lane);
       const vessel = VESSELS[state.vesselKey];
@@ -1353,7 +1377,7 @@
       // 2. Inter-Monsoon Dead Zone (35% Cyclone / Doldrum probability)
       if (calc.isDeadZone) {
         const roll = Math.random();
-        const stormThreshold = state.specialists.navigator ? 0.18 : 0.35;
+        const stormThreshold = calc.stormProbability;
         if (roll < stormThreshold) {
           crewHealthLoss += 12;
           const dmg = Math.round((22 + Math.random() * 16) * vessel.stormResist * diff.stormMult);
@@ -1428,6 +1452,7 @@
     function advanceTime(months) {
       const prevSixMonthBlock = Math.floor(state.monthIndex / 6);
       state.monthIndex += months;
+      if (state.previewMonthOffset === state.monthIndex % MONTHS.length) state.previewMonthOffset = null;
       const newSixMonthBlock = Math.floor(state.monthIndex / 6);
 
       if (state.debt > 0 && newSixMonthBlock > prevSixMonthBlock) {
@@ -1436,7 +1461,7 @@
         addLog(`Commenda investor accrued 5% biannual interest (+${interest} D; total debt: ${state.debt} D).`);
       }
 
-      if (state.monthIndex >= 24 || state.cash < -250) {
+      if (state.monthIndex >= CAMPAIGN_MONTHS || state.cash < -250) {
         finishCampaign();
       } else {
         renderAll();
@@ -1447,26 +1472,155 @@
       return Math.max(0, 50 - health) / 100;
     }
 
-    // INTERACTIVE CLOCK PREVIEW & ROUTE VECTOR HOVER
-    function previewClockMonth(monthMod12) {
-      const currentMod12 = state.monthIndex % 12;
-      if (monthMod12 === currentMod12) {
-        state.previewMonthOffset = null;
-      } else {
-        state.previewMonthOffset = monthMod12;
+    // WIND COMPARISON
+    function getForecastMonthIndex() {
+      if (state.monthIndex + 1 >= CAMPAIGN_MONTHS) return null;
+      if (state.previewMonthOffset !== null) {
+        const waitMonths = (state.previewMonthOffset - state.monthIndex % MONTHS.length + MONTHS.length) % MONTHS.length;
+        const departure = state.monthIndex + waitMonths;
+        if (waitMonths > 0 && departure < CAMPAIGN_MONTHS) return departure;
       }
-      renderAll();
+
+      const currentRegime = getWindState(state.monthIndex).regime;
+      for (let month = state.monthIndex + 1; month < CAMPAIGN_MONTHS; month++) {
+        if (getWindState(month).regime !== currentRegime) return month;
+      }
+      return state.monthIndex + 1;
     }
 
-    function resetClockPreview() {
-      state.previewMonthOffset = null;
-      renderAll();
+    function getWaitingCosts(waitMonths) {
+      const { currentPort } = state;
+      const currentStanding = state.diaspora[currentPort] || 0;
+      let portFees = 0;
+      for (let month = 0; month < waitMonths; month++) {
+        portFees += getEffectiveLayoverFee(currentPort, Math.min(100, currentStanding + 15 * month));
+      }
+      return { portFees, crewWages: waitMonths * VESSELS[state.vesselKey].upkeep };
+    }
+
+    function previewClockMonth(monthMod12, showComparison = false) {
+      const currentMonth = state.monthIndex % MONTHS.length;
+      const waitMonths = (monthMod12 - currentMonth + MONTHS.length) % MONTHS.length;
+      if (waitMonths === 0 || state.monthIndex + waitMonths >= CAMPAIGN_MONTHS) return;
+      state.previewMonthOffset = monthMod12;
+      renderWindComparison();
+      renderSVGMap(getWindState(state.monthIndex));
+      if (showComparison) {
+        document.getElementById("wind-comparison-heading").scrollIntoView({ block: "center" });
+        document.getElementById("wind-month").focus({ preventScroll: true });
+      }
+    }
+
+    function selectWindRoute(destId) {
+      state.windRouteTo = destId;
+      renderWindComparison();
+      renderSVGMap(getWindState(state.monthIndex));
     }
 
     function setHoveredLane(destId) {
       state.hoveredLaneTo = destId;
-      const displayIdx = state.previewMonthOffset !== null ? state.previewMonthOffset : state.monthIndex;
-      renderSVGMap(getWindState(displayIdx));
+      renderSVGMap(getWindState(state.monthIndex));
+    }
+
+    function formatVoyageMonth(monthIdx) {
+      return `${MONTHS[monthIdx % MONTHS.length]} · Month ${monthIdx + 1}`;
+    }
+
+    function compassName(bearing) {
+      return COMPASS_POINTS[Math.round(bearing / 22.5) % COMPASS_POINTS.length];
+    }
+
+    function renderWindPlan(lane, monthIdx, calc, waiting) {
+      const wind = getWindState(monthIdx);
+      const waitMonths = monthIdx - state.monthIndex;
+      const sailingWages = calc.months * VESSELS[state.vesselKey].upkeep;
+      const cost = sailingWages + waiting.crewWages + waiting.portFees;
+      const monthLabel = formatVoyageMonth(monthIdx);
+      const title = waitMonths ? `If you wait until ${monthLabel}` : `Sail now · ${monthLabel}`;
+      const badgeColor = waitMonths ? "text-amber-300" : "text-cyan-300";
+      const from = compassName((wind.bearing + 180) % 360);
+      const towards = compassName(wind.bearing);
+
+      return `
+        <h4 class="text-sm font-semibold ${badgeColor}">${title}</h4>
+        <div class="my-3 flex items-center gap-2">
+          <svg class="h-20 w-20 shrink-0" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+            <circle cx="40" cy="40" r="30" fill="#0f172a" stroke="#334155"/>
+            <path d="M 40 10 V 70 M 10 40 H 70" stroke="#334155" stroke-width="1"/>
+            <text x="40" y="8" fill="#94a3b8" text-anchor="middle" font-size="8">N</text>
+            <g transform="rotate(${wind.bearing} 40 40)" stroke="#67e8f9" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M 40 40 V 14" stroke-dasharray="3 3"/>
+              <path d="M 35 19 L 40 14 L 45 19"/>
+            </g>
+            <g transform="rotate(${lane.bearing} 40 40)" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M 40 40 V 24 M 36 28 L 40 24 L 44 28"/>
+            </g>
+          </svg>
+          <div class="min-w-0 text-xs leading-relaxed">
+            <div class="text-cyan-300"><span aria-hidden="true">⇢</span> Wind ${from} → ${towards} · ${wind.knots} kt</div>
+            <div class="text-amber-300"><span aria-hidden="true">→</span> Heading ${compassName(lane.bearing)} · ${lane.bearing}°</div>
+            <div class="mt-1 font-semibold text-white">${calc.alignmentStatus}</div>
+          </div>
+        </div>
+        <dl class="grid grid-cols-[1fr_auto] gap-x-2 gap-y-1 text-xs text-slate-300">
+          <dt>At sea</dt><dd class="text-right font-mono">~${calc.days} d · ${calc.months} mo</dd>
+          <dt>Sailing wages</dt><dd class="text-right font-mono">${sailingWages} D</dd>
+          ${waitMonths ? `
+            <dt>Time in port</dt><dd class="text-right font-mono">${waitMonths} mo</dd>
+            <dt>Wages while waiting</dt><dd class="text-right font-mono">${waiting.crewWages} D</dd>
+            <dt>Port fees while waiting</dt><dd class="text-right font-mono">${waiting.portFees} D</dd>
+          ` : ""}
+          <dt class="border-t border-slate-700 pt-1.5 font-semibold text-white">Estimated cost</dt>
+          <dd class="border-t border-slate-700 pt-1.5 text-right font-semibold text-white">${cost} D</dd>
+        </dl>
+        ${monthIdx + calc.months > CAMPAIGN_MONTHS ? '<p class="mt-2 text-xs text-amber-300">Transit extends beyond Month 24.</p>' : ""}
+      `;
+    }
+
+    function renderWindComparison() {
+      const outbound = SEA_LANES.filter(lane => lane.from === state.currentPort);
+      const lane = outbound.find(route => route.to === state.windRouteTo) || outbound[0];
+      state.windRouteTo = lane.to;
+
+      const routeSelect = document.getElementById("wind-route");
+      const routeOptions = outbound.map(route => `<option value="${route.to}">${PORTS[state.currentPort].name} → ${PORTS[route.to].name}</option>`).join("");
+      if (routeSelect.innerHTML !== routeOptions) routeSelect.innerHTML = routeOptions;
+      routeSelect.value = lane.to;
+
+      const future = getForecastMonthIndex();
+      const monthSelect = document.getElementById("wind-month");
+      const available = Math.min(MONTHS.length - 1, CAMPAIGN_MONTHS - 1 - state.monthIndex);
+      const monthOptions = Array.from({ length: available }, (_, index) => {
+        const monthIdx = state.monthIndex + 1 + index;
+        return `<option value="${monthIdx % MONTHS.length}">${formatVoyageMonth(monthIdx)}</option>`;
+      }).join("") || '<option value="">No future departure months</option>';
+      if (monthSelect.innerHTML !== monthOptions) monthSelect.innerHTML = monthOptions;
+      monthSelect.disabled = future === null;
+      monthSelect.value = future === null ? "" : String(future % MONTHS.length);
+
+      const nowTransit = computeTransit(lane);
+      document.getElementById("wind-now").innerHTML = renderWindPlan(lane, state.monthIndex, nowTransit, getWaitingCosts(0));
+
+      const futureCard = document.getElementById("wind-future");
+      const summary = document.getElementById("wind-comparison-summary");
+      if (future === null) {
+        futureCard.innerHTML = '<h4 class="text-sm font-semibold text-amber-300">Future departure</h4><p class="mt-2 text-xs text-slate-300">This is the last month of the campaign.</p>';
+        summary.textContent = "";
+        return;
+      }
+
+      const futureTransit = computeTransit(lane, future);
+      const waitMonths = future - state.monthIndex;
+      futureCard.innerHTML = renderWindPlan(lane, future, futureTransit, getWaitingCosts(waitMonths));
+      const sailingDays = futureTransit.days - nowTransit.days;
+      const arrivalMonths = waitMonths + futureTransit.months - nowTransit.months;
+      const sailingComparison = sailingDays === 0
+        ? "takes the same number of days at sea"
+        : `means ${Math.abs(sailingDays)} ${sailingDays < 0 ? "fewer" : "more"} days at sea`;
+      const arrivalComparison = arrivalMonths === 0
+        ? "and reaches port in the same campaign month"
+        : `and reaches port ${Math.abs(arrivalMonths)} mo ${arrivalMonths < 0 ? "earlier" : "later"}`;
+      summary.textContent = `Waiting until ${MONTHS[future % MONTHS.length]} ${sailingComparison} ${arrivalComparison}.`;
     }
 
     // PHASE 4: LIQUIDATION, RUBRIC TELEMETRY & MULTI-PAGE PDF EXPORT
@@ -1612,8 +1766,7 @@
       document.getElementById("crew-status").textContent =
         `${vessel.upkeep} D/month • Health ${state.crewHealth}% • Mutiny risk at current health ${Math.round(getMutinyRisk(state.crewHealth) * 100)}%`;
       const port = PORTS[state.currentPort];
-      const activeDisplayIdx = state.previewMonthOffset !== null ? state.previewMonthOffset : state.monthIndex;
-      const wind = getWindState(activeDisplayIdx);
+      const wind = getWindState(state.monthIndex);
       const usedTonnage = getUsedTonnage();
       const { bulk, luxury } = getBulkAndLuxuryTonnage();
       renderVoyageVisuals(port, vessel, usedTonnage);
@@ -1635,16 +1788,9 @@
         document.getElementById("debt-repay-box").classList.add("hidden");
       }
 
-      // Map Headers & Clock Preview State
+      // Map headers always show the current departure conditions.
       document.getElementById("map-port-title").textContent = `Docked at ${port.name} (${port.region})`;
-      const resetBtn = document.getElementById("btn-reset-clock");
-      if (state.previewMonthOffset !== null) {
-        resetBtn.classList.remove("hidden");
-        document.getElementById("wind-regime-badge").textContent = `PREVIEW (${MONTHS[state.previewMonthOffset]}): ${wind.label}`;
-      } else {
-        resetBtn.classList.add("hidden");
-        document.getElementById("wind-regime-badge").textContent = wind.label;
-      }
+      document.getElementById("wind-regime-badge").textContent = `${mName} · ${wind.label}`;
 
       const badge = document.getElementById("wind-regime-badge");
       badge.className = `px-3 py-1 rounded-full text-xs font-mono font-semibold border ${
@@ -1666,6 +1812,7 @@
       document.getElementById("port-layover-cost").textContent = `${totalWaitCost} D/mo`;
       document.getElementById("btn-wait-cost").textContent = `(-${totalWaitCost} D)`;
 
+      renderWindComparison();
       renderSVGMap(wind);
 
       // Render Outbound Sea Lanes
@@ -1674,7 +1821,7 @@
       const routesEl = document.getElementById("routes-container");
       routesEl.innerHTML = outbound.map(lane => {
         const dest = PORTS[lane.to];
-        const calc = computeTransit(lane, activeDisplayIdx);
+        const calc = computeTransit(lane);
         let badgeColor = "text-amber-300 bg-amber-950/70 border-amber-800";
         let hintArrow = "↗ Crosswind Reach";
         if (calc.isTailwind) {
@@ -1689,7 +1836,6 @@
           hintArrow = "⚠ Cyclone/Doldrum Dead Zone";
         }
 
-        const isPreviewing = state.previewMonthOffset !== null;
         return `
           <button
             onmouseenter="setHoveredLane('${dest.id}')"
@@ -1697,7 +1843,7 @@
             onclick="sailTo('${dest.id}')"
             class="text-left p-3 rounded-lg bg-slate-950 hover:bg-slate-800/90 border border-slate-800 hover:border-amber-400/70 transition flex flex-col justify-between gap-2">
             <div class="flex items-center justify-between gap-1">
-              <span class="font-bold text-sm text-white">${isPreviewing ? `[${MONTHS[state.previewMonthOffset]}] ` : ""}Sail → ${dest.name}</span>
+              <span class="font-bold text-sm text-white">Sail now → ${dest.name}</span>
               <span class="text-[11px] font-mono px-2 py-0.5 rounded border ${badgeColor}">${calc.alignmentStatus}</span>
             </div>
             <div class="flex items-center justify-between text-xs font-mono text-slate-400">
@@ -1846,14 +1992,13 @@
         `;
       }).join("");
 
-      // 3. Hovered Route Vector Telemetry Overlay
+      // 3. Selected or hovered route for current sailing conditions
       const previewGroup = document.getElementById("svg-route-preview");
-      if (state.hoveredLaneTo && PORTS[state.hoveredLaneTo]) {
+      const lane = SEA_LANES.find(route => route.from === state.currentPort && route.to === (state.hoveredLaneTo || state.windRouteTo));
+      if (lane) {
         const pStart = PORTS[state.currentPort];
-        const pEnd = PORTS[state.hoveredLaneTo];
-        const lane = SEA_LANES.find(l => l.from === state.currentPort && l.to === state.hoveredLaneTo);
-        const activeIdx = state.previewMonthOffset !== null ? state.previewMonthOffset : state.monthIndex;
-        const calc = computeTransit(lane, activeIdx);
+        const pEnd = PORTS[lane.to];
+        const calc = computeTransit(lane);
         const midX = (pStart.x + pEnd.x) / 2;
         const midY = (pStart.y + pEnd.y) / 2 - 14;
 
@@ -1888,7 +2033,8 @@
       // 5. Interactive 12-Month Polar Wind Clock
       const clockGroup = document.getElementById("svg-clock-months");
       const activeM = state.monthIndex % 12;
-      const shownM = state.previewMonthOffset !== null ? state.previewMonthOffset : activeM;
+      const forecastMonth = getForecastMonthIndex();
+      const shownM = forecastMonth === null ? null : forecastMonth % MONTHS.length;
 
       clockGroup.innerHTML = MONTHS.map((m, idx) => {
         const angle = ((idx * 30 - 90) * Math.PI) / 180;
@@ -1897,9 +2043,11 @@
         const my = Math.sin(angle) * r + 3;
         const isCur = idx === activeM;
         const isShown = idx === shownM;
+        const waitMonths = (idx - activeM + MONTHS.length) % MONTHS.length;
+        const canPreview = waitMonths > 0 && state.monthIndex + waitMonths < CAMPAIGN_MONTHS;
         const fillCol = isShown ? "#fbbf24" : isCur ? "#22d3ee" : "#94a3b8";
         return `
-          <g class="cursor-pointer" onclick="previewClockMonth(${idx})">
+          <g ${canPreview ? `class="cursor-pointer" onclick="previewClockMonth(${idx}, true)"` : ""}>
             <circle cx="${mx}" cy="${my - 3}" r="9" fill="transparent" />
             <text x="${mx}" y="${my}" text-anchor="middle"
                   fill="${fillCol}"
