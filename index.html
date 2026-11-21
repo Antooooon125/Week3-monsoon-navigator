@@ -449,6 +449,12 @@
           <h3 class="text-sm font-bold text-white">Hull Careening & Specialist Outfitting</h3>
         </div>
 
+        <div class="rounded-lg border border-slate-800 bg-slate-950 p-2.5">
+          <h4 class="text-xs font-semibold text-slate-200">Crew Wages, Health & Mutiny</h4>
+          <p id="crew-status" class="mt-1 text-xs font-mono text-cyan-300" aria-live="polite"></p>
+          <p class="mt-1 text-[11px] text-slate-400">Each month at sea costs 8 crew health points. Severe headwinds or a cyclone cost 12 extra. Waiting a month in port restores up to 20 points while wages and port fees continue. Below 50 health, a mutiny roll on arrival or return can cost two months of wages to settle.</p>
+        </div>
+
         <!-- Hull Repair -->
         <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800">
           <div>
@@ -590,6 +596,7 @@
       </div>
 
       <!-- Pre-Run Hypothesis & Post-Voyage Synthesis -->
+      <p id="audit-crew" class="text-xs font-mono text-cyan-300"></p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-slate-950 border border-slate-800 rounded-lg p-4">
           <h3 class="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">Pre-Run Monsoon Strategy Hypothesis</h3>
@@ -872,6 +879,8 @@
       startEquity: 1500,
       debt: 0,
       hull: 100,
+      crewHealth: 100,
+      mutinies: 0,
       cargo: { teak: 0, porcelain: 0, textiles: 0, pepper: 0, cloves: 0, ivory: 0 },
       costBasis: { teak: 0, porcelain: 0, textiles: 0, pepper: 0, cloves: 0, ivory: 0 },
       diaspora: { kilwa: 0, aden: 0, calicut: 0, malacca: 0, quanzhou: 0 },
@@ -1207,6 +1216,8 @@
       const totalExpense = layoverFee + vessel.upkeep;
 
       state.cash -= totalExpense;
+      const priorCrewHealth = state.crewHealth;
+      state.crewHealth = Math.min(100, state.crewHealth + 20);
       state.stats.layoverMonths += 1;
       state.diaspora[state.currentPort] = Math.min(100, (state.diaspora[state.currentPort] || 0) + 15);
 
@@ -1220,7 +1231,7 @@
         vignetteNote = ` | Diaspora Quarter: ${v}`;
       }
 
-      addLog(`Wintered 1 month in ${port.name} (Layover: ${layoverFee} D + Crew: ${vessel.upkeep} D; Standing: ${state.diaspora[state.currentPort]})${vignetteNote}`);
+      addLog(`Wintered 1 month in ${port.name} (Layover: ${layoverFee} D + Crew: ${vessel.upkeep} D; Standing: ${state.diaspora[state.currentPort]}; Crew health: +${state.crewHealth - priorCrewHealth} to ${state.crewHealth}%)${vignetteNote}`);
       advanceTime(1);
     }
 
@@ -1247,12 +1258,14 @@
 
       let eventNotes = [];
       let turnedBack = false;
+      let crewHealthLoss = calc.months * 8;
 
       if (calc.isTailwind) state.stats.goodWinds += 1;
       if (calc.isHeadwind || calc.isDeadZone) state.stats.badWinds += 1;
 
       // 1. Severe Monsoon Headwind Mechanics
       if (calc.isHeadwind) {
+        crewHealthLoss += 12;
         const dmg = Math.round((20 + Math.random() * 14) * vessel.stormResist * diff.stormMult);
         state.hull = Math.max(5, state.hull - dmg);
         eventNotes.push(`Fought severe monsoon headwinds (-${dmg}% hull)`);
@@ -1271,6 +1284,7 @@
         const roll = Math.random();
         const stormThreshold = state.specialists.navigator ? 0.18 : 0.35;
         if (roll < stormThreshold) {
+          crewHealthLoss += 12;
           const dmg = Math.round((22 + Math.random() * 16) * vessel.stormResist * diff.stormMult);
           state.hull = Math.max(5, state.hull - dmg);
           eventNotes.push(`Struck by inter-monsoon cyclone (-${dmg}% hull)`);
@@ -1320,6 +1334,16 @@
         state.diaspora[destId] = Math.min(100, (state.diaspora[destId] || 0) + 5);
       }
 
+      state.crewHealth = Math.max(0, state.crewHealth - crewHealthLoss);
+      eventNotes.push(`Crew health: ${state.crewHealth}%`);
+      const mutinyRisk = getMutinyRisk(state.crewHealth);
+      if (mutinyRisk > 0 && Math.random() < mutinyRisk) {
+        const settlement = 2 * vessel.upkeep;
+        state.cash -= settlement;
+        state.mutinies += 1;
+        eventNotes.push(`Crew mutiny settled at port (-${settlement} D)`);
+      }
+
       const routeLabel = turnedBack
         ? `Attempted ${PORTS[lane.from].name} → ${destPort.name} (TURNED BACK)`
         : `Sailed ${PORTS[lane.from].name} → ${destPort.name}`;
@@ -1346,6 +1370,10 @@
       } else {
         renderAll();
       }
+    }
+
+    function getMutinyRisk(health) {
+      return Math.max(0, 50 - health) / 100;
     }
 
     // INTERACTIVE CLOCK PREVIEW & ROUTE VECTOR HOVER
@@ -1410,6 +1438,7 @@
       document.getElementById("phase-audit").classList.remove("hidden");
 
       document.getElementById("audit-student-meta").textContent = `Student: ${state.studentName} | ID: ${state.studentId}`;
+      document.getElementById("audit-crew").textContent = `Final crew health: ${state.crewHealth}% • Mutinies: ${state.mutinies}`;
       document.getElementById("audit-vessel-meta").textContent = `Vessel: ${VESSELS[state.vesselKey].name} | Tier: ${DIFFICULTIES[state.diffKey].name}`;
       document.getElementById("audit-start-cash").textContent = `${state.startEquity.toLocaleString()} D`;
       document.getElementById("audit-final-cash").textContent = `${state.cash.toLocaleString()} D`;
@@ -1509,6 +1538,8 @@
     // UI RENDERING ENGINE
     function renderAll() {
       const vessel = VESSELS[state.vesselKey];
+      document.getElementById("crew-status").textContent =
+        `${vessel.upkeep} D/month • Health ${state.crewHealth}% • Mutiny risk at current health ${Math.round(getMutinyRisk(state.crewHealth) * 100)}%`;
       const port = PORTS[state.currentPort];
       const activeDisplayIdx = state.previewMonthOffset !== null ? state.previewMonthOffset : state.monthIndex;
       const wind = getWindState(activeDisplayIdx);
