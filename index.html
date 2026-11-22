@@ -22,6 +22,7 @@
     #hull-meter { accent-color:#34d399; }
     #glossary-dialog { width: calc(100% - 2rem); max-height: 88dvh; }
     #glossary-dialog::backdrop { background: rgba(2, 6, 23, .84); }
+    .play-only .student-only { display: none !important; }
     @keyframes windFlow {
       0% { stroke-dashoffset: 64; }
       100% { stroke-dashoffset: 0; }
@@ -165,33 +166,47 @@
   <!-- ===================================================================== -->
   <!-- PHASE 1: MANDATORY PRE-RUN HYPOTHESIS & CHARTER SETUP                 -->
   <!-- ===================================================================== -->
-  <main id="phase-setup" class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <main id="phase-setup" class="play-only flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
       <div class="border-b border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 1 • Predict & Outfit</span>
-          <h2 class="text-xl font-bold mt-1">Voyage Charter & Monsoon Strategy Hypothesis</h2>
+          <span class="student-only text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 1 • Predict & Outfit</span>
+          <h2 class="text-xl font-bold mt-1">Set up your voyage</h2>
           <p class="text-sm text-slate-400 mt-1">
-            Configure your hull archetype, capital tier, and quantitative profit target before departing on your 24-month campaign.
+            Choose a mode, starting port, ship, and difficulty for your 24-month campaign.
           </p>
         </div>
-        <span class="text-xs font-mono px-3 py-1 rounded-full bg-slate-950 border border-slate-700 text-slate-300">
+        <span class="student-only text-xs font-mono px-3 py-1 rounded-full bg-slate-950 border border-slate-700 text-slate-300">
           Predict → Simulate → Audit
         </span>
       </div>
 
-      <!-- Student Metadata -->
+      <fieldset class="mb-6">
+        <legend class="mb-2 text-sm font-semibold text-white">Game mode</legend>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-700 bg-slate-950 p-3 has-[:checked]:border-cyan-400">
+            <input type="radio" name="game-mode" value="play" checked onchange="selectGameMode(this.value)" class="mt-1 accent-cyan-400">
+            <span><strong class="block text-sm text-white">Play Only</strong><span class="text-xs text-slate-300">Launch without typing. See your voyage results at the end.</span></span>
+          </label>
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-700 bg-slate-950 p-3 has-[:checked]:border-cyan-400">
+            <input type="radio" name="game-mode" value="student" onchange="selectGameMode(this.value)" class="mt-1 accent-cyan-400">
+            <span><strong class="block text-sm text-white">Student Mode</strong><span class="text-xs text-slate-300">Enter your details and prediction. Reflect after the voyage to export the audit.</span></span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Student Metadata and starting port -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Full Name *</label>
+        <div class="student-only">
+          <label for="input-name" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Name *</label>
           <input id="input-name" type="text" placeholder="e.g., Niran Wattana" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500" />
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student ID *</label>
+        <div class="student-only">
+          <label for="input-id" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Number *</label>
           <input id="input-id" type="text" placeholder="e.g., KVIS-1042" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-500" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Home Port of Departure</label>
+          <label for="input-start-port" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Home Port of Departure</label>
           <select id="input-start-port" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500">
             <option value="calicut">Calicut (Malabar Coast — Central Hub)</option>
             <option value="aden">Aden (Red Sea — Western Gateway)</option>
@@ -216,7 +231,7 @@
               <span class="px-2 py-0.5 text-xs font-mono rounded bg-cyan-500/20 text-cyan-300">SELECTED</span>
             </div>
             <p class="text-xs text-slate-300 mt-2 leading-relaxed">
-              Faster base speed; in the game its speed gains more from a following wind and loses more against the wind (α = 0.85). Low crew overhead makes it ideal for nimble, high-turnover luxury spice arbitrage (Cloves, Pepper, Ivory).
+              Triangular lateen sail harnesses crosswinds effectively (α = 0.85). Low crew overhead makes it ideal for nimble, high-turnover luxury spice arbitrage (Cloves, Pepper, Ivory).
             </p>
             <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-800 text-xs font-mono">
               <div><span class="text-slate-400 block">MAX PAYLOAD</span><span class="text-white font-bold">120 Tons</span></div>
@@ -238,7 +253,7 @@
               <span class="px-2 py-0.5 text-xs font-mono rounded bg-slate-800 text-slate-400">SELECT</span>
             </div>
             <p class="text-xs text-slate-300 mt-2 leading-relaxed">
-              Massive 300-Ton hold unlocks profitable bulk freight economies of scale (Teak, Ming Porcelain, Textiles). Watertight compartments halve hull damage from headwinds and cyclones; its speed responds less to the wind, for better or worse (α = 0.60).
+              Massive 300-Ton hold unlocks profitable bulk freight economies of scale (Teak, Ming Porcelain, Textiles). Watertight compartments halve storm/reef hull damage, but sluggish in crosswinds.
             </p>
             <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-800 text-xs font-mono">
               <div><span class="text-slate-400 block">MAX PAYLOAD</span><span class="text-white font-bold">300 Tons</span></div>
@@ -246,7 +261,7 @@
               <div><span class="text-slate-400 block">CREW WAGES</span><span class="text-amber-400 font-bold">35 D/mo</span></div>
             </div>
             <div class="mt-2 text-[11px] font-mono text-amber-300">
-              Wind Agility α = 0.60 • -50% Headwind & Cyclone Hull Damage
+              Wind Agility α = 0.60 • -50% Storm & Reef Hull Damage
             </div>
           </div>
         </div>
@@ -283,7 +298,7 @@
       </div>
 
       <!-- Target Profit & Hypothesis -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="student-only grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">3. Target Net Profit (Dirhams) *</label>
           <input id="input-target-profit" type="number" value="1200" min="100" step="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-amber-400 focus:outline-none focus:border-cyan-500" />
@@ -291,7 +306,7 @@
         </div>
         <div class="md:col-span-2">
           <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-semibold text-slate-300 uppercase">4. Pre-Run Monsoon Strategy Hypothesis (2–3 Sentences) *</label>
+            <label for="input-hypothesis" class="block text-xs font-semibold text-slate-300 uppercase">4. Pre-Voyage Prediction (2–3 Sentences) *</label>
             <span id="hyp-concept-badge" class="text-[11px] font-mono text-slate-500">Include vessel, cargo & monsoon timing</span>
           </div>
           <textarea id="input-hypothesis" oninput="checkHypothesisConcepts()" rows="3" placeholder="Explain how your chosen hull class (Dhow vs. Junk), bulk vs. luxury cargo payload, and seasonal monsoon timing (SW Jun–Sep vs. NE Nov–Feb) will achieve your target profit..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500"></textarea>
@@ -404,13 +419,12 @@
             <g transform="translate(710, 365)">
               <circle cx="0" cy="0" r="72" fill="#0f172a" fill-opacity="0.95" stroke="#334155" stroke-width="1.5" />
               <!-- Shaded Monsoon Sectors -->
-              <!-- SW monsoon Jun–Sep (green) and NE monsoon Nov–Feb (cyan), matching getWindState and the month labels -->
-              <path d="M 0,0 L 43.1,43.1 A 61,61 0 0,1 -58.9,15.8 Z" fill="#10b981" fill-opacity="0.16" />
-              <path d="M 0,0 L -58.9,-15.8 A 61,61 0 0,1 43.1,-43.1 Z" fill="#06b6d4" fill-opacity="0.16" />
+              <path d="M 0,0 L 31,-53 A 61,61 0 0,1 31,53 Z" fill="#10b981" fill-opacity="0.16" />
+              <path d="M 0,0 L -31,53 A 61,61 0 0,1 -31,-53 Z" fill="#06b6d4" fill-opacity="0.16" />
               <circle cx="0" cy="0" r="46" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="2 2" />
               <text x="0" y="-56" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="monospace" font-weight="bold">SEASONAL WIND CLOCK</text>
               <g id="svg-clock-months" aria-hidden="true"></g>
-              <!-- Month hand: points at the current month. Wind direction is shown by the map streamlines and the Wind comparison compasses. -->
+              <!-- Active Wind Vector Needle -->
               <g id="svg-clock-needle">
                 <line x1="0" y1="18" x2="0" y2="-24" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round" />
                 <polygon points="0,-30 -5,-20 5,-20" fill="#22d3ee" />
@@ -584,7 +598,7 @@
         <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800">
           <div>
             <div class="text-xs font-semibold text-slate-200">Hire Celestial Navigator (Mu'allim)</div>
-            <div class="text-[11px] text-slate-400">Kamal star-sighting: +15% sailing speed & about half the cyclone risk in transition months.</div>
+            <div class="text-[11px] text-slate-400">Kamal star-sighting: -15% transit days & -50% Doldrum risk.</div>
           </div>
           <button onclick="hireSpecialist('navigator')" id="btn-navigator" class="px-3 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-xs font-mono font-bold text-white transition">
             Hire (180 D)
@@ -632,11 +646,11 @@
   <!-- ===================================================================== -->
   <main id="phase-audit" class="hidden flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
     <!-- Post-Voyage Student Reflection Input (Captured into PDF Report) -->
-    <div class="no-print bg-slate-900 border border-cyan-500/40 rounded-xl p-5 shadow-lg space-y-3">
+    <div class="student-only no-print bg-slate-900 border border-cyan-500/40 rounded-xl p-5 shadow-lg space-y-3">
       <div class="flex items-center justify-between">
         <div>
           <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 4 • Historical Synthesis & Audit</span>
-          <h3 class="text-base font-bold text-white">Post-Voyage Cause-and-Effect Reflection</h3>
+          <h3 class="text-base font-bold text-white"><label for="input-reflection">Post-Voyage Cause-and-Effect Reflection *</label></h3>
         </div>
         <span class="text-xs font-mono text-slate-400">Updates live on report below</span>
       </div>
@@ -653,7 +667,7 @@
         <div>
           <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Global History • Week 3 Simulation Audit • KVIS</span>
           <h2 class="text-2xl font-bold text-white mt-1">Indian Ocean Maritime Voyage Ledger</h2>
-          <p id="audit-student-meta" class="text-sm text-slate-300 font-mono mt-1">Student: — | ID: —</p>
+          <p id="audit-student-meta" class="student-only text-sm text-slate-300 font-mono mt-1"></p>
         </div>
         <div class="text-right">
           <div id="audit-outcome-badge" class="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
@@ -711,7 +725,7 @@
 
       <!-- Pre-Run Hypothesis & Post-Voyage Synthesis -->
       <p id="audit-crew" class="text-xs font-mono text-cyan-300"></p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="student-only grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-slate-950 border border-slate-800 rounded-lg p-4">
           <h3 class="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">Pre-Run Monsoon Strategy Hypothesis</h3>
           <p id="audit-hypothesis-text" class="text-xs sm:text-sm text-slate-200 italic leading-relaxed"></p>
@@ -743,12 +757,13 @@
       <button onclick="location.reload()" class="px-4 py-2.5 rounded-lg border border-slate-700 hover:bg-slate-800 text-xs font-semibold text-slate-300 transition">
         ↺ Start New Voyage Campaign
       </button>
-      <div class="flex flex-wrap items-center gap-3">
-        <button onclick="window.print()" class="px-4 py-2.5 rounded-lg border border-slate-600 hover:bg-slate-800 text-xs font-mono font-semibold text-slate-200 transition">
+      <div class="student-only flex flex-wrap items-center gap-3">
+        <p id="reflection-requirement" class="basis-full text-xs text-amber-200">Enter at least 15 characters in your reflection to unlock print and PDF export.</p>
+        <button id="btn-print-audit" onclick="printStudentAudit()" disabled class="px-4 py-2.5 rounded-lg border border-slate-600 hover:bg-slate-800 disabled:opacity-40 text-xs font-mono font-semibold text-slate-200 transition">
           🖨️ Print / Save PDF Fallback
         </button>
-        <button id="btn-export-pdf" onclick="exportAuditPDF()" class="px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
-          <span>📄 Export Audit PDF</span>
+        <button id="btn-export-pdf" onclick="exportAuditPDF()" disabled class="px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+          <span>📄 Export Verified Audit PDF</span>
           <span id="pdf-filename-preview" class="font-mono text-xs opacity-85"></span>
         </button>
       </div>
@@ -802,10 +817,10 @@
       </div>
       <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
         <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono text-[11px] text-cyan-300">
-          T = Distance / [ V_base × max(0.25, cos(θ_route − θ_wind) × α_hull + 0.5) × 0.65 (transition months) × 1.15 (navigator) ]
+          T = Distance / [ V_base × max(0.25, cos(θ_route − θ_wind) × α_hull + 0.5) ]
         </div>
         <p>
-          <strong class="text-white">1. Sewn-Plank Dhow vs. Bulkhead Junk:</strong> Arab/Indian dhows stitched teak planks with coconut coir rope, allowing hulls to flex over coral reefs. Chinese junks used iron nails and watertight bulkheads. In the game, α only scales how much the wind along the route changes speed: the dhow (α = 0.85) gains more with a following wind and loses more against it, and both ships get the same factor in a pure crosswind. The junk takes half the hull damage from headwinds and cyclones and carries 300 tons.
+          <strong class="text-white">1. Sewn-Plank Dhow vs. Bulkhead Junk:</strong> Arab/Indian dhows stitched teak planks with coconut coir rope, allowing hulls to flex over coral reefs and tack efficiently across winds (α = 0.85). Chinese junks used iron nails and watertight bulkheads—reducing storm/reef losses by 50% and hauling 300 Tons of bulk timber/porcelain.
         </p>
         <p>
           <strong class="text-white">2. Monsoons and merchant communities (Chaudhuri & Abu-Lughod):</strong> The game models winds blowing from the southwest toward the northeast in Jun–Sep and from the northeast toward the southwest in Nov–Feb. Mar–May and Oct are transition months in this simulation. Seasonal layovers helped create opportunities for merchants to build relationships in port communities.
@@ -1017,6 +1032,7 @@
     };
 
     let state = {
+      mode: "play",
       studentName: "",
       studentId: "",
       vesselKey: "dhow",
@@ -1088,10 +1104,9 @@
     function checkHypothesisConcepts() {
       const txt = document.getElementById("input-hypothesis").value.toLowerCase();
       const badge = document.getElementById("hyp-concept-badge");
-      // Whole words only: substring matching let "junk" count as June and "money" as NE.
-      const hasVessel = /\b(dhows?|junks?|tons?|tonnage|capacity|agility|hull)\b/.test(txt);
-      const hasWind = /\b(monsoons?|sw|ne|south-?west(erly)?|north-?east(erly)?|winds?|june?|nov(ember)?|layovers?|wait(ing)?)\b/.test(txt);
-      const hasCargo = /\b(bulk|luxury|teak|porcelain|textiles?|pepper|cloves?|ivory|spices?)\b/.test(txt);
+      const hasVessel = /(dhow|junk|ton|capacity|agility|hull)/.test(txt);
+      const hasWind = /(monsoon|sw|ne|southwest|northeast|wind|jun|nov|layover|wait)/.test(txt);
+      const hasCargo = /(bulk|luxury|teak|porcelain|textile|pepper|clove|ivory|spice)/.test(txt);
       const count = [hasVessel, hasWind, hasCargo].filter(Boolean).length;
 
       if (count === 3) {
@@ -1106,16 +1121,23 @@
       }
     }
 
+    function selectGameMode(mode) {
+      state.mode = mode;
+      document.getElementById("phase-setup").classList.toggle("play-only", mode === "play");
+      document.getElementById("setup-error").classList.add("hidden");
+    }
+
     function startSimulation() {
-      const name = document.getElementById("input-name").value.trim();
-      const id = document.getElementById("input-id").value.trim();
-      const target = parseInt(document.getElementById("input-target-profit").value, 10);
-      const hyp = document.getElementById("input-hypothesis").value.trim();
+      const student = state.mode === "student";
+      const name = student ? document.getElementById("input-name").value.trim() : "";
+      const id = student ? document.getElementById("input-id").value.trim() : "";
+      const target = student ? parseInt(document.getElementById("input-target-profit").value, 10) : state.targetProfit;
+      const hyp = student ? document.getElementById("input-hypothesis").value.trim() : "";
       const startPort = document.getElementById("input-start-port").value;
       const errBox = document.getElementById("setup-error");
 
-      if (!name || !id || isNaN(target) || target < 100 || hyp.length < 15) {
-        errBox.textContent = "Please complete Student Name, Student ID, a Target Net Profit of at least 100 D, and at least 1–2 sentences for your Monsoon Strategy Hypothesis.";
+      if (student && (!name || !id || isNaN(target) || hyp.length < 15)) {
+        errBox.textContent = "Enter your name, student number, profit target, and a pre-voyage prediction of at least 15 characters.";
         errBox.classList.remove("hidden");
         return;
       }
@@ -1702,9 +1724,21 @@
     function syncReflection() {
       const val = document.getElementById("input-reflection").value.trim();
       state.reflection = val;
+      const ready = canExportStudentAudit();
+      document.getElementById("btn-export-pdf").disabled = !ready;
+      document.getElementById("btn-print-audit").disabled = !ready;
+      document.getElementById("reflection-requirement").classList.toggle("hidden", ready);
       document.getElementById("audit-reflection-text").textContent = val
         ? `"${val}"`
         : "(No post-voyage reflection entered yet — use the reflection box above before exporting.)";
+    }
+
+    function canExportStudentAudit() {
+      return state.mode === "student" && state.ended && state.reflection.length >= 15;
+    }
+
+    function printStudentAudit() {
+      if (canExportStudentAudit()) window.print();
     }
 
     function finishCampaign() {
@@ -1736,8 +1770,11 @@
       document.getElementById("phase-sim").classList.add("hidden");
       document.getElementById("hud-bar").classList.add("hidden");
       document.getElementById("phase-audit").classList.remove("hidden");
+      document.getElementById("phase-audit").classList.toggle("play-only", state.mode === "play");
 
-      document.getElementById("audit-student-meta").textContent = `Student: ${state.studentName} | ID: ${state.studentId}`;
+      document.getElementById("audit-student-meta").textContent = state.mode === "student"
+        ? `Student: ${state.studentName} | Student no.: ${state.studentId}`
+        : "";
       document.getElementById("audit-crew").textContent = `Final crew health: ${state.crewHealth}% • Mutinies: ${state.mutinies}`;
       document.getElementById("audit-vessel-meta").textContent = `Vessel: ${VESSELS[state.vesselKey].name} | Tier: ${DIFFICULTIES[state.diffKey].name}`;
       document.getElementById("audit-start-cash").textContent = `${state.startEquity.toLocaleString()} D`;
@@ -1764,7 +1801,7 @@
         badge.textContent = "PROFITABLE VOYAGE • BELOW TARGET";
         badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40";
       } else {
-        badge.textContent = "VENTURE DEFICIT • AUDIT REQUIRED";
+        badge.textContent = "VENTURE DEFICIT";
         badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40";
       }
 
@@ -1778,6 +1815,7 @@
     }
 
     async function exportAuditPDF() {
+      if (!canExportStudentAudit()) return;
       const btn = document.getElementById("btn-export-pdf");
       const origHTML = btn.innerHTML;
       btn.disabled = true;
@@ -1824,7 +1862,7 @@
       } catch (err) {
         window.print();
       } finally {
-        btn.disabled = false;
+        btn.disabled = !canExportStudentAudit();
         btn.innerHTML = origHTML;
       }
     }
@@ -2134,8 +2172,7 @@
       }).join("");
 
       const needle = document.getElementById("svg-clock-needle");
-      // The dial is a calendar, so the hand points at the current month, not at a compass bearing.
-      needle.setAttribute("transform", `rotate(${activeM * 30})`);
+      needle.setAttribute("transform", `rotate(${wind.bearing})`);
     }
   </script>
 </body>
