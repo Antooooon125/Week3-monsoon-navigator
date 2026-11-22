@@ -2,7 +2,8 @@
 
 **Course** · Global History at Kamnoetvidya Science Academy (KVIS)  
 **Setting** · Indian Ocean maritime networks, c. 1000–1450 CE  
-**Original credit** · Amnuayvit Thitibordin (KVIS), CC BY-NC-SA 4.0  
+**Original creator** · Amnuayvit Thitibordin (KVIS)  
+**Collaborator** · Thanakrit  
 **Status** · Classroom prototype
 
 ## The historical concept
@@ -50,7 +51,7 @@ The game uses one HTML page with inline SVG, vanilla JavaScript and Tailwind’s
 
 ## Attribution and license
 
-The original game in index.html is credited to Amnuayvit Thitibordin (KVIS) and carries [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). The existing repository MIT license does not relicense the game. Third-party libraries retain their respective licenses.
+Copyright © 2026 Amnuayvit Thitibordin. Collaborator · Thanakrit. The original game is licensed under CC BY-NC-SA 4.0 with a Commercial Derivative Exception for substantially modified versions. Third-party materials retain their respective licenses. [Full project license](LICENSE.md)
 
 
 
