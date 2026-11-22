@@ -103,7 +103,7 @@
   $('routes-container').addEventListener('focusin',event=>{const button=event.target.closest?.('button[onclick^="sailTo"]');const id=button?.getAttribute('onclick').match(/'(\w+)'/)?.[1];if(id)setHoveredLane(id);});
   $('routes-container').addEventListener('focusout',()=>setHoveredLane(null));
   // A8: a double click must not sail or wait twice. The list re-renders under the second click.
-  departure.addEventListener('click',event=>{if(event.detail>1&&event.target.closest?.('button')){event.stopPropagation();event.preventDefault();}},true);
+  departure.addEventListener('click',event=>{if(event.detail>1&&event.target.closest?.('button')){event.stopPropagation();event.preventDefault();const card=$('atlas-event');(card&&!card.hidden?$('atlas-event-title'):departure.querySelector('h3')).focus?.({preventScroll:true});}},true);
   departure.querySelector('h3').tabIndex=-1;
   const standing=$('diaspora-rank-badge').parentElement.parentElement;standing.classList.add('atlas-standing');departure.append(standing);
   const planner=document.createElement('details');planner.id='atlas-planner';planner.className='atlas-planner';planner.innerHTML='<summary><strong>Compare another departure</strong><span>Timing, wages and the cost of waiting</span></summary>';planner.append(comparison);departure.after(planner);
@@ -174,7 +174,7 @@
     $('atlas-months').innerHTML=MONTHS.map((name,index)=>{const wait=(index-actual+12)%12,enabled=wait>0&&state.monthIndex+wait<CAMPAIGN_MONTHS;return `<button type="button" data-month="${index}" ${index===actual?'aria-current="date"':''} aria-pressed="${forecast!==null&&index===forecast%12}" ${enabled?'':'disabled'} aria-label="${name}${index===actual?', actual month':enabled?', compare departure':' unavailable within this campaign'}">${name}</button>`;}).join('');
   };
   $('atlas-months').addEventListener('click',event=>{const button=event.target.closest('button[data-month]');if(button){const month=Number(button.dataset.month);previewClockMonth(month);$('atlas-months').querySelector(`[data-month="${month}"]`)?.focus();}});
-  const clock=$('svg-clock-months').parentElement;
+  const clock=$('svg-clock-months').parentElement;clock.classList?.add('atlas-clock');
   clock.insertAdjacentHTML?.('beforeend','<text x="-30" y="52" class="atlas-clock-label" text-anchor="middle">SW</text><text x="-30" y="-42" class="atlas-clock-label" text-anchor="middle">NE</text>');
   const comparisonOriginal=renderWindComparison;renderWindComparison=function(){comparisonOriginal();paintCalendar();};
   const mapOriginal=renderSVGMap;renderSVGMap=function(wind){
@@ -243,7 +243,7 @@
     if(!isStudent()){
       // A7: Play Only has no target, so show no goal or target verdict.
       $('audit-roi').textContent=$('audit-roi').textContent.replace(/\s*\(Goal:[^)]*\)/,'');
-      const badge=$('audit-outcome-badge');badge.textContent=state.cash-state.startEquity>0?'PROFITABLE VOYAGE':'VENTURE DEFICIT';
+      const badge=$('audit-outcome-badge');badge.textContent=state.cash-state.startEquity>0?'PROFITABLE VOYAGE':'VENTURE DEFICIT';badge.className='inline-block px-3 py-1 rounded-full text-xs font-mono font-bold atlas-play-badge';
     }
     $('audit-ports-visited').textContent=$('audit-ports-visited').textContent.replace('Emporia Visited','ports visited');
     $('audit-vessel-meta').textContent=$('audit-vessel-meta').textContent.replace('Chinese Treasure Junk','Chinese ocean-going junk');

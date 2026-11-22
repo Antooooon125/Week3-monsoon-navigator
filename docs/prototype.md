@@ -101,3 +101,11 @@ These are display-only changes; the engine script is still copied verbatim.
 - **A16:** the chosen game mode is outlined, keyboard focus previews a route, difficulty focus differs from selection, the plain headings replace the jargon, the wind badge reads "blowing toward SW, 225°", there is a ▲/▼ legend, and the dark theme reaches the trade panels.
 - **A17:** "a composite period" in the header; "Investor loan … (a game rule)"; "Chinese ocean-going junk" on the ship card and in the audit vessel line; the navigator card drops the kamal claim; the sailing dialog drops "flex over coral reefs"; the Sources dialog says port stories are fictional scenes.
 - The "Classic version" link is removed, because the KVIS site no longer has classic.html.
+- **Review of KVIS #21:**
+  - the selected route (now a path) is pink again;
+  - the dark theme's hold legend and bar fills reach ≥ 3:1 (measured: legend 7.8 and 8.8, bulk bar 7.4, cargo fills ≥ 4.7);
+  - the Play Only badge has one neutral style;
+  - phone map labels are about 14 px;
+  - the phone header keeps its subtitle and fits in about 29 % of the screen;
+  - a blocked second click moves focus to "Choose your next port";
+  - the clock is hidden on phones through a class.
