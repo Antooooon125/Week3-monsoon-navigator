@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<!--
+  Copyright (c) 2026 Amnuayvit Thitibordin.
+  Collaborator: Thanakrit.
+  Licensed under CC BY-NC-SA 4.0 + Commercial Derivative Exception.
+  - Original Work: Non-Commercial use only (free for educational & personal use with attribution).
+  - Commercial Use: Permitted ONLY for Substantially Modified Derivative Works (requires major functional, UI/UX, or content transformation; cosmetic reskins, translations, and parameter tweaks are excluded).
+  Full terms: https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md
+-->
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
@@ -22,6 +30,7 @@
     #hull-meter { accent-color:#34d399; }
     #glossary-dialog { width: calc(100% - 2rem); max-height: 88dvh; }
     #glossary-dialog::backdrop { background: rgba(2, 6, 23, .84); }
+    .play-only .student-only { display: none !important; }
     @keyframes windFlow {
       0% { stroke-dashoffset: 64; }
       100% { stroke-dashoffset: 0; }
@@ -165,33 +174,47 @@
   <!-- ===================================================================== -->
   <!-- PHASE 1: MANDATORY PRE-RUN HYPOTHESIS & CHARTER SETUP                 -->
   <!-- ===================================================================== -->
-  <main id="phase-setup" class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <main id="phase-setup" class="play-only flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
       <div class="border-b border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 1 • Predict & Outfit</span>
-          <h2 class="text-xl font-bold mt-1">Voyage Charter & Monsoon Strategy Hypothesis</h2>
+          <span class="student-only text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 1 • Predict & Outfit</span>
+          <h2 class="text-xl font-bold mt-1">Set up your voyage</h2>
           <p class="text-sm text-slate-400 mt-1">
-            Configure your hull archetype, capital tier, and quantitative profit target before departing on your 24-month campaign.
+            Choose a mode, starting port, ship, and difficulty for your 24-month campaign.
           </p>
         </div>
-        <span class="text-xs font-mono px-3 py-1 rounded-full bg-slate-950 border border-slate-700 text-slate-300">
+        <span class="student-only text-xs font-mono px-3 py-1 rounded-full bg-slate-950 border border-slate-700 text-slate-300">
           Predict → Simulate → Audit
         </span>
       </div>
 
-      <!-- Student Metadata -->
+      <fieldset class="mb-6">
+        <legend class="mb-2 text-sm font-semibold text-white">Game mode</legend>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-700 bg-slate-950 p-3 has-[:checked]:border-cyan-400">
+            <input type="radio" name="game-mode" value="play" checked onchange="selectGameMode(this.value)" class="mt-1 accent-cyan-400">
+            <span><strong class="block text-sm text-white">Play Only</strong><span class="text-xs text-slate-300">Launch without typing. See your voyage results at the end.</span></span>
+          </label>
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-700 bg-slate-950 p-3 has-[:checked]:border-cyan-400">
+            <input type="radio" name="game-mode" value="student" onchange="selectGameMode(this.value)" class="mt-1 accent-cyan-400">
+            <span><strong class="block text-sm text-white">Student Mode</strong><span class="text-xs text-slate-300">Enter your details and prediction. Reflect after the voyage to export the audit.</span></span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Student Metadata and starting port -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Full Name *</label>
+        <div class="student-only">
+          <label for="input-name" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Name *</label>
           <input id="input-name" type="text" placeholder="e.g., Niran Wattana" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500" />
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student ID *</label>
+        <div class="student-only">
+          <label for="input-id" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Number *</label>
           <input id="input-id" type="text" placeholder="e.g., KVIS-1042" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-500" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Home Port of Departure</label>
+          <label for="input-start-port" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Home Port of Departure</label>
           <select id="input-start-port" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500">
             <option value="calicut">Calicut (Malabar Coast — Central Hub)</option>
             <option value="aden">Aden (Red Sea — Western Gateway)</option>
@@ -283,7 +306,7 @@
       </div>
 
       <!-- Target Profit & Hypothesis -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="student-only grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">3. Target Net Profit (Dirhams) *</label>
           <input id="input-target-profit" type="number" value="1200" min="100" step="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-amber-400 focus:outline-none focus:border-cyan-500" />
@@ -291,7 +314,7 @@
         </div>
         <div class="md:col-span-2">
           <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-semibold text-slate-300 uppercase">4. Pre-Run Monsoon Strategy Hypothesis (2–3 Sentences) *</label>
+            <label for="input-hypothesis" class="block text-xs font-semibold text-slate-300 uppercase">4. Pre-Voyage Prediction (2–3 Sentences) *</label>
             <span id="hyp-concept-badge" class="text-[11px] font-mono text-slate-500">Include vessel, cargo & monsoon timing</span>
           </div>
           <textarea id="input-hypothesis" oninput="checkHypothesisConcepts()" rows="3" placeholder="Explain how your chosen hull class (Dhow vs. Junk), bulk vs. luxury cargo payload, and seasonal monsoon timing (SW Jun–Sep vs. NE Nov–Feb) will achieve your target profit..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500"></textarea>
@@ -302,7 +325,7 @@
 
       <div class="flex flex-wrap items-center justify-between gap-4">
         <span class="text-[11px] font-mono text-slate-500">
-          CC BY-NC-SA 4.0 • Amnuayvit Thitibordin (KVIS) • Global History Curriculum
+          Amnuayvit Thitibordin (KVIS) · Thanakrit (collaborator) · <a href="https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md" class="underline" target="_blank" rel="noopener noreferrer">License</a> • Global History Curriculum
         </span>
         <button onclick="startSimulation()" class="px-6 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-cyan-500/20">
           Launch 24-Month Maritime Campaign →
@@ -632,11 +655,11 @@
   <!-- ===================================================================== -->
   <main id="phase-audit" class="hidden flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
     <!-- Post-Voyage Student Reflection Input (Captured into PDF Report) -->
-    <div class="no-print bg-slate-900 border border-cyan-500/40 rounded-xl p-5 shadow-lg space-y-3">
+    <div class="student-only no-print bg-slate-900 border border-cyan-500/40 rounded-xl p-5 shadow-lg space-y-3">
       <div class="flex items-center justify-between">
         <div>
           <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 4 • Historical Synthesis & Audit</span>
-          <h3 class="text-base font-bold text-white">Post-Voyage Cause-and-Effect Reflection</h3>
+          <h3 class="text-base font-bold text-white"><label for="input-reflection">Post-Voyage Cause-and-Effect Reflection *</label></h3>
         </div>
         <span class="text-xs font-mono text-slate-400">Updates live on report below</span>
       </div>
@@ -653,7 +676,7 @@
         <div>
           <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Global History • Week 3 Simulation Audit • KVIS</span>
           <h2 class="text-2xl font-bold text-white mt-1">Indian Ocean Maritime Voyage Ledger</h2>
-          <p id="audit-student-meta" class="text-sm text-slate-300 font-mono mt-1">Student: — | ID: —</p>
+          <p id="audit-student-meta" class="student-only text-sm text-slate-300 font-mono mt-1"></p>
         </div>
         <div class="text-right">
           <div id="audit-outcome-badge" class="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
@@ -711,7 +734,7 @@
 
       <!-- Pre-Run Hypothesis & Post-Voyage Synthesis -->
       <p id="audit-crew" class="text-xs font-mono text-cyan-300"></p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="student-only grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-slate-950 border border-slate-800 rounded-lg p-4">
           <h3 class="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">Pre-Run Monsoon Strategy Hypothesis</h3>
           <p id="audit-hypothesis-text" class="text-xs sm:text-sm text-slate-200 italic leading-relaxed"></p>
@@ -733,7 +756,7 @@
       </div>
 
       <div class="text-[10px] font-mono text-slate-500 border-t border-slate-800 pt-3 flex justify-between">
-        <span>CC BY-NC-SA 4.0 • Amnuayvit Thitibordin (KVIS)</span>
+        <span>Amnuayvit Thitibordin (KVIS) · Thanakrit (collaborator) · <a href="https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md" class="underline" target="_blank" rel="noopener noreferrer">License</a></span>
         <span id="audit-timestamp">Generated via Monsoon Navigator Engine</span>
       </div>
     </div>
@@ -743,11 +766,12 @@
       <button onclick="location.reload()" class="px-4 py-2.5 rounded-lg border border-slate-700 hover:bg-slate-800 text-xs font-semibold text-slate-300 transition">
         ↺ Start New Voyage Campaign
       </button>
-      <div class="flex flex-wrap items-center gap-3">
-        <button onclick="window.print()" class="px-4 py-2.5 rounded-lg border border-slate-600 hover:bg-slate-800 text-xs font-mono font-semibold text-slate-200 transition">
+      <div class="student-only flex flex-wrap items-center gap-3">
+        <p id="reflection-requirement" class="basis-full text-xs text-amber-200">Enter at least 15 characters in your reflection to unlock print and PDF export.</p>
+        <button id="btn-print-audit" onclick="printStudentAudit()" disabled class="px-4 py-2.5 rounded-lg border border-slate-600 hover:bg-slate-800 disabled:opacity-40 text-xs font-mono font-semibold text-slate-200 transition">
           🖨️ Print / Save PDF Fallback
         </button>
-        <button id="btn-export-pdf" onclick="exportAuditPDF()" class="px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+        <button id="btn-export-pdf" onclick="exportAuditPDF()" disabled class="px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
           <span>📄 Export Audit PDF</span>
           <span id="pdf-filename-preview" class="font-mono text-xs opacity-85"></span>
         </button>
@@ -1017,6 +1041,7 @@
     };
 
     let state = {
+      mode: "play",
       studentName: "",
       studentId: "",
       vesselKey: "dhow",
@@ -1106,16 +1131,23 @@
       }
     }
 
+    function selectGameMode(mode) {
+      state.mode = mode;
+      document.getElementById("phase-setup").classList.toggle("play-only", mode === "play");
+      document.getElementById("setup-error").classList.add("hidden");
+    }
+
     function startSimulation() {
-      const name = document.getElementById("input-name").value.trim();
-      const id = document.getElementById("input-id").value.trim();
-      const target = parseInt(document.getElementById("input-target-profit").value, 10);
-      const hyp = document.getElementById("input-hypothesis").value.trim();
+      const student = state.mode === "student";
+      const name = student ? document.getElementById("input-name").value.trim() : "";
+      const id = student ? document.getElementById("input-id").value.trim() : "";
+      const target = student ? parseInt(document.getElementById("input-target-profit").value, 10) : state.targetProfit;
+      const hyp = student ? document.getElementById("input-hypothesis").value.trim() : "";
       const startPort = document.getElementById("input-start-port").value;
       const errBox = document.getElementById("setup-error");
 
-      if (!name || !id || isNaN(target) || target < 100 || hyp.length < 15) {
-        errBox.textContent = "Please complete Student Name, Student ID, a Target Net Profit of at least 100 D, and at least 1–2 sentences for your Monsoon Strategy Hypothesis.";
+      if (student && (!name || !id || isNaN(target) || target < 100 || hyp.length < 15)) {
+        errBox.textContent = "Enter your name, student number, a profit target of at least 100 D, and a pre-voyage prediction of at least 15 characters.";
         errBox.classList.remove("hidden");
         return;
       }
@@ -1702,9 +1734,21 @@
     function syncReflection() {
       const val = document.getElementById("input-reflection").value.trim();
       state.reflection = val;
+      const ready = canExportStudentAudit();
+      document.getElementById("btn-export-pdf").disabled = !ready;
+      document.getElementById("btn-print-audit").disabled = !ready;
+      document.getElementById("reflection-requirement").classList.toggle("hidden", ready);
       document.getElementById("audit-reflection-text").textContent = val
         ? `"${val}"`
         : "(No post-voyage reflection entered yet — use the reflection box above before exporting.)";
+    }
+
+    function canExportStudentAudit() {
+      return state.mode === "student" && state.ended && state.reflection.length >= 15;
+    }
+
+    function printStudentAudit() {
+      if (canExportStudentAudit()) window.print();
     }
 
     function finishCampaign() {
@@ -1736,8 +1780,11 @@
       document.getElementById("phase-sim").classList.add("hidden");
       document.getElementById("hud-bar").classList.add("hidden");
       document.getElementById("phase-audit").classList.remove("hidden");
+      document.getElementById("phase-audit").classList.toggle("play-only", state.mode === "play");
 
-      document.getElementById("audit-student-meta").textContent = `Student: ${state.studentName} | ID: ${state.studentId}`;
+      document.getElementById("audit-student-meta").textContent = state.mode === "student"
+        ? `Student: ${state.studentName} | Student no.: ${state.studentId}`
+        : "";
       document.getElementById("audit-crew").textContent = `Final crew health: ${state.crewHealth}% • Mutinies: ${state.mutinies}`;
       document.getElementById("audit-vessel-meta").textContent = `Vessel: ${VESSELS[state.vesselKey].name} | Tier: ${DIFFICULTIES[state.diffKey].name}`;
       document.getElementById("audit-start-cash").textContent = `${state.startEquity.toLocaleString()} D`;
@@ -1764,7 +1811,7 @@
         badge.textContent = "PROFITABLE VOYAGE • BELOW TARGET";
         badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40";
       } else {
-        badge.textContent = "VENTURE DEFICIT • AUDIT REQUIRED";
+        badge.textContent = "VENTURE DEFICIT";
         badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40";
       }
 
@@ -1778,6 +1825,7 @@
     }
 
     async function exportAuditPDF() {
+      if (!canExportStudentAudit()) return;
       const btn = document.getElementById("btn-export-pdf");
       const origHTML = btn.innerHTML;
       btn.disabled = true;
@@ -1824,7 +1872,7 @@
       } catch (err) {
         window.print();
       } finally {
-        btn.disabled = false;
+        btn.disabled = !canExportStudentAudit();
         btn.innerHTML = origHTML;
       }
     }
