@@ -73,13 +73,14 @@ test("a purchase is capped by hold space and by cash, never overdrawn", () => {
 
 test("cost basis is the rounded weighted average of purchases", () => {
   const e = loadEngine().start();
-  e.g.buyCargoQty("pepper", 2);           // 2 × 80 at month 0
-  e.state.diaspora.calicut = 50;          // tariff now 3%: unit 79
+  e.g.buyCargoQty("pepper", 1);           // month 0: unit 80
+  e.state.monthIndex = 3;                 // pepper 74 D (seed 214 ≡ 10): unit round(76.96) = 77
   e.g.buyCargoQty("pepper", 1);
-  assert.equal(e.state.costBasis.pepper, Math.round((2 * 80 + 79) / 3)); // 80
+  // average 78.5 → 79; differs from the first price (80) and the last (77)
+  assert.equal(e.state.costBasis.pepper, 79);
   e.g.sellCargoQty("pepper", 1);          // partial sale keeps the basis
-  assert.equal(e.state.costBasis.pepper, 80);
-  assert.equal(e.state.cargo.pepper, 2);
+  assert.equal(e.state.costBasis.pepper, 79);
+  assert.equal(e.state.cargo.pepper, 1);
 });
 
 test("selling more than is held sells what is held; selling nothing is a no-op", () => {

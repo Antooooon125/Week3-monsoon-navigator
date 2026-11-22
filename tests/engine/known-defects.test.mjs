@@ -8,6 +8,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadEngine } from "./load-engine.mjs";
 
+const pin = id => `${id} pin: if a bug-fix PR changed this on purpose, replace this test with one for the corrected behaviour`;
+
 test("DEFECT D01 (current behaviour): a voyage arriving after month 24 is credited, and the ledger shows month 24", () => {
   // Junk, Aden → Calicut in November (month 22): 61 days at the speed floor, 3 months.
   const e = loadEngine().start({ vessel: "junk", port: "aden" });
@@ -16,13 +18,17 @@ test("DEFECT D01 (current behaviour): a voyage arriving after month 24 is credit
   e.rng.push(0.0, 0.99, 0.99);                 // damage, no turn-back, no pirates
   e.g.sailTo("calicut");
   assert.equal(e.rng.remaining, 0, "scripted draws left unused");
+  const fixed = pin("D01");
   assert.equal(e.state.ended, true);
-  assert.equal(e.state.monthIndex, 25);         // past the 24-month campaign
-  assert.equal(e.state.currentPort, "calicut"); // the late arrival still counts
-  // Ivory at Calicut, month min(23, 25) = 23: seed 'c'+'i' = 204, 227 ≡ 11, sin(11π/6) = −0.5 → 540 × 0.96 = 518.4 → 518
+  assert.equal(e.state.monthIndex, 25, fixed);          // past the 24-month campaign
+  assert.equal(e.state.currentPort, "calicut", fixed);  // the late arrival still counts
   const liquidation = e.logs().find(l => l.includes("Liquidation"));
+  assert.ok(liquidation.startsWith("[M24 • "), `${fixed}: ledger month should read M24 (${liquidation})`);
+  assert.match(liquidation, /Sold 2× E\. African Ivory at Calicut/, `${fixed}: cargo sold at the arrival port`);
+  // Separate from the defect itself: the month name is month 26's, and the
+  // price is month 23's. Ivory at Calicut, month 23: seed 'c'+'i' = 204,
+  // 227 ≡ 11, sin(11π/6) = −0.5 → 540 × 0.96 = 518.4 → 518; 2 lots = 1036.
   assert.equal(liquidation, "[M24 • Feb] Month 24 Liquidation: Sold 2× E. African Ivory at Calicut for 1036 D.");
-  // "M24 • Feb": the month number is capped at 24 but the month name is month 26's.
 });
 
 test("DEFECT D07 (current behaviour): a campaign ended by debt is logged as \"Month 24 Liquidation\"", () => {
@@ -37,7 +43,7 @@ test("DEFECT D07 (current behaviour): a campaign ended by debt is logged as \"Mo
   assert.equal(e.state.monthIndex, 3);
   // Pepper at Calicut, month 3: 214 ≡ 10, sin(5π/3) = −0.866 → 80 × 0.9307 = 74.46 → 74
   const liquidation = e.logs().find(l => l.includes("Liquidation"));
-  assert.equal(liquidation, "[M4 • Apr] Month 24 Liquidation: Sold 1× Black Pepper at Calicut for 74 D.");
+  assert.equal(liquidation, "[M4 • Apr] Month 24 Liquidation: Sold 1× Black Pepper at Calicut for 74 D.", pin("D07"));
   // Nothing in the audit says the campaign ended early.
   assert.ok(!e.logs().some(l => /early|bankrupt|insolv/i.test(l)));
   assert.equal(e.el("audit-outcome-badge").textContent, "VENTURE DEFICIT • AUDIT REQUIRED");
@@ -50,7 +56,7 @@ test("DEFECT D08 (current behaviour): arrival log entries carry the departure mo
   assert.equal(e.rng.remaining, 0, "scripted draws left unused");
   assert.equal(e.state.monthIndex, 2);          // arrives in March (M3)
   const voyage = e.logs().find(l => l.includes("Sailed Aden → Calicut"));
-  assert.ok(voyage.startsWith("[M1 • Jan] Sailed Aden → Calicut (53d / 2mo"), voyage);
+  assert.ok(voyage.startsWith("[M1 • Jan] Sailed Aden → Calicut (53d / 2mo"), `${pin("D08")}: ${voyage}`);
 });
 
 test("DEFECT D02 (current behaviour): pepper is labelled Semi-Bulk in the market but counted as luxury in the audit", () => {
@@ -62,8 +68,8 @@ test("DEFECT D02 (current behaviour): pepper is labelled Semi-Bulk in the market
   e.rng.push(0.99);                             // tailwind to Aden: piracy draw only
   e.g.sailTo("aden");
   assert.equal(e.rng.remaining, 0, "scripted draws left unused");
-  assert.equal(e.state.stats.bulkTonsShipped, 0);
-  assert.equal(e.state.stats.luxuryTonsShipped, 10);
+  assert.equal(e.state.stats.bulkTonsShipped, 0, pin("D02"));
+  assert.equal(e.state.stats.luxuryTonsShipped, 10, pin("D02"));
   e.g.finishCampaign();
   assert.equal(e.el("audit-cargo-mix").textContent, "0T Bulk / 10T Luxury Shipped");
 });
@@ -75,7 +81,7 @@ test("DEFECT D03 (current behaviour): the freight tally counts cargo loaded, eve
   e.g.sailTo("calicut");
   assert.equal(e.rng.remaining, 0, "scripted draws left unused");
   assert.equal(e.state.currentPort, "aden");    // nothing was delivered
-  assert.equal(e.state.stats.bulkTonsShipped, 30);
+  assert.equal(e.state.stats.bulkTonsShipped, 30, pin("D03"));
   e.g.finishCampaign();
   assert.equal(e.el("audit-cargo-mix").textContent, "30T Bulk / 0T Luxury Shipped");
 });
@@ -90,6 +96,6 @@ test("DEFECT D03 (current behaviour): cargo lost at sea still counts as shipped"
   assert.equal(e.state.currentPort, "calicut");
   assert.equal(e.state.cargo.teak, 2);          // 20 t arrived
   assert.equal(e.state.cargo.cloves, 1);        // 1 t arrived
-  assert.equal(e.state.stats.bulkTonsShipped, 30);
-  assert.equal(e.state.stats.luxuryTonsShipped, 2);
+  assert.equal(e.state.stats.bulkTonsShipped, 30, pin("D03"));
+  assert.equal(e.state.stats.luxuryTonsShipped, 2, pin("D03"));
 });

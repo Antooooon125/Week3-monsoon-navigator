@@ -260,31 +260,58 @@ test("piracy without luxuries: risk × 0.6, tribute of min(cash, 75)", () => {
   assert.equal(missed.state.cash, 1500 - 15);
 });
 
-test("piracy risk is cut by marines (× 0.2), destination standing ≥ 50 (× 0.5), raised on survival (× 1.8)", () => {
-  const marines = loadEngine().start();
-  marines.state.cargo.cloves = 1;
-  marines.state.specialists.marines = true;
-  marines.rng.push(0.0451);                     // 0.225 × 0.2 = 0.045
-  marines.g.sailTo("aden");
-  assert.equal(marines.rng.remaining, 0, "scripted draws left unused");
-  assert.equal(marines.state.cargo.cloves, 1);
+// One voyage Calicut → Aden in January (tailwind, 1 month) unless told otherwise.
+function voyage({ start = {}, setup = () => {}, draws, to = "aden" }) {
+  const e = loadEngine().start(start);
+  setup(e.state);
+  e.rng.push(...draws);
+  e.g.sailTo(to);
+  assert.equal(e.rng.remaining, 0, "scripted draws left unused");
+  return e;
+}
 
-  const known = loadEngine().start();
-  known.state.cargo.cloves = 1;
-  known.state.diaspora.aden = 50;
-  known.rng.push(0.1126);                       // 0.225 × 0.5 = 0.1125
-  known.g.sailTo("aden");
-  assert.equal(known.rng.remaining, 0, "scripted draws left unused");
-  assert.equal(known.state.cargo.cloves, 1);
-
-  const survival = loadEngine().start({ difficulty: "survival" });
-  survival.rng.push(0.1619);                    // 0.09 × 1.8 = 0.162
-  survival.g.sailTo("aden");
-  assert.equal(survival.rng.remaining, 0, "scripted draws left unused");
-  assert.equal(survival.state.cash, 600 - 15 - 75);
+test("marines multiply piracy risk by 0.2 (checked just below and just above 0.045)", () => {
+  // Cloves aboard: 0.15 × 1.5 × 0.2 = 0.045
+  const marines = s => { s.cargo.cloves = 1; s.specialists.marines = true; };
+  assert.equal(voyage({ setup: marines, draws: [0.0449] }).state.cargo.cloves, 0);
+  assert.equal(voyage({ setup: marines, draws: [0.0451] }).state.cargo.cloves, 1);
 });
 
-test("mutiny: probability (50 − health)/100 after the voyage, costs two months' wages", () => {
+test("destination standing of 50 halves piracy risk; 49 does not (checked on both sides)", () => {
+  const at = standing => s => { s.cargo.cloves = 1; s.diaspora.aden = standing; };
+  // standing 50: 0.225 × 0.5 = 0.1125
+  assert.equal(voyage({ setup: at(50), draws: [0.1124] }).state.cargo.cloves, 0);
+  assert.equal(voyage({ setup: at(50), draws: [0.1126] }).state.cargo.cloves, 1);
+  // standing 49: no discount, still 0.225
+  assert.equal(voyage({ setup: at(49), draws: [0.2249] }).state.cargo.cloves, 0);
+});
+
+test("survival multiplies piracy risk by 1.8 (checked just below and just above 0.162)", () => {
+  // No luxuries: 0.15 × 0.6 × 1.8 = 0.162
+  const start = { difficulty: "survival" };
+  assert.equal(voyage({ start, draws: [0.1619] }).state.cash, 600 - 15 - 75);
+  assert.equal(voyage({ start, draws: [0.1621] }).state.cash, 600 - 15);
+});
+
+test("storm damage is (22 to 38) × hull multiplier × difficulty multiplier", () => {
+  const april = s => { s.monthIndex = 3; };
+  // draw 0.5: 22 + 8 = 30
+  assert.equal(voyage({ setup: april, draws: [0.0, 0.5, NO_PIRATES] }).state.hull, 70);                               // dhow, ×1 ×1
+  assert.equal(voyage({ start: { vessel: "junk" }, setup: april, draws: [0.0, 0.5, NO_PIRATES] }).state.hull, 85);   // junk, ×0.5
+  assert.equal(voyage({ start: { difficulty: "survival" }, setup: april, draws: [0.0, 0.5, NO_PIRATES] }).state.hull, 40); // survival, ×2
+  assert.equal(voyage({ start: { difficulty: "easy" }, setup: april, draws: [0.0, 0.9999, NO_PIRATES] }).state.hull, 81);  // easy ×0.5: round(37.998 × 0.5) = 19
+});
+
+test("arrival raises destination standing by 5, capped at 100", () => {
+  assert.equal(voyage({ setup: s => { s.diaspora.aden = 60; }, draws: [NO_PIRATES] }).state.diaspora.aden, 65);
+  assert.equal(voyage({ setup: s => { s.diaspora.aden = 98; }, draws: [NO_PIRATES] }).state.diaspora.aden, 100);
+});
+
+test("mutiny: probability (50 − health)/100 after the voyage, costs two months' wages (dhow 30 D, junk 70 D)", () => {
+  const junk = voyage({ start: { vessel: "junk" }, setup: s => { s.crewHealth = 30; }, draws: [NO_PIRATES, 0.0] });
+  assert.equal(junk.state.mutinies, 1);
+  assert.equal(junk.state.cash, 1500 - 35 - 70);
+
   const e = loadEngine().start();
   e.state.crewHealth = 30;                      // 22 after one month at sea: risk 0.28
   e.rng.push(NO_PIRATES, 0.2799);

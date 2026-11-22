@@ -120,3 +120,29 @@ test("after the campaign ends, no action changes the result", () => {
   assert.equal(e.state.currentPort, "calicut");
   assert.equal(e.rng.calls, 0);
 });
+
+test("finishCampaign audit tallies: crew, winds, freight, layovers, ports, standing", () => {
+  const e = loadEngine().start();               // Calicut, January, dhow, normal
+  e.state.cargo.teak = 2;                       // 20 t bulk
+  e.state.cargo.pepper = 5;                     // 10 t, tallied as luxury (D02)
+  e.rng.push(NO_STORY);
+  e.g.waitInPort();                             // Feb; Calicut standing 25
+  e.rng.push(0.99);
+  e.g.sailTo("aden");                           // Feb, NE monsoon: tailwind, 1 month
+  e.rng.push(0.9, 0.99);
+  e.g.sailTo("calicut");                        // Mar, transition: calm, 81 days = 3 months
+  e.rng.push(0.99);
+  e.g.sailTo("malacca");                        // Jun, SW monsoon: tailwind, 1 month
+  assert.equal(e.rng.remaining, 0, "scripted draws left unused");
+  assert.equal(e.state.monthIndex, 6);
+  e.g.finishCampaign();
+  // crew: 100 → 92 → 68 → 60, no mutiny draw (health never below 50)
+  assert.equal(e.el("audit-crew").textContent, "Final crew health: 60% • Mutinies: 0");
+  assert.equal(e.el("audit-wind-ratio").textContent, "2 Tailwind / 1 Adverse or Dead-Zone");
+  // three voyages × (20 t bulk, 10 t pepper), counted at departure (D02, D03)
+  assert.equal(e.el("audit-cargo-mix").textContent, "60T Bulk / 30T Luxury Shipped");
+  assert.equal(e.el("audit-layovers").textContent, "1 months wintered in ports");
+  assert.equal(e.el("audit-ports-visited").textContent, "3 / 5 Emporia Visited");
+  // standing: Calicut 10 + 15 + 5 = 30, Aden 5, Malacca 5
+  assert.equal(e.el("audit-diaspora-score").textContent, "Basin Diaspora Standing: 40 pts");
+});

@@ -19,7 +19,7 @@ test("one month in port costs the port fee plus wages and raises standing by 15"
   assert.match(e.logs().at(-1), /Wintered 1 month in Calicut \(Layover: 25 D \+ Crew: 15 D; Standing: 25;/);
 });
 
-test("standing discounts the port fee: ×0.75 from 20, ×0.5 from 50", () => {
+test("four waits in a row: standing 10, 25, 40, 55 pay fees of 25, 19, 19, 13", () => {
   const e = loadEngine().start();
   const cash = [e.state.cash];
   for (let i = 0; i < 4; i++) { e.rng.push(NO_STORY); e.g.waitInPort(); cash.push(e.state.cash); }
@@ -29,6 +29,20 @@ test("standing discounts the port fee: ×0.75 from 20, ×0.5 from 50", () => {
   // fees: 25, round(18.75) = 19, 19, round(12.5) = 13; plus 15 wages each
   assert.deepEqual(spent, [40, 34, 34, 28]);
   assert.equal(e.state.diaspora.calicut, 70);
+});
+
+test("port fee thresholds, checked on both sides: 19 and 20, 49 and 50", () => {
+  const e = loadEngine().start();
+  const fee = s => e.g.getEffectiveLayoverFee("calicut", s);
+  assert.deepEqual([fee(19), fee(20), fee(49), fee(50)], [25, 19, 19, 13]);
+  // The same thresholds through a real wait: what is charged is the fee at the standing before the wait.
+  for (const [standing, fee] of [[19, 25], [20, 19], [49, 19], [50, 13]]) {
+    const w = loadEngine().start();
+    w.state.diaspora.calicut = standing;
+    w.rng.push(NO_STORY);
+    w.g.waitInPort();
+    assert.equal(w.state.cash, 1500 - fee - 15, `standing ${standing}`);
+  }
 });
 
 test("difficulty scales the port fee", () => {

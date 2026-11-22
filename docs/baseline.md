@@ -108,16 +108,18 @@ It covers the deterministic sailing model only. The published Aden → Calicut e
 
 ### Engine tests (R5, first part)
 
-`tests/engine/` runs the real engine in Node: it evaluates the inline script of `index.html` unchanged, with a small DOM stand-in, and scripts `Math.random` so each hazard path can be forced. Any unscripted draw fails the test. They cover buying and selling with tariffs, waiting (port fees, standing, stories), sailing (wages, months, turn-back, jettison, storms, becalming, cargo loss, piracy, mutiny), loan interest, the real `finishCampaign` settlement and audit screen, previews and forecasts that must not change state or draw random numbers, and the same 480-row transit comparison as the browser page. D01, D02, D03, D07 and D08 are pinned as observed behaviour, labelled as defects: a fix for one of them is expected to fail its test, and should replace it.
+`tests/engine/` runs the real engine in Node: it evaluates the inline script of `index.html` unchanged, with a small DOM stand-in, and scripts `Math.random` so each hazard path can be forced. Any unscripted draw fails the test. They cover buying and selling with tariffs and cost basis; waiting (port fees at each standing threshold, standing, stories); sailing (wages, months, turn-back, jettison, storms on each ship and difficulty, becalming, cargo loss, the piracy factors on both sides of each threshold, mutiny, arrival standing); loan interest; and the real `finishCampaign`: the settlement's money fields, the outcome badge, and the audit tallies (crew, winds, freight, layovers, ports, standing). Previews and forecasts are checked not to change state or draw random numbers, and the 480-row transit comparison is the same as the browser page's. D01, D02, D03, D07 and D08 are pinned as observed behaviour, labelled as defects: a fix for one of them is expected to fail its test, and should replace it.
 
-Run with Node 22 or later, from the repository root:
+Not covered: the audit's date and timestamp lines, the hypothesis and reflection text, the PDF export, `repairHull`, `hireSpecialist`, the setup form's error messages, and the economy sweep. The DOM stand-in accepts every call (`querySelector` returns a blank element, `querySelectorAll` an empty list), so an exception that only a real browser would raise in `renderAll` is not caught, and nothing checks how the page looks.
+
+Run from the repository root (the quoted glob needs Node 21 or later; so far run on the Node 22 and 24 runtimes bundled in Electron apps, not yet on a stock Node install or in CI):
 
 ```
 node --test "tests/engine/*.test.mjs"
 node tests/engine/planted-defects.mjs
 ```
 
-The second command makes 28 small changes to a temporary copy of `index.html`, one at a time, and checks that each is caught by the test it targets. The browser page remains the check named in CONTRIBUTING.md.
+The second command makes 40 small changes to a temporary copy of `index.html`, one at a time, and checks that each is caught by the test it targets, that some tests still pass (so a copy that fails to load is not counted as caught), and that `index.html` has the same hash afterwards. The browser page remains the check named in CONTRIBUTING.md.
 
 ## 4. Known defects
 

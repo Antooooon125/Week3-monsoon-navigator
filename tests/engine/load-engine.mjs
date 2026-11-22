@@ -140,13 +140,16 @@ export function loadEngine({ index = process.env.MONSOON_INDEX || DEFAULT_INDEX,
       context.selectVessel(vessel);
       context.selectDifficulty(difficulty);
       context.startSimulation();
-      if (api.state.monthIndex !== 0 || api.state.currentPort !== port) throw new Error("startSimulation did not start the campaign");
+      // A rejected setup leaves month 0 at Calicut too, so check what only a successful start writes.
+      const started = api.state.studentName === "Test Student" && api.state.logs.some(l => l.includes("Charter signed"));
+      if (!started || api.state.monthIndex !== 0 || api.state.currentPort !== port) throw new Error("startSimulation did not start the campaign");
       return this;
     }
   };
 }
 
 // Values created inside the vm context have that context's prototypes, which
-// assert.deepStrictEqual treats as different. Compare plain JSON copies.
-export const plain = x => JSON.parse(JSON.stringify(x, (k, v) => (Object.prototype.toString.call(v) === "[object Set]" ? [...v] : v)));
+// assert.deepStrictEqual treats as different. structuredClone makes host
+// copies and, unlike a JSON round trip, keeps undefined, NaN and Sets.
+export const plain = x => structuredClone(x);
 
