@@ -12,6 +12,22 @@ This file pins the classroom game as it stands, so later visual, evidence and re
 
 PR #1 changed the wind clock drawing, the hypothesis concept check, the profit-target minimum, some on-screen wording and two README sentences. It did not change any value in section 2, so the sailing model is the same as at `db57f54`.
 
+**Changes on `main` since the pin (checked at `ba2f279`, 2026-11-22).** The owner committed three changes directly to `main`:
+- `8267088`: Play Only and Student Mode;
+- `29f2354`: the PR #1 fixes kept in both modes;
+- `ba2f279`: licence and credits (section 6).
+
+Effects:
+- **Modes.** `state.mode` defaults to `"play"`. In Play Only mode, `startSimulation` skips the name, number, target and hypothesis inputs, and the target stays at its default of 1,200 D. So F03's minimum-target check applies only in Student Mode.
+- **Protected engine.** `finishCampaign`, listed in section 2, changed in three display details:
+  - it toggles a `play-only` class on the audit, which hides the student line, hypothesis, reflection and export controls in Play Only mode;
+  - the student line reads "Student no." instead of "ID";
+  - the deficit badge now reads "VENTURE DEFICIT" (it was "VENTURE DEFICIT • AUDIT REQUIRED").
+
+  Its money logic is unchanged: liquidation, debt deduction, net profit, ROI and the badge thresholds. A separate gate allows export in Student Mode only after a reflection of at least 15 characters.
+- **Line endings.** `index.html` was converted to LF throughout (2,189 lines).
+- **Sailing model.** No value in section 2 changed, and the transit check (section 3) still reports MATCH for all 480 rows at `ba2f279`. The snapshot therefore still describes the sailing model, and its `revision` field stays `111acdc`.
+
 ## 2. Protected engine
 
 These symbols and constants define the classroom model. A change to any of them changes results, and needs the owner's approval in advance (see [CONTRIBUTING.md](../CONTRIBUTING.md)).
@@ -164,8 +180,18 @@ These pairs share a seed, not common random numbers. The two ships make differen
 
 Their pre-registrations must cite this section as a prior look.
 
-## 6. Licensing: open question for the owner
+## 6. Licensing
 
-`LICENSE` is the MIT licence, copyright Antooooon125. The game in `index.html` credits Amnuayvit Thitibordin (KVIS) under CC BY-NC-SA 4.0, and the README says the MIT licence does not relicense the game. CC BY-NC-SA asks that adaptations carry the same licence and say what was changed.
+The owner set the project licence in `ba2f279` (2026-11-22). `LICENSE` points to [LICENSE.md](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md). Copyright belongs to Amnuayvit Thitibordin, with Thanakrit credited as collaborator.
 
-R0 does not change any licence. Until the owner decides, do not copy files from CC BY-NC-SA projects into this repository; that includes the Frost & Silver files the research roadmap suggests as templates. Write new files instead. This is a reading of the licence terms, not legal advice.
+The terms:
+- **CC BY-NC-SA 4.0** for the original game.
+- **A Commercial Derivative Exception** allowing commercial use of *substantially modified* derivatives, with credit, a link to the notice and an account of the changes. This exception covers only rights the copyright holder can grant. Third-party material keeps its own licence.
+
+This replaces the earlier MIT `LICENSE` text. It resolves the conflict raised in issue #4, which is still open.
+
+**Consequences for contributors:**
+- Material from other CC BY-NC-SA projects, such as Frost & Silver, is now licence-compatible with the project's base licence. Record its source, licence and changes when reusing it. The Commercial Derivative Exception cannot extend to it, because the owner doesn't hold those rights.
+- The origin and licence of `harbor-atlas.jpg` are still unrecorded.
+
+This is a reading of the licence terms, not legal advice.
