@@ -184,7 +184,7 @@ test('one print action, credits and drawing provenance as resolved for the KVIS 
   game.run('startSimulation()');
   assert.match(game.elements.get('ship-credit').textContent,/^Schematic illustration; reference photograph: /);
   assert.match(prototype,/<a id="atlas-classic-link" href="classic\.html">Classic version<\/a>/);
-  assert.match(prototype,/\(credit wording proposed, pending the copyright holder’s confirmation\)/);
+  assert.doesNotMatch(prototype,/pending the copyright holder/);
   assert.match(prototype,/Collaborator: Guntitat Sawadwuthikul/);
 });
 
