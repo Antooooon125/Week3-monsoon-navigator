@@ -46,6 +46,8 @@ The game uses one HTML page with inline SVG, vanilla JavaScript and Tailwind’s
 
 **Verification.** The original inline script ran in Node with a simulated DOM and controlled random outcomes. Checks covered route timing, buying and selling, wind preview, standing discounts, end-of-campaign audit data and invocation of the print fallback. That harness is not committed to this repository. Browser layout and PDF rendering still need hands-on verification.
 
+**Baseline and contributing.** [docs/baseline.md](docs/baseline.md) pins the classroom version, lists its parameters and known defects, and explains the committed sailing-model check (`tools/baseline-check.html`). [CONTRIBUTING.md](CONTRIBUTING.md) says which changes need the owner's agreement first.
+
 ## Attribution and license
 
 The original game in index.html is credited to Amnuayvit Thitibordin (KVIS) and carries [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). The existing repository MIT license does not relicense the game. Third-party libraries retain their respective licenses.
