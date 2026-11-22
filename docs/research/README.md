@@ -12,6 +12,8 @@ Research checkpoint: **22 November 2026**. Exploratory first-pass evidence revie
 
 **Current reading priority: P02/P03.** P01's access gaps remain recorded for later work. The proposed next case examines what agents did, whose goods and money they handled, and when proceeds became available.
 
+**Extended-search update:** [Additional findings and revised priorities](p02-p03-extended-search-addendum.md) add market/liquidity waiting, salvage and settlement, a linked dispute, protection costs, and a Melaka comparison. Hall's author-uploaded body text is now accessible for selected reading, so R04 is no longer an outstanding blocker. New source requests target Quseir accounts and Kerala inscriptions.
+
 The reports retain source locators, reading status, contrary interpretations, and exclusions. Their interpretation is provisional. In particular, the seven-record P02/P03 feasibility sample is purposive, contains related records, and is not the planned 30–50-document pilot or a count of independent historical cases.
 
 ## Documents awaiting provision
