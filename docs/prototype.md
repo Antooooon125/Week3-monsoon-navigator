@@ -80,3 +80,12 @@ The licence and credit wording still awaits the copyright holder's confirmation.
 - **Packaging test:** it also reads `setAttribute('href'|'src', …)`, template-literal assignments and CSS `@import`, and it fails on twelve plants. Values assembled at run time are not checked; the test title now says "static".
 
 - **Copyright holder's approval (2026-11-22):** the credit wording is approved, so the footer no longer carries the "pending" label.
+
+### More detailed vessel drawings (2026-11-22)
+
+The dhow and junk SVGs in `prototype/atlas.js` are redrawn with more detail, from scratch and without tracing or viewing the reference photographs. They are still schematic illustrations, not reconstructions, and the card and Sources wording is unchanged.
+
+- **Dhow:** stitched-plank hull with plank seams and a stitching line, raked stem head, raised stern deck with rail, side rudder; forward-raked main mast with a long lateen yard and a sail whose cloths run parallel to the leech, halyard, sheet and stays; a smaller mizzen lateen aft.
+- **Junk:** flat transom bow with an oculus, wales, a stern deckhouse with windows and a gallery rail, a fenestrated rudder; three battened lug sails with fanned sheets, the foremast raked forward.
+
+Both use only `currentColor` and `var(--surface)`, so the light, dark and print themes follow, and stay `aria-hidden` inside the same fixed-height boxes. The voyage ship card's label now reads "schematic illustration" instead of "schematic silhouette". No game state is touched; `tests/prototype-engine.test.mjs` 20/20.
