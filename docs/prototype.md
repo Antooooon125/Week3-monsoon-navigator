@@ -72,3 +72,9 @@ The licence and credit wording still awaits the copyright holder's confirmation.
 - The footer's Atlas credit is marked "(proposed, pending the copyright holder’s confirmation)".
 - The packaging test now extracts every `href`, `src` and `url()` (quoted or not, and quoted JS assignments). Each must be absolute, an anchor, a `${…}` template, or `classic.html` / `index.html`. It fails on each of eight planted relative references.
 - The event reports read only voyage log entries (those containing " | Events: "). Survival's charter line names "Cyclone & Piracy Crisis". It matched the cyclone pattern, opened the game with a false cyclone report, and suppressed the first real one. A seeded event-card check in the KVIS repository (`tests/03/atlas-events.test.mjs`) found this.
+
+### Collaborator decisions and third review (2026-11-22)
+
+- **Licence:** the collaborator chose CC BY-NC-SA 4.0 **with** the Commercial Derivative Exception for the Atlas material. The footer now says so, and also credits Guntitat Sawadwuthikul as collaborator. The credit wording is still marked pending the copyright holder's confirmation.
+- **Drawings:** vessel cards and the Sources dialog call the drawings "schematic illustrations", without "original", until the copyright holder confirms.
+- **Packaging test:** it also reads `setAttribute('href'|'src', …)`, template-literal assignments and CSS `@import`, and it fails on twelve plants. Values assembled at run time are not checked; the test title now says "static".

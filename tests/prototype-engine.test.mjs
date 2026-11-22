@@ -182,19 +182,23 @@ test('one print action, credits and drawing provenance as resolved for the KVIS 
   assert.ok(game.elements.get('btn-export-pdf').classList.contains('hidden'),'duplicate export button hidden');
   assert.match(game.elements.get('atlas-export-note').textContent,/print dialog/);
   game.run('startSimulation()');
-  assert.match(game.elements.get('ship-credit').textContent,/^Original schematic illustration; reference photograph: /);
+  assert.match(game.elements.get('ship-credit').textContent,/^Schematic illustration; reference photograph: /);
   assert.match(prototype,/<a id="atlas-classic-link" href="classic\.html">Classic version<\/a>/);
-  assert.match(prototype,/\(proposed, pending the copyright holder’s confirmation\)/);
+  assert.match(prototype,/\(credit wording proposed, pending the copyright holder’s confirmation\)/);
+  assert.match(prototype,/Collaborator: Guntitat Sawadwuthikul/);
 });
 
-// Every reference a page makes: HTML attributes (quoted or not), quoted JS property
-// assignments such as el.href='x', and CSS url(). Template values (${...}) and
-// assignments of variables are dynamic and are not checked here.
+// References a page makes: HTML attributes (quoted or not), quoted JS property
+// assignments (el.href='x', including template literals), setAttribute('href'|'src', '...'),
+// CSS url() and @import. Not checked: values assembled at run time (${...} templates,
+// variables, string concatenation) and references built any other way.
 export function pageReferences(html){
   const refs=[];
   for(const m of html.matchAll(/(?<=[\s<"'])(?:xlink:)?(href|src|srcset|action|poster)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"'`]+))/gi))refs.push(m[2]??m[3]??m[4]);
   for(const m of html.matchAll(/\.(href|src)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)/g))refs.push(m[2]??m[3]??m[4]);
   for(const m of html.matchAll(/(?<![\w.])url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s]*))\s*\)/gi))refs.push(m[1]??m[2]??m[3]);
+  for(const m of html.matchAll(/setAttribute\(\s*['"`](?:xlink:)?(?:href|src|srcset|action|poster)['"`]\s*,\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)/g))refs.push(m[1]??m[2]??m[3]);
+  for(const m of html.matchAll(/@import\s+(?:"([^"]*)"|'([^']*)')/gi))refs.push(m[1]??m[2]??m[3]);
   return refs;
 }
 export const ALLOWED_LOCAL=['classic.html','index.html'];
@@ -202,12 +206,12 @@ export function unresolvedReferences(html){
   return pageReferences(html).filter(ref=>!(/^(?:https?:|data:|mailto:|#)/i.test(ref)||ref.startsWith('${')||ALLOWED_LOCAL.includes(ref)));
 }
 
-test('packaging: every reference is absolute, an anchor, or classic.html / index.html',()=>{
+test('packaging: every static reference is absolute, an anchor, or classic.html / index.html',()=>{
   // B2: href="README.md" resolved to projects/03/README.md on the KVIS site (404).
   assert.deepEqual(unresolvedReferences(prototype),[]);
   assert.doesNotMatch(prototype,/playable visual prototype/);
   // The check must catch each way a relative reference can be written.
-  for(const plant of [`<a href="README.md">`,`<a href='README.md'>`,`<a href=./README.md>`,`<a href="docs/prototype.md">`,`<img src="harbour.jpg">`,`<style>i{background:url(./Harbor-Atlas.jpg)}</style>`,`<script>x.href='notes.html'</script>`,`<link rel=icon href=favicon.ico>`])
+  for(const plant of [`<a href="README.md">`,`<a href='README.md'>`,`<a href=./README.md>`,`<a href="docs/prototype.md">`,`<img src="harbour.jpg">`,`<style>i{background:url(./Harbor-Atlas.jpg)}</style>`,`<script>x.href='notes.html'</script>`,`<link rel=icon href=favicon.ico>`,"<script>x.href=`notes.html`</script>",`<script>a.setAttribute('href','notes.html')</script>`,`<style>@import url("extra.css");</style>`,`<style>@import 'extra.css';</style>`])
     assert.ok(unresolvedReferences(prototype.replace('</body>',plant+'</body>')).length===1,plant);
 });
 
