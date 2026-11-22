@@ -32,3 +32,18 @@ Check setup and vessel keyboard selection; each seasonal palette; actual versus 
 The Node suite exercises both ships and all difficulties against the unchanged engine, including adverse events and random draw counts, actual versus preview wind direction, event dismissal and repeated events, loaded-weight reconciliation, last-month behavior and print fallback. It uses a minimal DOM double and does not establish browser layout, font rendering, contrast or PDF pagination compliance. Automated browser review remains pending because the available browser security policy blocks local-file navigation.
 
 Original game: Amnuayvit Thitibordin (KVIS), CC BY-NC-SA 4.0. The adapted prototype and its new visual material are distributed under the same terms. Referenced photographs remain at their sources and retain their credited Creative Commons licences.
+
+## Rebuilt on main for the KVIS deployment (2026-11-22)
+
+Branch `fix/atlas-on-main` merges game `main` (`ba2f279`: Play Only / Student Mode, reflection gate, licence header) into `ff74d45` and fixes what a browser review of the rebuilt page found:
+
+- Vessel drawings no longer cover the vessel card text (the SVGs now fill their fixed-height boxes).
+- At 375 px the market fits the screen: trade buttons sit on their own row under each good. The header no longer sticks, and the audit export button wraps.
+- The desktop market table no longer clips its last column.
+- Labels are only pointed at fields that have an `id`, so the game-mode radios keep their labels.
+- In Play Only, setup and audit text no longer mention a target or prediction.
+- The first event report takes keyboard focus. Amber and pink market text now reaches 4.5:1. The actual month in the planner is no longer dimmed.
+- The page says that export opens the browser's print dialog, because the offline page has no direct PDF download.
+- The builder writes every breakpoint rule after the base rules (`grid-cols-1 sm:grid-cols-2` had collapsed), and removes the Google Fonts `@import` whole.
+
+`tests/prototype-engine.test.mjs`: test 3 now selects Student Mode first; the ungated export test is replaced by one that pins the gate; there are new tests for the Play Only default, utility order and Play Only audit wording. 17/17 pass.

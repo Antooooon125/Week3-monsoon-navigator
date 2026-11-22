@@ -47,6 +47,7 @@ for(const name of ['rounded','rounded-md','rounded-lg','rounded-xl']) rules.set(
 // Include tokens from both static markup and dynamic templates, including conditional classes.
 const tokens = new Set((original+adapter).match(/[a-zA-Z0-9_-]+(?::[a-zA-Z0-9_-]+)*-?\[[^\]\s]+\](?:\/\d+)?|[a-zA-Z0-9_-]+(?::[a-zA-Z0-9_./-]+)*/g));
 let utility = '*{box-sizing:border-box}html{font-size:16px}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed}h1,h2,h3,h4,p,figure{margin:0}ul{padding:0;list-style:none}a{color:inherit}img,svg{max-width:100%}table{border-spacing:0}th,td{vertical-align:top} [class*="space-y-"]>*+*{margin-top:var(--stack)}[class*="space-x-"]>*+*{margin-left:var(--inline-gap)}\n';
+const media={};
 const escape = s => s.replace(/[^a-zA-Z0-9_-]/g,c=>'\\'+c);
 for(const token of tokens){
   const parts=token.split(':');const name=parts.pop();let value=rules.get(name);
@@ -63,11 +64,14 @@ for(const token of tokens){
     if({sm:640,md:768,lg:1100}[variant])min={sm:640,md:768,lg:1100}[variant];
     else if(['hover','disabled','focus','focus-visible'].includes(variant))selector+=':'+variant;
   }
-  const rule=selector+'{'+value+'}';utility+=min?`@media(min-width:${min}px){${rule}}\n`:rule+'\n';
+  const rule=selector+'{'+value+'}';if(min)(media[min]??=[]).push(rule);else utility+=rule+'\n';
 }
+// Breakpoint rules come after every base rule, smallest breakpoint first, so that
+// "grid-cols-1 sm:grid-cols-2" works whatever order the tokens appear in the source.
+for(const min of Object.keys(media).map(Number).sort((a,b)=>a-b))utility+=media[min].map(rule=>`@media(min-width:${min}px){${rule}}\n`).join('');
 let output=original
   .replace(/<script\b[^>]*\bsrc=[^>]*><\/script>\s*/g,'')
-  .replace(/@import url\([^;]+;/g,'')
+  .replace(/@import url\((['"]).*?\1\);?/g,'')
   .replace('<html lang="en" class="dark">','<html lang="en">')
   .replace(/<title>.*?<\/title>/,'<title>Monsoon Navigator — An Atlas of Moving Worlds</title>')
   .replace('</head>',`<meta name="description" content="Plan a merchant voyage through the seasonal Indian Ocean. An Atlas of Moving Worlds: a playable visual prototype.">\n<style id="atlas-fonts">${fontLicences}\n${fontCSS}</style>\n<style id="atlas-utilities">${utility}</style>\n<style id="atlas-style">${styles}</style>\n</head>`)

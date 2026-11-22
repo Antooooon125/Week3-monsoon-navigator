@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+<!--
+  Copyright (c) 2026 Amnuayvit Thitibordin.
+  Collaborator: Thanakrit.
+  Licensed under CC BY-NC-SA 4.0 + Commercial Derivative Exception.
+  - Original Work: Non-Commercial use only (free for educational & personal use with attribution).
+  - Commercial Use: Permitted ONLY for Substantially Modified Derivative Works (requires major functional, UI/UX, or content transformation; cosmetic reskins, translations, and parameter tweaks are excluded).
+  Full terms: https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Monsoon Navigator — An Atlas of Moving Worlds</title>
   <style>
-    500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
     body {
       font-family: 'Inter', sans-serif;
       background-color: #020617;
@@ -19,6 +27,7 @@
     #hull-meter { accent-color:#34d399; }
     #glossary-dialog { width: calc(100% - 2rem); max-height: 88dvh; }
     #glossary-dialog::backdrop { background: rgba(2, 6, 23, .84); }
+    .play-only .student-only { display: none !important; }
     @keyframes windFlow {
       0% { stroke-dashoffset: 64; }
       100% { stroke-dashoffset: 0; }
@@ -379,7 +388,6 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .text-cyan-400{color:var(--accent)}
 .font-bold{font-weight:700}
 .text-sm{font-size:.9375rem}
-@media(min-width:640px){.sm\:text-base{font-size:1rem}}
 .tracking-tight{letter-spacing:-.025em}
 .text-xs{font-size:.875rem}
 .text-slate-400{color:var(--muted)}
@@ -431,7 +439,6 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .underline{text-decoration:underline}
 .flex-1{flex:1 1 0%}
 .max-w-5xl{max-width:1160px}
-@media(min-width:640px){.sm\:p-6{padding:1.5rem}}
 .p-6{padding:1.5rem}
 .pb-4{padding-bottom:1rem}
 .mb-6{margin-bottom:1.5rem}
@@ -440,15 +447,15 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .text-xl{font-size:1.3rem}
 .rounded-full{border-radius:99px}
 .grid{display:grid}
+.cursor-pointer{cursor:pointer}
+.items-start{align-items:flex-start}
+.p-3{padding:0.75rem}
+.border-cyan-400{border-color:var(--line)}
 .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
-@media(min-width:640px){.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .gap-4{gap:1rem}
 .mb-1{margin-bottom:0.25rem}
 .focus\:border-cyan-500:focus{border-color:var(--line)}
-@media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.cursor-pointer{cursor:pointer}
 .border-2{border:2px solid var(--line)}
-.items-start{align-items:flex-start}
 .text-base{font-size:1rem}
 .mt-0{margin-top:0rem}
 .py-0{padding-block:0rem}
@@ -460,12 +467,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .text-\[11px\]{font-size:.8125rem}
 .hover\:border-slate-500:hover{border-color:var(--line)}
 .text-amber-300{color:var(--warn)}
-@media(min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:1100px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .text-left{text-align:left}
-.p-3{padding:0.75rem}
-@media(min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:768px){.md\:col-span-2{grid-column:span 2/span 2}}
 .text-slate-500{color:var(--muted)}
 .mb-4{margin-bottom:1rem}
 .border-rose-700{border-color:var(--line)}
@@ -473,8 +475,6 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .px-6{padding-inline:1.5rem}
 .hover\:bg-cyan-400:hover{background:var(--surface)}
 .text-slate-950{color:var(--ink)}
-@media(min-width:1100px){.lg\:grid-cols-12{grid-template-columns:repeat(12,minmax(0,1fr))}}
-@media(min-width:1100px){.lg\:col-span-7{grid-column:span 7/span 7}}
 .space-y-4{--stack:1rem}
 .overflow-hidden{overflow:hidden}
 .mb-3{margin-bottom:0.75rem}
@@ -495,7 +495,6 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .h-44{height:11rem}
 .space-y-1{--stack:0.25rem}
 .pr-1{padding-right:0.25rem}
-@media(min-width:1100px){.lg\:col-span-5{grid-column:span 5/span 5}}
 .h-48{height:12rem}
 .object-cover{object-fit:cover}
 .object-center{object-position:center}
@@ -517,16 +516,13 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .hover\:bg-rose-500:hover{background:var(--surface)}
 .max-w-4xl{max-width:1050px}
 .p-5{padding:1.25rem}
-@media(min-width:640px){.sm\:p-8{padding:2rem}}
 .pb-5{padding-bottom:1.25rem}
 .text-2xl{font-size:1.75rem}
 .inline-block{display:inline-block}
 .bg-emerald-500{background:var(--surface)}
 .text-emerald-300{color:var(--good)}
 .border-emerald-500{border-color:var(--line)}
-@media(min-width:640px){.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .pb-2{padding-bottom:0.5rem}
-@media(min-width:640px){.sm\:text-sm{font-size:.9375rem}}
 .italic{font-style:italic}
 .hover\:bg-emerald-400:hover{background:var(--surface)}
 .opacity-85{opacity:0.85}
@@ -568,6 +564,20 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .bg-amber-800{background:var(--surface)}
 .hover\:bg-amber-700:hover{background:var(--surface)}
 .text-amber-100{color:var(--warn)}
+@media(min-width:640px){.sm\:text-base{font-size:1rem}}
+@media(min-width:640px){.sm\:p-6{padding:1.5rem}}
+@media(min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:640px){.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:640px){.sm\:p-8{padding:2rem}}
+@media(min-width:640px){.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:640px){.sm\:text-sm{font-size:.9375rem}}
+@media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:768px){.md\:col-span-2{grid-column:span 2/span 2}}
+@media(min-width:1100px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1100px){.lg\:grid-cols-12{grid-template-columns:repeat(12,minmax(0,1fr))}}
+@media(min-width:1100px){.lg\:col-span-7{grid-column:span 7/span 7}}
+@media(min-width:1100px){.lg\:col-span-5{grid-column:span 5/span 5}}
 </style>
 <style id="atlas-style">:root{--f-display:"Archivo Atlas","Arial Black",sans-serif;--f-body:"Atkinson Atlas",system-ui,sans-serif;--f-mono:"Plex Atlas",Consolas,monospace;--bg:#f1f0e8;--surface:#faf9f3;--ink:#192b2c;--muted:#52645e;--line:#a3aea7;--accent:#234a91;--good:#23623e;--bad:#9b302d;--warn:#805514;--action:#a5382c;--on-action:#fff;--sea:#252d59;--field:#8298d0;--spectral:#f1a6a0;color-scheme:light}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-weight:400;font-size:1rem;line-height:1.5}
@@ -594,7 +604,7 @@ main{width:100%;margin:auto;padding:24px!important}#phase-setup{max-width:1220px
 .atlas-steps{display:flex;gap:24px;padding:14px 0;color:var(--muted);font-family:var(--f-mono);font-weight:500;font-size:.875rem}.atlas-steps b{color:var(--accent);font-weight:500}
 #phase-setup>div>div:first-child{margin-bottom:28px}#phase-setup [id^=card-]{background:var(--surface);padding:24px;border:1px solid var(--line);cursor:pointer;position:relative}
 #phase-setup [id^=card-][aria-checked=true]{border:2px solid var(--accent);padding:23px;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
-.atlas-vessel-plate{height:112px;display:block;width:100%;margin:10px 0 18px;color:var(--accent)}.diff-btn[aria-pressed=true]{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.atlas-vessel-plate{height:112px;display:block;width:100%;margin:10px 0 18px;color:var(--accent)}.atlas-vessel-plate svg,.atlas-ship svg{display:block;width:100%;height:100%}.diff-btn[aria-pressed=true]{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
 #phase-setup button[onclick='startSimulation()']{background:var(--action);color:var(--on-action);padding:16px 24px;border:0;font-size:1rem}
 #phase-sim{max-width:1440px;gap:24px}#phase-sim>div{min-width:0}.atlas-map-panel{padding:0!important;overflow:hidden;background:var(--sea)!important;--ink:#e9edf4;--muted:#c4cedd;--line:#53677c;--accent:#ec9abe;--good:#91d6ac;--warn:#ffd18a;--bad:#ffaa9d;color:var(--ink);border:1px solid #53677c}
 .atlas-map-panel>div:first-child{padding:20px 24px 0}.atlas-map-panel>div.relative{border:0;border-radius:0;background:var(--sea)}.atlas-map-panel #ocean-svg{display:block;background:var(--sea)}
@@ -602,7 +612,7 @@ main{width:100%;margin:auto;padding:24px!important}#phase-setup{max-width:1220px
 .atlas-map-panel #wind-regime-badge{border-color:#8296ad;background:#111c35;color:#e9edf4;font-size:.8125rem;border-radius:0;padding:8px}
 #ocean-svg #svg-sea-lanes path{stroke:var(--field)}#ocean-svg #svg-route-preview>line{stroke:#ec9abe}#ocean-svg #svg-route-preview>rect{stroke:#ec9abe;fill:#111c35}#ocean-svg #svg-route-preview>text{fill:#f3d2e5}#routePreviewArrow path{fill:#ec9abe}
 .atlas-calendar{padding:18px 24px;background:#111c35;border-top:1px solid #53677c}.atlas-calendar-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:.8125rem}
-.atlas-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px}.atlas-months button{border:1px solid #53677c;color:#cbd5e8;background:#192633;padding:6px 0;min-width:0;font-family:var(--f-mono);font-weight:500;font-size:.8125rem}.atlas-months button[aria-current=date]{border:2px solid #e9edf4;color:#fff;background:#34536b}.atlas-months button[aria-pressed=true]{border:2px solid #ec9abe;color:#ffd4e9;background:#392d48}.atlas-months button:focus-visible{outline-color:#f3ba68}.atlas-months button:disabled{opacity:.5}.atlas-calendar-note{margin-top:10px;font-size:.8125rem;color:#c4cedd}
+.atlas-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px}.atlas-months button{border:1px solid #53677c;color:#cbd5e8;background:#192633;padding:6px 0;min-width:0;font-family:var(--f-mono);font-weight:500;font-size:.8125rem}.atlas-months button[aria-current=date]{border:2px solid #e9edf4;color:#fff;background:#34536b}.atlas-months button[aria-pressed=true]{border:2px solid #ec9abe;color:#ffd4e9;background:#392d48}.atlas-months button:focus-visible{outline-color:#f3ba68}.atlas-months button:disabled{opacity:.5}.atlas-months button[aria-current=date]:disabled{opacity:1}.atlas-calendar-note{margin-top:10px;font-size:.8125rem;color:#c4cedd}
 #ocean-svg text,.atlas-cover text{font-family:var(--f-mono);font-weight:500}#ocean-svg #svg-ports text{font-family:var(--f-body);font-weight:700}
 #routes-container button{background:var(--surface);border:1px solid var(--line);padding:18px;min-height:110px}#routes-container button:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface));color:var(--ink)}
 #wind-now,#wind-future{padding:18px}#wind-future{border-color:var(--action)}#wind-comparison-heading{font-size:1.35rem!important}
@@ -675,13 +685,15 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-cargo-column{padding-top:8px}
   .atlas-trade{border:0;border-radius:3px;padding:24px!important;--accent:#963b70;--line:#93ac9e}
   .atlas-trade h3{font-size:1.55rem!important;font-stretch:110%;font-weight:800;margin-top:6px;letter-spacing:-.04em}
-  .atlas-trade table{min-width:480px;font-size:.8125rem}
+  .atlas-trade table{min-width:0;width:100%;font-size:.8125rem}
   .atlas-trade td:last-child{white-space:normal;width:150px}
   .atlas-trade td:last-child button{margin:2px!important;padding:4px;min-width:40px;min-height:40px;font-size:.75rem}
   .atlas-trade td:last-child button:nth-child(-n+3){background:#345d6d;color:#fff;border-color:#345d6d}
   .atlas-trade td:last-child button:nth-child(n+4){background:transparent;color:#19363c;border-color:#7d9a90}
   .atlas-trade td:last-child button:hover:not(:disabled){background:#963b70;border-color:#963b70;color:#fff}
   .atlas-trade #market-tariff-rate{color:#19363c}
+  .atlas-trade{--warn:#674210;--accent:#83305f}
+  .atlas-export-note{flex-basis:100%;font-size:.8125rem;color:var(--muted);margin:4px 0 0}
   #market-tbody tr td:first-child::before{content:"";display:block;width:16px;height:3px;background:var(--material);margin-bottom:6px}
   .atlas-table-hint{font-size:.8125rem;color:#3d5d5c;line-height:1.5;margin:12px 0 8px}
   .atlas-hold{border:0;border-radius:3px;background:#d8e3d5!important}
@@ -729,6 +741,13 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   #cargo-shelves .atlas-commodity:nth-child(3n+2){border-inline:0}#cargo-shelves .atlas-commodity:nth-child(2n){border-left:1px solid #93ac9e}
   .atlas-planner>summary{justify-content:flex-start}.atlas-planner>summary span{display:block}
   .atlas-event{padding:20px}.atlas-event h3{font-size:1.4rem!important}
+  body>header.sticky{position:relative}
+  .atlas-trade table,.atlas-trade thead,.atlas-trade tbody{display:block}
+  .atlas-trade tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:12px;align-items:start}
+  .atlas-trade th:last-child{display:none}
+  .atlas-trade td:last-child{grid-column:1/-1;width:auto;padding-top:4px;text-align:left}
+  .atlas-trade td:last-child>*{justify-content:flex-start}
+  #btn-export-pdf{flex-wrap:wrap;max-width:100%}#btn-export-pdf span{white-space:normal;overflow-wrap:anywhere;min-width:0}
 }
 @media(prefers-reduced-motion:reduce){.atlas-wind-tracer{animation:none!important;stroke-dasharray:14 18}}
 @media print{body{--bg:#fff;--surface:#fff;--ink:#111;--muted:#333;--line:#777;--accent:#111;--good:#111;--bad:#111;--warn:#111;background:#fff!important;color:#111!important}header,.atlas-footer,.atlas-event,.atlas-source-dialog,.no-print{display:none!important}#phase-setup,#phase-sim{display:none!important}#phase-audit{display:block!important;padding:0!important;max-width:none}#pdf-export-target{background:white!important;color:#111!important;border:0;padding:0!important}#pdf-export-target *{color:#111!important;background:transparent!important;box-shadow:none!important}#pdf-export-target .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#pdf-export-target p,#pdf-export-target .grid>div{break-inside:avoid}#audit-log-table>div{break-inside:avoid}#audit-log-table{font-size:10pt}a{text-decoration:none}}
@@ -842,33 +861,47 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   <!-- ===================================================================== -->
   <!-- PHASE 1: MANDATORY PRE-RUN HYPOTHESIS & CHARTER SETUP                 -->
   <!-- ===================================================================== -->
-  <main id="phase-setup" class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <main id="phase-setup" class="play-only flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
       <div class="border-b border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 1 • Predict & Outfit</span>
-          <h2 class="text-xl font-bold mt-1">Voyage Charter & Monsoon Strategy Hypothesis</h2>
+          <span class="student-only text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 1 • Predict & Outfit</span>
+          <h2 class="text-xl font-bold mt-1">Set up your voyage</h2>
           <p class="text-sm text-slate-400 mt-1">
-            Configure your hull archetype, capital tier, and quantitative profit target before departing on your 24-month campaign.
+            Choose a mode, starting port, ship, and difficulty for your 24-month campaign.
           </p>
         </div>
-        <span class="text-xs font-mono px-3 py-1 rounded-full bg-slate-950 border border-slate-700 text-slate-300">
+        <span class="student-only text-xs font-mono px-3 py-1 rounded-full bg-slate-950 border border-slate-700 text-slate-300">
           Predict → Simulate → Audit
         </span>
       </div>
 
-      <!-- Student Metadata -->
+      <fieldset class="mb-6">
+        <legend class="mb-2 text-sm font-semibold text-white">Game mode</legend>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-700 bg-slate-950 p-3 has-[:checked]:border-cyan-400">
+            <input type="radio" name="game-mode" value="play" checked onchange="selectGameMode(this.value)" class="mt-1 accent-cyan-400">
+            <span><strong class="block text-sm text-white">Play Only</strong><span class="text-xs text-slate-300">Launch without typing. See your voyage results at the end.</span></span>
+          </label>
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-700 bg-slate-950 p-3 has-[:checked]:border-cyan-400">
+            <input type="radio" name="game-mode" value="student" onchange="selectGameMode(this.value)" class="mt-1 accent-cyan-400">
+            <span><strong class="block text-sm text-white">Student Mode</strong><span class="text-xs text-slate-300">Enter your details and prediction. Reflect after the voyage to export the audit.</span></span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Student Metadata and starting port -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Full Name *</label>
+        <div class="student-only">
+          <label for="input-name" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Name *</label>
           <input id="input-name" type="text" placeholder="e.g., Niran Wattana" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500" />
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student ID *</label>
+        <div class="student-only">
+          <label for="input-id" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Student Number *</label>
           <input id="input-id" type="text" placeholder="e.g., KVIS-1042" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-500" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Home Port of Departure</label>
+          <label for="input-start-port" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Home Port of Departure</label>
           <select id="input-start-port" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500">
             <option value="calicut">Calicut (Malabar Coast — Central Hub)</option>
             <option value="aden">Aden (Red Sea — Western Gateway)</option>
@@ -960,7 +993,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
       </div>
 
       <!-- Target Profit & Hypothesis -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="student-only grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">3. Target Net Profit (Dirhams) *</label>
           <input id="input-target-profit" type="number" value="1200" min="100" step="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-amber-400 focus:outline-none focus:border-cyan-500" />
@@ -968,7 +1001,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
         </div>
         <div class="md:col-span-2">
           <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-semibold text-slate-300 uppercase">4. Pre-Run Monsoon Strategy Hypothesis (2–3 Sentences) *</label>
+            <label for="input-hypothesis" class="block text-xs font-semibold text-slate-300 uppercase">4. Pre-Voyage Prediction (2–3 Sentences) *</label>
             <span id="hyp-concept-badge" class="text-[11px] font-mono text-slate-500">Include vessel, cargo & monsoon timing</span>
           </div>
           <textarea id="input-hypothesis" oninput="checkHypothesisConcepts()" rows="3" placeholder="Explain how your chosen hull class (Dhow vs. Junk), bulk vs. luxury cargo payload, and seasonal monsoon timing (SW Jun–Sep vs. NE Nov–Feb) will achieve your target profit..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500"></textarea>
@@ -979,7 +1012,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
 
       <div class="flex flex-wrap items-center justify-between gap-4">
         <span class="text-[11px] font-mono text-slate-500">
-          CC BY-NC-SA 4.0 • Amnuayvit Thitibordin (KVIS) • Global History Curriculum
+          Amnuayvit Thitibordin (KVIS) · Thanakrit (collaborator) · <a href="https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md" class="underline" target="_blank" rel="noopener noreferrer">License</a> • Global History Curriculum
         </span>
         <button onclick="startSimulation()" class="px-6 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-cyan-500/20">
           Launch 24-Month Maritime Campaign →
@@ -1309,11 +1342,11 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   <!-- ===================================================================== -->
   <main id="phase-audit" class="hidden flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
     <!-- Post-Voyage Student Reflection Input (Captured into PDF Report) -->
-    <div class="no-print bg-slate-900 border border-cyan-500/40 rounded-xl p-5 shadow-lg space-y-3">
+    <div class="student-only no-print bg-slate-900 border border-cyan-500/40 rounded-xl p-5 shadow-lg space-y-3">
       <div class="flex items-center justify-between">
         <div>
           <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Phase 4 • Historical Synthesis & Audit</span>
-          <h3 class="text-base font-bold text-white">Post-Voyage Cause-and-Effect Reflection</h3>
+          <h3 class="text-base font-bold text-white"><label for="input-reflection">Post-Voyage Cause-and-Effect Reflection *</label></h3>
         </div>
         <span class="text-xs font-mono text-slate-400">Updates live on report below</span>
       </div>
@@ -1330,7 +1363,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
         <div>
           <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Global History • Week 3 Simulation Audit • KVIS</span>
           <h2 class="text-2xl font-bold text-white mt-1">Indian Ocean Maritime Voyage Ledger</h2>
-          <p id="audit-student-meta" class="text-sm text-slate-300 font-mono mt-1">Student: — | ID: —</p>
+          <p id="audit-student-meta" class="student-only text-sm text-slate-300 font-mono mt-1"></p>
         </div>
         <div class="text-right">
           <div id="audit-outcome-badge" class="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
@@ -1388,7 +1421,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
 
       <!-- Pre-Run Hypothesis & Post-Voyage Synthesis -->
       <p id="audit-crew" class="text-xs font-mono text-cyan-300"></p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="student-only grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-slate-950 border border-slate-800 rounded-lg p-4">
           <h3 class="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">Pre-Run Monsoon Strategy Hypothesis</h3>
           <p id="audit-hypothesis-text" class="text-xs sm:text-sm text-slate-200 italic leading-relaxed"></p>
@@ -1410,7 +1443,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
       </div>
 
       <div class="text-[10px] font-mono text-slate-500 border-t border-slate-800 pt-3 flex justify-between">
-        <span>CC BY-NC-SA 4.0 • Amnuayvit Thitibordin (KVIS)</span>
+        <span>Amnuayvit Thitibordin (KVIS) · Thanakrit (collaborator) · <a href="https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md" class="underline" target="_blank" rel="noopener noreferrer">License</a></span>
         <span id="audit-timestamp">Generated via Monsoon Navigator Engine</span>
       </div>
     </div>
@@ -1420,11 +1453,12 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
       <button onclick="location.reload()" class="px-4 py-2.5 rounded-lg border border-slate-700 hover:bg-slate-800 text-xs font-semibold text-slate-300 transition">
         ↺ Start New Voyage Campaign
       </button>
-      <div class="flex flex-wrap items-center gap-3">
-        <button onclick="window.print()" class="px-4 py-2.5 rounded-lg border border-slate-600 hover:bg-slate-800 text-xs font-mono font-semibold text-slate-200 transition">
+      <div class="student-only flex flex-wrap items-center gap-3">
+        <p id="reflection-requirement" class="basis-full text-xs text-amber-200">Enter at least 15 characters in your reflection to unlock print and PDF export.</p>
+        <button id="btn-print-audit" onclick="printStudentAudit()" disabled class="px-4 py-2.5 rounded-lg border border-slate-600 hover:bg-slate-800 disabled:opacity-40 text-xs font-mono font-semibold text-slate-200 transition">
           🖨️ Print / Save PDF Fallback
         </button>
-        <button id="btn-export-pdf" onclick="exportAuditPDF()" class="px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+        <button id="btn-export-pdf" onclick="exportAuditPDF()" disabled class="px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
           <span>📄 Export Audit PDF</span>
           <span id="pdf-filename-preview" class="font-mono text-xs opacity-85"></span>
         </button>
@@ -1694,6 +1728,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
     };
 
     let state = {
+      mode: "play",
       studentName: "",
       studentId: "",
       vesselKey: "dhow",
@@ -1783,16 +1818,23 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
       }
     }
 
+    function selectGameMode(mode) {
+      state.mode = mode;
+      document.getElementById("phase-setup").classList.toggle("play-only", mode === "play");
+      document.getElementById("setup-error").classList.add("hidden");
+    }
+
     function startSimulation() {
-      const name = document.getElementById("input-name").value.trim();
-      const id = document.getElementById("input-id").value.trim();
-      const target = parseInt(document.getElementById("input-target-profit").value, 10);
-      const hyp = document.getElementById("input-hypothesis").value.trim();
+      const student = state.mode === "student";
+      const name = student ? document.getElementById("input-name").value.trim() : "";
+      const id = student ? document.getElementById("input-id").value.trim() : "";
+      const target = student ? parseInt(document.getElementById("input-target-profit").value, 10) : state.targetProfit;
+      const hyp = student ? document.getElementById("input-hypothesis").value.trim() : "";
       const startPort = document.getElementById("input-start-port").value;
       const errBox = document.getElementById("setup-error");
 
-      if (!name || !id || isNaN(target) || target < 100 || hyp.length < 15) {
-        errBox.textContent = "Please complete Student Name, Student ID, a Target Net Profit of at least 100 D, and at least 1–2 sentences for your Monsoon Strategy Hypothesis.";
+      if (student && (!name || !id || isNaN(target) || target < 100 || hyp.length < 15)) {
+        errBox.textContent = "Enter your name, student number, a profit target of at least 100 D, and a pre-voyage prediction of at least 15 characters.";
         errBox.classList.remove("hidden");
         return;
       }
@@ -2379,9 +2421,21 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
     function syncReflection() {
       const val = document.getElementById("input-reflection").value.trim();
       state.reflection = val;
+      const ready = canExportStudentAudit();
+      document.getElementById("btn-export-pdf").disabled = !ready;
+      document.getElementById("btn-print-audit").disabled = !ready;
+      document.getElementById("reflection-requirement").classList.toggle("hidden", ready);
       document.getElementById("audit-reflection-text").textContent = val
         ? `"${val}"`
         : "(No post-voyage reflection entered yet — use the reflection box above before exporting.)";
+    }
+
+    function canExportStudentAudit() {
+      return state.mode === "student" && state.ended && state.reflection.length >= 15;
+    }
+
+    function printStudentAudit() {
+      if (canExportStudentAudit()) window.print();
     }
 
     function finishCampaign() {
@@ -2413,8 +2467,11 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
       document.getElementById("phase-sim").classList.add("hidden");
       document.getElementById("hud-bar").classList.add("hidden");
       document.getElementById("phase-audit").classList.remove("hidden");
+      document.getElementById("phase-audit").classList.toggle("play-only", state.mode === "play");
 
-      document.getElementById("audit-student-meta").textContent = `Student: ${state.studentName} | ID: ${state.studentId}`;
+      document.getElementById("audit-student-meta").textContent = state.mode === "student"
+        ? `Student: ${state.studentName} | Student no.: ${state.studentId}`
+        : "";
       document.getElementById("audit-crew").textContent = `Final crew health: ${state.crewHealth}% • Mutinies: ${state.mutinies}`;
       document.getElementById("audit-vessel-meta").textContent = `Vessel: ${VESSELS[state.vesselKey].name} | Tier: ${DIFFICULTIES[state.diffKey].name}`;
       document.getElementById("audit-start-cash").textContent = `${state.startEquity.toLocaleString()} D`;
@@ -2441,7 +2498,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
         badge.textContent = "PROFITABLE VOYAGE • BELOW TARGET";
         badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40";
       } else {
-        badge.textContent = "VENTURE DEFICIT • AUDIT REQUIRED";
+        badge.textContent = "VENTURE DEFICIT";
         badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40";
       }
 
@@ -2455,6 +2512,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
     }
 
     async function exportAuditPDF() {
+      if (!canExportStudentAudit()) return;
       const btn = document.getElementById("btn-export-pdf");
       const origHTML = btn.innerHTML;
       btn.disabled = true;
@@ -2501,7 +2559,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
       } catch (err) {
         window.print();
       } finally {
-        btn.disabled = false;
+        btn.disabled = !canExportStudentAudit();
         btn.innerHTML = origHTML;
       }
     }
@@ -2860,9 +2918,12 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   $('phase-setup').prepend(intro);
   const setup=$('phase-setup').lastElementChild;
   setup.querySelector('h2').textContent='Charter your voyage';
-  setup.querySelector('h2+p').textContent='Choose a vessel, set a target, and predict how your trading strategy will work.';
+  const setupLead=setup.querySelector('h2+p');
+  const isStudent=()=>(state.mode??'student')==='student';
+  const paintSetupLead=()=>{setupLead.textContent=isStudent()?'Choose a vessel, set a target, and predict how your trading strategy will work.':'Choose a mode, a starting port, a vessel and a difficulty.';};paintSetupLead();
+  if(typeof selectGameMode==='function'){const modeOriginal=selectGameMode;selectGameMode=function(mode){modeOriginal(mode);paintSetupLead();};}
   $('input-name').placeholder='Your name';$('input-id').placeholder='Your student ID';
-  document.querySelectorAll('label').forEach(label=>{const field=label.parentElement.querySelector('input,textarea,select');if(field&&!label.htmlFor)label.htmlFor=field.id;});
+  document.querySelectorAll('label').forEach(label=>{const field=label.parentElement.querySelector('input,textarea,select');if(field&&field.id&&!label.htmlFor)label.htmlFor=field.id;});
   $('input-reflection').setAttribute('aria-label','Post-voyage reflection');
   for(const key of ['dhow','junk']) {
     const card=$('card-'+key);card.setAttribute('role','radio');card.tabIndex=0;
@@ -2899,7 +2960,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   $('wind-comparison-heading').textContent='Now or another season?';
   const previewOriginal=previewClockMonth;previewClockMonth=function(...args){planner.open=true;previewOriginal(...args);};
   const eventCard=document.createElement('aside');eventCard.id='atlas-event';eventCard.className='atlas-event';eventCard.hidden=true;eventCard.setAttribute('aria-labelledby','atlas-event-title');
-  eventCard.innerHTML='<div class="atlas-eyebrow">From the voyage ledger</div><h3 id="atlas-event-title">Conditions changed</h3><p id="atlas-event-message"></p><ul id="atlas-event-consequences"></ul><p class="atlas-event-caption">First encounter with this event type. Later occurrences remain in the voyage log.</p><button type="button" id="atlas-event-close">Continue the voyage</button><a href="#voyage-log">Read the log</a>';
+  eventCard.innerHTML='<div class="atlas-eyebrow">From the voyage ledger</div><h3 id="atlas-event-title" tabindex="-1">Conditions changed</h3><p id="atlas-event-message"></p><ul id="atlas-event-consequences"></ul><p class="atlas-event-caption">First encounter with this event type. Later occurrences remain in the voyage log.</p><button type="button" id="atlas-event-close">Continue the voyage</button><a href="#voyage-log">Read the log</a>';
   departure.before(eventCard);
   const displayedTypes=new Set(),processedEntries=new Set();
   $('atlas-event-close').addEventListener('click',()=>{eventCard.hidden=true;});
@@ -2925,8 +2986,9 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   document.querySelectorAll('button').forEach(button=>{if(button.getAttribute('onclick')==="toggleModal('intel-modal')")button.textContent='Port price guide';if(button.getAttribute('onclick')==="toggleModal('physics-modal')")button.textContent='How sailing works';});
   const auditReport=$('pdf-export-target');auditReport.querySelector('h2').textContent='Voyage ledger';
   const prediction=$('audit-hypothesis-text').parentElement.parentElement;prediction.classList.add('atlas-audit-prediction');auditReport.querySelector('.grid').before(prediction);
-  const auditLead=document.createElement('section');auditLead.className='atlas-audit-lead';auditLead.innerHTML='<div class="atlas-eyebrow">Audit / prediction and evidence</div><h2>Your venture, reviewed.</h2><p id="atlas-audit-summary"></p><p>Compare your prediction with the ledger. Choose two dated entries that explain the result.</p>';auditReport.prepend(auditLead);
+  const auditLead=document.createElement('section');auditLead.className='atlas-audit-lead';auditLead.innerHTML='<div class="atlas-eyebrow">Audit / prediction and evidence</div><h2>Your venture, reviewed.</h2><p id="atlas-audit-summary"></p><p id="atlas-audit-prompt"></p>';auditReport.prepend(auditLead);
   $('audit-log-table').parentElement.querySelector('h3').textContent='Dated voyage evidence';
+  const exportNote=document.createElement('p');exportNote.id='atlas-export-note';exportNote.className='atlas-export-note';exportNote.textContent='Offline page: both buttons open your browser’s print dialog. Choose “Save as PDF” there to keep a file.';$('btn-export-pdf').parentElement.append(exportNote);
   const auditEvidence=$('audit-wind-ratio').parentElement.parentElement.parentElement;auditEvidence.querySelector('span').textContent='Voyage evidence';
 
   // Decorative atmospheric colour is confined to the scene. These strokes encode
@@ -2988,13 +3050,13 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
       const [voyage,effects]=entry.split(' | Events: ');$('atlas-event-message').textContent=voyage;
       $('atlas-event-consequences').innerHTML='';
       if(effects)for(const effect of effects.split('; ')){const item=document.createElement('li');item.textContent=effect;$('atlas-event-consequences').append(item);}
-      eventCard.hidden=false;break;
+      eventCard.hidden=false;$('atlas-event-title').focus();break;
     }
     document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');button.setAttribute('aria-label',`${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
     document.querySelectorAll('#market-tbody tr').forEach((row,index)=>{const item=COMMODITIES[index];row.dataset.good=item.id;row.style.setProperty('--material',goods[item.id][0]);});
   };
   const renderOriginal=renderAll;renderAll=function(){renderOriginal();paint();};
-  const finishOriginal=finishCampaign;finishCampaign=function(){finishOriginal();document.body.dataset.plate='audit';const profit=state.cash-state.startEquity;$('atlas-audit-summary').textContent=`Your venture finished with ${state.cash.toLocaleString()} D in cash: a net ${profit<0?'loss':'gain'} of ${Math.abs(profit).toLocaleString()} D against your ${state.targetProfit.toLocaleString()} D profit target.`;$('phase-audit').tabIndex=-1;$('phase-audit').focus();};
+  const finishOriginal=finishCampaign;finishCampaign=function(){finishOriginal();document.body.dataset.plate='audit';const profit=state.cash-state.startEquity;const result=`Your venture finished with ${state.cash.toLocaleString()} D in cash: a net ${profit<0?'loss':'gain'} of ${Math.abs(profit).toLocaleString()} D`;$('atlas-audit-summary').textContent=isStudent()?`${result} against your ${state.targetProfit.toLocaleString()} D profit target.`:`${result}.`;$('atlas-audit-prompt').textContent=isStudent()?'Compare your prediction with the ledger. Choose two dated entries that explain the result.':'Choose two dated entries in the ledger that explain the result.';$('phase-audit').tabIndex=-1;$('phase-audit').focus();};
   // Mark any inherited non-native overlay modal as a dialog, manage focus and Escape.
   const modalOriginal=toggleModal;let modalReturn=null;
   toggleModal=function(id){const element=$(id),opening=element.classList.contains('hidden');modalOriginal(id);if(opening){modalReturn=document.activeElement;element.setAttribute('role','dialog');element.setAttribute('aria-modal','true');element.setAttribute('aria-label',element.querySelector('h3')?.textContent||'Reference');element.querySelector('button')?.focus();}else modalReturn?.focus();};

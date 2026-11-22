@@ -43,9 +43,12 @@
   $('phase-setup').prepend(intro);
   const setup=$('phase-setup').lastElementChild;
   setup.querySelector('h2').textContent='Charter your voyage';
-  setup.querySelector('h2+p').textContent='Choose a vessel, set a target, and predict how your trading strategy will work.';
+  const setupLead=setup.querySelector('h2+p');
+  const isStudent=()=>(state.mode??'student')==='student';
+  const paintSetupLead=()=>{setupLead.textContent=isStudent()?'Choose a vessel, set a target, and predict how your trading strategy will work.':'Choose a mode, a starting port, a vessel and a difficulty.';};paintSetupLead();
+  if(typeof selectGameMode==='function'){const modeOriginal=selectGameMode;selectGameMode=function(mode){modeOriginal(mode);paintSetupLead();};}
   $('input-name').placeholder='Your name';$('input-id').placeholder='Your student ID';
-  document.querySelectorAll('label').forEach(label=>{const field=label.parentElement.querySelector('input,textarea,select');if(field&&!label.htmlFor)label.htmlFor=field.id;});
+  document.querySelectorAll('label').forEach(label=>{const field=label.parentElement.querySelector('input,textarea,select');if(field&&field.id&&!label.htmlFor)label.htmlFor=field.id;});
   $('input-reflection').setAttribute('aria-label','Post-voyage reflection');
   for(const key of ['dhow','junk']) {
     const card=$('card-'+key);card.setAttribute('role','radio');card.tabIndex=0;
@@ -82,7 +85,7 @@
   $('wind-comparison-heading').textContent='Now or another season?';
   const previewOriginal=previewClockMonth;previewClockMonth=function(...args){planner.open=true;previewOriginal(...args);};
   const eventCard=document.createElement('aside');eventCard.id='atlas-event';eventCard.className='atlas-event';eventCard.hidden=true;eventCard.setAttribute('aria-labelledby','atlas-event-title');
-  eventCard.innerHTML='<div class="atlas-eyebrow">From the voyage ledger</div><h3 id="atlas-event-title">Conditions changed</h3><p id="atlas-event-message"></p><ul id="atlas-event-consequences"></ul><p class="atlas-event-caption">First encounter with this event type. Later occurrences remain in the voyage log.</p><button type="button" id="atlas-event-close">Continue the voyage</button><a href="#voyage-log">Read the log</a>';
+  eventCard.innerHTML='<div class="atlas-eyebrow">From the voyage ledger</div><h3 id="atlas-event-title" tabindex="-1">Conditions changed</h3><p id="atlas-event-message"></p><ul id="atlas-event-consequences"></ul><p class="atlas-event-caption">First encounter with this event type. Later occurrences remain in the voyage log.</p><button type="button" id="atlas-event-close">Continue the voyage</button><a href="#voyage-log">Read the log</a>';
   departure.before(eventCard);
   const displayedTypes=new Set(),processedEntries=new Set();
   $('atlas-event-close').addEventListener('click',()=>{eventCard.hidden=true;});
@@ -108,8 +111,9 @@
   document.querySelectorAll('button').forEach(button=>{if(button.getAttribute('onclick')==="toggleModal('intel-modal')")button.textContent='Port price guide';if(button.getAttribute('onclick')==="toggleModal('physics-modal')")button.textContent='How sailing works';});
   const auditReport=$('pdf-export-target');auditReport.querySelector('h2').textContent='Voyage ledger';
   const prediction=$('audit-hypothesis-text').parentElement.parentElement;prediction.classList.add('atlas-audit-prediction');auditReport.querySelector('.grid').before(prediction);
-  const auditLead=document.createElement('section');auditLead.className='atlas-audit-lead';auditLead.innerHTML='<div class="atlas-eyebrow">Audit / prediction and evidence</div><h2>Your venture, reviewed.</h2><p id="atlas-audit-summary"></p><p>Compare your prediction with the ledger. Choose two dated entries that explain the result.</p>';auditReport.prepend(auditLead);
+  const auditLead=document.createElement('section');auditLead.className='atlas-audit-lead';auditLead.innerHTML='<div class="atlas-eyebrow">Audit / prediction and evidence</div><h2>Your venture, reviewed.</h2><p id="atlas-audit-summary"></p><p id="atlas-audit-prompt"></p>';auditReport.prepend(auditLead);
   $('audit-log-table').parentElement.querySelector('h3').textContent='Dated voyage evidence';
+  const exportNote=document.createElement('p');exportNote.id='atlas-export-note';exportNote.className='atlas-export-note';exportNote.textContent='Offline page: both buttons open your browser’s print dialog. Choose “Save as PDF” there to keep a file.';$('btn-export-pdf').parentElement.append(exportNote);
   const auditEvidence=$('audit-wind-ratio').parentElement.parentElement.parentElement;auditEvidence.querySelector('span').textContent='Voyage evidence';
 
   // Decorative atmospheric colour is confined to the scene. These strokes encode
@@ -171,13 +175,13 @@
       const [voyage,effects]=entry.split(' | Events: ');$('atlas-event-message').textContent=voyage;
       $('atlas-event-consequences').innerHTML='';
       if(effects)for(const effect of effects.split('; ')){const item=document.createElement('li');item.textContent=effect;$('atlas-event-consequences').append(item);}
-      eventCard.hidden=false;break;
+      eventCard.hidden=false;$('atlas-event-title').focus();break;
     }
     document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');button.setAttribute('aria-label',`${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
     document.querySelectorAll('#market-tbody tr').forEach((row,index)=>{const item=COMMODITIES[index];row.dataset.good=item.id;row.style.setProperty('--material',goods[item.id][0]);});
   };
   const renderOriginal=renderAll;renderAll=function(){renderOriginal();paint();};
-  const finishOriginal=finishCampaign;finishCampaign=function(){finishOriginal();document.body.dataset.plate='audit';const profit=state.cash-state.startEquity;$('atlas-audit-summary').textContent=`Your venture finished with ${state.cash.toLocaleString()} D in cash: a net ${profit<0?'loss':'gain'} of ${Math.abs(profit).toLocaleString()} D against your ${state.targetProfit.toLocaleString()} D profit target.`;$('phase-audit').tabIndex=-1;$('phase-audit').focus();};
+  const finishOriginal=finishCampaign;finishCampaign=function(){finishOriginal();document.body.dataset.plate='audit';const profit=state.cash-state.startEquity;const result=`Your venture finished with ${state.cash.toLocaleString()} D in cash: a net ${profit<0?'loss':'gain'} of ${Math.abs(profit).toLocaleString()} D`;$('atlas-audit-summary').textContent=isStudent()?`${result} against your ${state.targetProfit.toLocaleString()} D profit target.`:`${result}.`;$('atlas-audit-prompt').textContent=isStudent()?'Compare your prediction with the ledger. Choose two dated entries that explain the result.':'Choose two dated entries in the ledger that explain the result.';$('phase-audit').tabIndex=-1;$('phase-audit').focus();};
   // Mark any inherited non-native overlay modal as a dialog, manage focus and Escape.
   const modalOriginal=toggleModal;let modalReturn=null;
   toggleModal=function(id){const element=$(id),opening=element.classList.contains('hidden');modalOriginal(id);if(opening){modalReturn=document.activeElement;element.setAttribute('role','dialog');element.setAttribute('aria-modal','true');element.setAttribute('aria-label',element.querySelector('h3')?.textContent||'Reference');element.querySelector('button')?.focus();}else modalReturn?.focus();};
