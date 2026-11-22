@@ -80,3 +80,24 @@ The licence and credit wording still awaits the copyright holder's confirmation.
 - **Packaging test:** it also reads `setAttribute('href'|'src', …)`, template-literal assignments and CSS `@import`, and it fails on twelve plants. Values assembled at run time are not checked; the test title now says "static".
 
 - **Copyright holder's approval (2026-11-22):** the credit wording is approved, so the footer no longer carries the "pending" label.
+
+### Live-page review, presentation fixes (2026-11-22)
+
+These are display-only changes; the engine script is still copied verbatim.
+- **A1:** the hold bar draws its fill against a visible track.
+- **A2:** the map key reads "Game wind (one wind for the whole map)".
+- **A3:** the price dialog is labelled "Game prices (not historical)", priced in dirhams per game lot.
+- **A4:** the glossary's monsoon link points to National Geographic Education's "Monsoon" page, which covers the Indian Ocean monsoon; the sailing dialog gives full references for Chaudhuri (Cambridge University Press, 1985) and Abu-Lughod (Oxford University Press), with DOIs taken from Crossref.
+- **A5:** keyboard focus stays on the trade button after buying or selling. After a sail or wait with no event report, focus goes to "Choose your next port".
+- **A6:** on phones the map labels are about 14 px, the route label box and the in-map clock are hidden (the month planner shows the same information), and the header is shorter.
+- **A7:** the Play Only audit shows no goal or target verdict.
+- **A8:** a double click sails or waits only once.
+- **A9:** a new voyage opens at the top of the page, and the audit opens at its top.
+- **A10:** the selected route follows its curved sea lane, and the map is captioned "not to scale".
+- **A11:** land is at least 3:1 against the sea in every season, and port labels have a halo.
+- **A12:** the clock's season wedges are distinct and labelled NE and SW, and the comparison month is pink on the clock as in the month row.
+- **A13:** the commodity colours use an Okabe–Ito-based palette (CIEDE2000 minimum 16.6 in normal vision), and the hold lists loaded cargo in text.
+- **A14:** on narrow screens the market sits directly after "Sail or stay".
+- **A16:** the chosen game mode is outlined, keyboard focus previews a route, difficulty focus differs from selection, the plain headings replace the jargon, the wind badge reads "blowing toward SW, 225°", there is a ▲/▼ legend, and the dark theme reaches the trade panels.
+- **A17:** "a composite period" in the header; "Investor loan … (a game rule)"; "Chinese ocean-going junk" on the ship card and in the audit vessel line; the navigator card drops the kamal claim; the sailing dialog drops "flex over coral reefs"; the Sources dialog says port stories are fictional scenes.
+- The "Classic version" link is removed, because the KVIS site no longer has classic.html.

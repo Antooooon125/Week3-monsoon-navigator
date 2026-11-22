@@ -183,7 +183,9 @@ test('one print action, credits and drawing provenance as resolved for the KVIS 
   assert.match(game.elements.get('atlas-export-note').textContent,/print dialog/);
   game.run('startSimulation()');
   assert.match(game.elements.get('ship-credit').textContent,/^Schematic illustration; reference photograph: /);
-  assert.match(prototype,/<a id="atlas-classic-link" href="classic\.html">Classic version<\/a>/);
+  // classic.html was removed from the KVIS site on 2026-11-22, so the page no longer links it.
+  assert.doesNotMatch(prototype,/atlas-classic-link|classic\.html/);
+  assert.match(prototype,/>Original source<\/a>/);
   assert.doesNotMatch(prototype,/pending the copyright holder/);
   assert.match(prototype,/Collaborator: Guntitat Sawadwuthikul/);
 });
