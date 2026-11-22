@@ -118,3 +118,9 @@ The weights are tons per purchase unit in the game. Use the readings to compare 
 | **Black pepper** | 2 tons, semi-bulk in the marketplace. | Read the historical Calicut sources for pepper cultivation and trade. [UC Davis History–Social Science Project, *Sites of Encounter: Calicut*](https://chssp.ucdavis.edu/sites/g/files/dgvnsk8426/files/inline-files/Calicut.pdf) |
 | **Moluccan cloves** | 1 ton, luxury. Carrying cloves raises piracy risk in the game. | Learn why the Maluku Islands matter to the history of cloves. Find Maluku and Malacca on a map, then explain the difference between a place of production and a market. [Kew, *Syzygium aromaticum*](https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:601421-1/general-information) |
 | **East African ivory** | 3 tons, luxury. Carrying ivory raises piracy risk in the game. | Trace the historic trade from the East African hinterland through a Swahili port. [UNESCO, *Kilwa Kisiwani and Songo Mnara*](https://whc.unesco.org/en/list/144/) |
+
+## Playable atlas prototype
+
+Open [prototype.html](prototype.html) for **An Atlas of Moving Worlds**, the offline visual prototype. It preserves the original game engine and adds the editorial opening, seasonal map/calendar, commodity plates, event reports and print ledger. The default index.html remains the original game.
+
+See [prototype notes](docs/prototype.md) for development, font licences, validation and known limitations.
