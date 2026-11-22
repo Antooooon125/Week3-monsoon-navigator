@@ -35,7 +35,7 @@ CONTRIBUTING.md reserves two decisions to the **repository owner**: agreement be
 - Review findings (RV IDs, and rows from a PR review) use only the disposition values in docs/review-process.md (`open`, `addressed_awaiting_review`, and so on).
 - Classroom defects (D and F rows) keep the status column of docs/baseline.md §4.
 - docs/open-findings.md mirrors whichever applies, without inventing a third vocabulary.
-- GitHub issues (such as the licence question) are the one exception: they are described in plain words, because they aren't findings in either family.
+- GitHub issues are the one exception: they are described in plain words, because they aren't findings in either family.
 
 ## Where information belongs
 
@@ -50,7 +50,7 @@ CONTRIBUTING.md reserves two decisions to the **repository owner**: agreement be
 - **Protected engine.** Do not change a constant or function listed in docs/baseline.md §2 without the owner's agreement first, as CONTRIBUTING.md requires.
   - A presentation PR keeps the baseline check at MATCH.
   - A bug-fix PR names the defect, shows behaviour before and after, and updates the defect's row.
-- **Line endings.** `index.html` is stored with mixed line endings, and `.gitattributes` exempts it from normalisation. Do not normalise it except in its own reviewed PR, because doing so rewrites 2,129 of its 2,142 lines and hides real changes.
+- **Line endings.** All text files, `index.html` included, are stored with LF, and `.gitattributes` keeps them that way. Don't commit CRLF line endings: a whole-file line-ending change rewrites every line and hides real changes.
 - **Tests.** Never weaken a test, fixture, claim status or expected result to make a check pass. If an approved change moves the baseline, say why and update every affected test and document.
 - **Kinds of evidence.** Keep historical observation, navigational advice, modern climatology, reconstruction, interpretation, game assumption and model result separate. Label simulated days, costs, odds and winds as game values, and do not give unsupported numbers an air of precision.
 - **Reading.** Finding, downloading or summarising a source is not reading it. Record the depth actually read, the locator, the date and the limitations. Never invent a quotation, identifier, date, page or citation.
@@ -62,7 +62,7 @@ CONTRIBUTING.md reserves two decisions to the **repository owner**: agreement be
   - A shared seed is not a shared set of random events.
 - **Review.** An author alone does not verify a fix. A reviewer works from the pinned revision, reruns the reproduction or re-reads the source, and says what is still uncertain. See [docs/review-process.md](docs/review-process.md).
 - **Privacy.** Never commit real student names, IDs, identifiable screenshots, reports, private communications, unpublished class work or credentials. Use fictional names in fixtures, screenshots and exported PDFs.
-- **Credit and licences.** Keep creator credit and asset provenance. The licence question in docs/baseline.md §6 and [issue #4](https://github.com/Antooooon125/Week3-monsoon-navigator/issues/4) is unresolved, so do not copy files from CC BY-NC-SA projects. Do not commit restricted PDFs, full copyrighted texts or unapproved third-party assets.
+- **Credit and licences.** The project licence is in [LICENSE.md](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md): CC BY-NC-SA 4.0 with a Commercial Derivative Exception, set by the owner in `ba2f279`. Keep creator credit and asset provenance. Before copying files from another project, record their source and licence, and check that they are compatible. The Commercial Derivative Exception covers only rights the copyright holder can grant, so it does not extend to material copied from other projects (Frost & Silver included). Do not commit restricted PDFs, full copyrighted texts or unapproved third-party assets.
 - **Visual honesty.** Accessibility (stable meaning, contrast, keyboard use, reduced motion) comes before ornament. A wind field or colour effect is illustrative unless it comes from a documented data source, and must be labelled that way. Follow the approved design documents once they are committed.
 - **Cost and permissions.**
   - Prefer small checks that anyone can run locally.

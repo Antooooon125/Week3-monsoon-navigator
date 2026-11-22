@@ -16,7 +16,7 @@ This handoff supplements, rather than replaces, the existing [`docs/research-dir
 
 The governing documents are `CONTRIBUTING.md` and `docs/baseline.md`. CONTRIBUTING.md reserves engine changes and licensing to the owner. Graduation of research into the classroom game already needs owner approval under the tracker's R8. This handoff proposes that publication should too. The externally approved art direction can proceed as a separate presentation track. The previously drafted design documents are not yet present at the inspected revision.
 
-**Licensing boundary:** the existing repository MIT license and the game's CC BY-NC-SA 4.0 attribution remain unresolved as a scope question. Until the maintainer resolves it, write original implementations and instructions; do not copy files from Frost & Silver or other CC BY-NC-SA projects. Preserve credits, do not assign new licenses or assume a new license applies to third-party material. This document is original guidance, not a transplant of another repository's instructions.
+**Licensing boundary (updated after `ba2f279`):** the owner has set the project licence in [LICENSE.md](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/main/LICENSE.md): CC BY-NC-SA 4.0 with a Commercial Derivative Exception. Issue #4 is still open. Preserve credits and record the source and licence of anything copied from another project. The Commercial Derivative Exception does not extend to material the copyright holder doesn't own, which includes Frost & Silver. When this handoff was written the question was unresolved, and it advised writing original implementations only.
 
 ## 2. Verified checkpoint
 
@@ -229,7 +229,7 @@ PR contract: the committed [.github/pull_request_template.md](../.github/pull_re
 
 **Implementation note (`infra/agent-governance`, 2026-11-22).** This PR adds AGENTS.md, CLAUDE.md, `.gitattributes`, `.gitignore`, the PR template, docs/review-process.md, docs/open-findings.md and this file.
 
-- **`.gitattributes` exempts the root `/index.html`.** It is stored with mixed line endings. A blanket `text=auto eol=lf` would mark the protected file for a full rewrite, so normalising it is left to its own reviewed PR. The other text files are already stored with LF, so the rule changes none of them.
+- **`.gitattributes` line endings.** As first committed, `.gitattributes` exempted the root `/index.html`, which was then stored with mixed line endings. The owner's commits after `b607af9` converted `index.html` to LF, so the exemption was removed after merging `main` into this branch. With the rule as committed, `git add --renormalize .` changes no tracked file.
 - **`.gitignore` covers exported audit PDFs** (`*_Week_3*.pdf`, which includes browser duplicates such as `… (1).pdf`), because they can carry student names.
 - **Not yet done:**
   - CI (R5).
