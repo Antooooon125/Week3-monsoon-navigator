@@ -1,0 +1,18 @@
+# Text files are stored with LF line endings.
+* text=auto eol=lf
+
+# Binary assets
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.webp binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+
+# index.html is stored with mixed line endings (CRLF with some LF lines).
+# Normalising it would rewrite every line of the protected classroom file and
+# hide real changes in the diff. Leave it as stored until a separate,
+# reviewed PR normalises it on its own.
+index.html -text
