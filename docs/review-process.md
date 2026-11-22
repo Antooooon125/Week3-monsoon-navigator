@@ -8,7 +8,7 @@ How a finding goes from "someone noticed something" to "independently checked". 
 2. **Investigate independently.** The reviewer gets the pinned revision, the relevant sources and the reproduction steps, not just the author's summary.
 3. **Reproduce or re-read.** Rerun the check or the reproduction, or re-read the source at the cited locator.
 4. **Propose.** The author proposes a correction, or explains why none is needed.
-5. **Decide.** The owner decides trade-offs the reviewer and author can't settle, such as mechanics, licence or scope.
+5. **Decide.** The owner decides what CONTRIBUTING.md reserves to them, which is mechanics and licence. Disagreements the reviewer and author can't settle also go to the owner.
 6. **Re-check.** Someone other than the author confirms the correction against the pinned revision.
 7. **Guard.** Where it makes sense, add a test or check that fails on the original defect, and show that it fails.
 

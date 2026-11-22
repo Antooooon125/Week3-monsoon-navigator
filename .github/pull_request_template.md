@@ -2,7 +2,7 @@
 
 ## Kind of change and IDs
 
-<!-- Presentation / bug fix / mechanics / evidence / research / licence. Defect, milestone or experiment IDs (D.., F.., R.., M.., Q..). -->
+<!-- Presentation / bug fix / mechanics / evidence / research / licence. IDs from the families in AGENTS.md: D.., F.., R.., M.., P.., Q.., RVnn-mm. -->
 
 ## Protected engine
 
@@ -18,7 +18,7 @@
 - Baseline check result line (`tools/baseline-check.html`):
 - Other checks actually run, with output:
 - Failure case tried, where relevant:
-- Phone, desktop and print checked, if anything visible changed (fictional student details only):
+- If anything visible changed: before and after screenshots at phone and desktop widths, and print checked (fictional student details only):
 
 ## Not checked, and known limits
 

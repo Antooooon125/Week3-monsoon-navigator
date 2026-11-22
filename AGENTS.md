@@ -28,10 +28,13 @@ CONTRIBUTING.md reserves two decisions to the **repository owner**: agreement be
 | Tickets | Q01–Q10 | the same tracker | The first work queue |
 | Classroom defects | D01–D13, F01–F04 | docs/baseline.md §4 | Known defects (D) and fixed ones (F) |
 | Review findings | RVnn-mm | docs/review-process.md | New findings from a numbered review; reuse a D or F ID when it's the same defect |
-| Infrastructure checklist | I01–I10 | docs/repository-infrastructure-handoff.md §13 | A checklist of infrastructure items. Not a status board: record progress in the tracker |
+| Infrastructure checklist | I01–I10 | docs/repository-infrastructure-handoff.md §13 | A checklist of infrastructure items. Their state lives only in the handoff's dated snapshot. It is not a status board, and the tracker has no infrastructure rows to mirror it |
 | Verification layers | L0–L5 | docs/repository-infrastructure-handoff.md §8 | Kinds of test (syntax, deterministic, accounting, stochastic, research, pedagogy). Not milestones |
 
-The disposition values in docs/review-process.md (`open`, `addressed_awaiting_review`, and so on) are the only finding statuses.
+**Statuses follow the family:**
+- Review findings (RV IDs, and rows from a PR review) use only the disposition values in docs/review-process.md (`open`, `addressed_awaiting_review`, and so on).
+- Classroom defects (D and F rows) keep the status column of docs/baseline.md §4.
+- docs/open-findings.md mirrors whichever applies, without inventing a third vocabulary.
 
 ## Where information belongs
 

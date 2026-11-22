@@ -4,7 +4,7 @@
 **Status:** Proposed implementation handoff; not authorization to modify the engine or repository.  
 **Audit date:** 2026-11-22 (KST)  
 **Inspected revision:** [`b607af9dce751bae56528655a65afc362e21d8c7`](https://github.com/Antooooon125/Week3-monsoon-navigator/commit/b607af9dce751bae56528655a65afc362e21d8c7)  
-**Committed:** in PR #5 (`infra/agent-governance`), together with the first infrastructure files. The implementation note in section 13, under "First PR", records what that PR added and how it departs from this proposal.
+**Committed:** in PR #5 (`infra/agent-governance`), together with the first infrastructure files. The implementation note in section 13, under "First PR", records what that PR added.
 
 ## 1. Purpose and boundaries
 
@@ -14,7 +14,7 @@ Build the infrastructure that allows historical claims, observations, computatio
 
 This handoff supplements, rather than replaces, the existing [`docs/research-directions-and-milestones.md`](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/b607af9dce751bae56528655a65afc362e21d8c7/docs/research-directions-and-milestones.md). Keep R0–R8, M1–M6, P01–P08 and Q01–Q10 as defined there; do not create a competing research milestone taxonomy. Infrastructure items below use I01–I10 solely as checklist identifiers.
 
-The governing documents are `CONTRIBUTING.md` and `docs/baseline.md`. The repository maintainer decides on engine changes, licensing, publication and graduation of research into the classroom game. The approved art direction can proceed as a separate presentation track. The previously drafted design documents are not yet present at the inspected revision.
+The governing documents are `CONTRIBUTING.md` and `docs/baseline.md`. CONTRIBUTING.md reserves engine changes and licensing to the owner. This handoff proposes that publication and graduation of research into the classroom game are also the owner's decisions. The externally approved art direction can proceed as a separate presentation track. The previously drafted design documents are not yet present at the inspected revision.
 
 **Licensing boundary:** the existing repository MIT license and the game's CC BY-NC-SA 4.0 attribution remain unresolved as a scope question. Until the maintainer resolves it, write original implementations and instructions; do not copy files from Frost & Silver or other CC BY-NC-SA projects. Preserve credits, do not assign new licenses or assume a new license applies to third-party material. This document is original guidance, not a transplant of another repository's instructions.
 
@@ -33,7 +33,7 @@ Repository tree and recent commits were inspected during the preceding audit. No
 | `tests/fixtures/baseline-transit.json` | Present: 480 deterministic transit cases |
 | `tools/baseline-check.html`, `tools/baseline-harness.js` | Present: browser comparison and exploratory strategy harness |
 | Agent instructions, review protocol, CI, dependency lock, evidence registries, observation schemas | Not present in inspected tree |
-| Approved art direction, design system and visual refactor plan | Drafted separately; not committed at inspected revision |
+| Art direction (approved externally), design system and visual refactor plan | Drafted separately; not committed at inspected revision |
 
 The baseline pins classroom engine revision `111acdc72821a259b679d2c6f5e7afa44630e2a5`. The current repository head is different because documentation and harness work followed. Do not confuse repository head with the engine baseline revision.
 
@@ -81,7 +81,7 @@ Do not repeat constants, claim statuses or milestone state in multiple independe
 
 The agent contract is the root [AGENTS.md](../AGENTS.md). It is the only operational version, and it is subordinate to CONTRIBUTING.md. [CLAUDE.md](../CLAUDE.md) imports it.
 
-This section used to hold the full ready-to-use draft. It was removed so the repository doesn't carry two operational copies of the contract that could drift apart. The draft is preserved at [commit `bed26b0`, section 5](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/bed26b0c89f3dbc2b4b6aa2cfa0b97bf4a1461be/docs/repository-infrastructure-handoff.md#5-proposed-root-agentsmd-ready-to-use-draft). The root file departs from it in several ways, including terminology, the ID families, every-PR checks, line endings and design wording. The independent review of PR #5 lists the differences, and `git diff` against that commit shows them exactly.
+This section used to hold the full ready-to-use draft. It was removed so the repository doesn't carry two operational copies of the contract that could drift apart. The draft is preserved at [commit `bed26b0`, section 5](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/bed26b0c89f3dbc2b4b6aa2cfa0b97bf4a1461be/docs/repository-infrastructure-handoff.md#5-proposed-root-agentsmd-ready-to-use-draft). The differences between that draft and the root file are not listed anywhere. To see them, compare §5 of the pinned file with the root AGENTS.md side by side. A `git diff` between commits won't show them, because the root file already differed from the draft when it was first committed.
 
 Merge PR #5 with a merge commit, not a squash, so `bed26b0` stays in `main`'s history and the link stays stable.
 
@@ -202,15 +202,15 @@ Store dated handoffs under `docs/handoffs/` only when useful. Keep milestone sta
 
 ## 13. Infrastructure implementation tracker
 
-**Dated snapshot: 2026-11-22, after PR #5's review follow-up, before merge.** I01–I10 are infrastructure checklist IDs (AGENTS.md, "ID families"). This table is a checklist, not a status board: the milestone tracker owns status. All open items are proposed, and completion requires an evidence link and the relevant gate. Do not fill a repository with empty directories just to match this layout.
+**Dated snapshot: 2026-11-22, after PR #5's review follow-up, before merge.** I01–I10 are infrastructure checklist IDs (AGENTS.md, "ID families"). This table is a checklist, not a status board. The "State at snapshot" column describes this date only. The tracker has no infrastructure rows, so these states are not mirrored there, and finding dispositions (`addressed_awaiting_review` and so on) are not used for I-items. All open items are proposed, and completion requires an evidence link and the relevant gate. Do not fill a repository with empty directories just to match this layout.
 
-| ID | Priority | Infrastructure | Milestone alignment | Status | Acceptance gate |
+| ID | Priority | Infrastructure | Milestone alignment | State at snapshot | Acceptance gate |
 |---|---|---|---|---|---|
-| I01 | P0 | Agent governance | R1 | In PR #5, addressed awaiting review | Original AGENTS.md and CLAUDE.md consistent with existing contribution rules |
-| I02 | P0 | Hygiene and PR contract | R1 | In PR #5, addressed awaiting review | Ignore rules, text conventions, PR template; no engine changes |
+| I01 | P0 | Agent governance | None: governance, not a tracker milestone | Delivered by PR #5 (open; re-verification and owner approval pending) | Original AGENTS.md and CLAUDE.md consistent with existing contribution rules |
+| I02 | P0 | Hygiene and PR contract | None: governance, not a tracker milestone | Delivered by PR #5 (open; re-verification and owner approval pending) | Ignore rules, text conventions, PR template; no engine changes |
 | I03 | P0 | Evidence infrastructure | R1–R2 | Open | Source/claim/asset example records, bibliography, validator and fail/pass fixtures |
 | I04 | P0 | Regression and CI | R5 | Partial | Existing transit fixture retained; new arithmetic, hazards, audit and validation checks with bounded CI |
-| I05 | P0 | Independent review | R2–R5 | Partial: procedure and index in PR #5; no independently verified disposition yet | Review procedure, open-findings index and first independently verified disposition |
+| I05 | P0 | Independent review | R2–R5 | Partial: procedure and index in PR #5; nothing independently verified fixed under it yet | Review procedure, open-findings index and first independently verified disposition |
 | I06 | P1 | Observation data architecture | R3–R4 | Open | Pilot schemas + sourced records + deterministic export + integrity checks |
 | I07 | P1 | Design infrastructure | Parallel visual track | Drafts only | Approved docs committed; semantic/layout tests and asset provenance |
 | I08 | P0 before publication | Privacy, citations and licenses | Before release/data reuse | Open | Student-data safeguards verified; owner-approved attribution and license scope |
@@ -223,25 +223,7 @@ I04 is partial solely because R0 transit and the exploratory harness exist. I08 
 
 **Allowed scope:** new original root `AGENTS.md`, `CLAUDE.md`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `docs/review-process.md`, minimal `docs/open-findings.md`, and small navigational links in existing documentation if needed. The draft formerly in section 5 is preserved at the pinned link there. Keep the first PR narrow: no historical new claims, no license edits, no protected engine changes, no research outputs masquerading as validation.
 
-Suggested PR contract:
-
-```markdown
-## What changed / why
-## Scope and milestone or defect IDs
-## Protected engine and teaching contract
-- [ ] No protected mechanics changed, or prior maintainer approval linked.
-## Evidence and provenance
-- Source IDs / access / exact locators (or none):
-- Asset and data permissions (or none):
-## Validation
-- Baseline MATCH/MISMATCH and exact output:
-- Other checks actually executed:
-- Negative or regression case where applicable:
-- Phone/desktop and print checks if visible changes:
-## Known limits / checks not run
-## AI assistance and independent verification
-## Owner decisions still required
-```
+PR contract: the committed [.github/pull_request_template.md](../.github/pull_request_template.md) is the only version. The suggested contract this section originally held is preserved at [commit `bed26b0`](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/bed26b0c89f3dbc2b4b6aa2cfa0b97bf4a1461be/docs/repository-infrastructure-handoff.md).
 
 **Acceptance:** original instructions match `CONTRIBUTING.md`; existing baseline and 480-row transit fixture untouched; run browser baseline check and record output; links resolve; new docs do not claim absent tools are operational; no private data/restricted assets, license changes or unapproved engine changes. A documentation-only PR does not need to run a full economy sweep. Record any inability to execute verification clearly. Do not merge without maintainer authorization.
 
@@ -254,7 +236,10 @@ Suggested PR contract:
   - The student-data policy (I08).
   - `reviews/`, until the first review exists.
 - **I05** is partial: the procedure and index exist, but no independently verified disposition does yet.
-- **Review follow-up.** An independent fresh-agent review of `bed26b0` returned *approve with changes*: 3 medium and 11 low findings. A single follow-up commit addresses all 14. They are `addressed_awaiting_review` until someone other than the author re-checks them.
+- **Review follow-up.**
+  - **First review.** An independent fresh-agent review of `bed26b0` returned *approve with changes*: 3 medium and 11 low findings. Follow-up `3b59103` addressed all 14.
+  - **Re-verification.** A second fresh agent re-verified `3b59103`: 12 findings `verified_fixed` and 2 fixed with a new issue. It raised four new findings, N1–N4.
+  - **Second follow-up.** The next commit addresses N1–N4. They are `addressed_awaiting_review`.
 
 ### Follow-on PRs
 
