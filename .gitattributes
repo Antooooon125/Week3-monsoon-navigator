@@ -16,7 +16,7 @@
 *.woff2 binary
 
 # The root index.html is stored with mixed line endings (CRLF with some LF
-# lines). Normalising it would rewrite every line of the protected classroom
+# lines). Normalising it would rewrite 2,129 of the 2,142 lines of the protected classroom
 # file and hide real changes in the diff. Leave it as stored until a
 # separate, reviewed PR normalises it on its own. The leading slash limits
 # this exemption to the root file, not any index.html elsewhere.

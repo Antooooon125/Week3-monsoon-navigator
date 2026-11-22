@@ -14,7 +14,7 @@ Build the infrastructure that allows historical claims, observations, computatio
 
 This handoff supplements, rather than replaces, the existing [`docs/research-directions-and-milestones.md`](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/b607af9dce751bae56528655a65afc362e21d8c7/docs/research-directions-and-milestones.md). Keep R0–R8, M1–M6, P01–P08 and Q01–Q10 as defined there; do not create a competing research milestone taxonomy. Infrastructure items below use I01–I10 solely as checklist identifiers.
 
-The governing documents are `CONTRIBUTING.md` and `docs/baseline.md`. CONTRIBUTING.md reserves engine changes and licensing to the owner. This handoff proposes that publication and graduation of research into the classroom game are also the owner's decisions. The externally approved art direction can proceed as a separate presentation track. The previously drafted design documents are not yet present at the inspected revision.
+The governing documents are `CONTRIBUTING.md` and `docs/baseline.md`. CONTRIBUTING.md reserves engine changes and licensing to the owner. Graduation of research into the classroom game already needs owner approval under the tracker's R8. This handoff proposes that publication should too. The externally approved art direction can proceed as a separate presentation track. The previously drafted design documents are not yet present at the inspected revision.
 
 **Licensing boundary:** the existing repository MIT license and the game's CC BY-NC-SA 4.0 attribution remain unresolved as a scope question. Until the maintainer resolves it, write original implementations and instructions; do not copy files from Frost & Silver or other CC BY-NC-SA projects. Preserve credits, do not assign new licenses or assume a new license applies to third-party material. This document is original guidance, not a transplant of another repository's instructions.
 
@@ -223,7 +223,7 @@ I04 is partial solely because R0 transit and the exploratory harness exist. I08 
 
 **Allowed scope:** new original root `AGENTS.md`, `CLAUDE.md`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `docs/review-process.md`, minimal `docs/open-findings.md`, and small navigational links in existing documentation if needed. The draft formerly in section 5 is preserved at the pinned link there. Keep the first PR narrow: no historical new claims, no license edits, no protected engine changes, no research outputs masquerading as validation.
 
-PR contract: the committed [.github/pull_request_template.md](../.github/pull_request_template.md) is the only version. The suggested contract this section originally held is preserved at [commit `bed26b0`](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/bed26b0c89f3dbc2b4b6aa2cfa0b97bf4a1461be/docs/repository-infrastructure-handoff.md).
+PR contract: the committed [.github/pull_request_template.md](../.github/pull_request_template.md) is the only version. The suggested contract this section originally held is preserved at [commit `bed26b0`, "Next PR"](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/bed26b0c89f3dbc2b4b6aa2cfa0b97bf4a1461be/docs/repository-infrastructure-handoff.md#next-pr--infraagent-governance).
 
 **Acceptance:** original instructions match `CONTRIBUTING.md`; existing baseline and 480-row transit fixture untouched; run browser baseline check and record output; links resolve; new docs do not claim absent tools are operational; no private data/restricted assets, license changes or unapproved engine changes. A documentation-only PR does not need to run a full economy sweep. Record any inability to execute verification clearly. Do not merge without maintainer authorization.
 
@@ -235,11 +235,11 @@ PR contract: the committed [.github/pull_request_template.md](../.github/pull_re
   - CI (R5).
   - The student-data policy (I08).
   - `reviews/`, until the first review exists.
-- **I05** is partial: the procedure and index exist, but no independently verified disposition does yet.
+- **I05** is partial: the procedure and index exist, but nothing has yet been verified fixed *under this process*. The PR #5 reviews below came before the process existed.
 - **Review follow-up.**
   - **First review.** An independent fresh-agent review of `bed26b0` returned *approve with changes*: 3 medium and 11 low findings. Follow-up `3b59103` addressed all 14.
-  - **Re-verification.** A second fresh agent re-verified `3b59103`: 12 findings `verified_fixed` and 2 fixed with a new issue. It raised four new findings, N1–N4.
-  - **Second follow-up.** The next commit addresses N1–N4. They are `addressed_awaiting_review`.
+  - **Re-verification.** A second fresh agent re-verified `3b59103`: 12 findings `verified_fixed` and 2 `partial` (findings 2 and 12, each with a new issue: N1 and N2). It raised four new findings, N1–N4.
+  - **Second follow-up and third pass.** Commit `266aeb7` addressed N1–N4. A third fresh agent re-verified `266aeb7` and found N1–N4 `verified_fixed`, with every earlier fix still holding. The next commit is wording and status only; its own changes are `addressed_awaiting_review`.
 
 ### Follow-on PRs
 

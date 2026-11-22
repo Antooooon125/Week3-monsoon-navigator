@@ -2,7 +2,7 @@
 
 ## Kind of change and IDs
 
-<!-- Presentation / bug fix / mechanics / evidence / research / licence. IDs from the families in AGENTS.md: D.., F.., R.., M.., P.., Q.., RVnn-mm. -->
+<!-- Presentation / bug fix / mechanics or parameters / historical claims and sources / research / licence and attribution. IDs from the families in AGENTS.md: D.., F.., R.., M.., P.., Q.., RVnn-mm. -->
 
 ## Protected engine
 
