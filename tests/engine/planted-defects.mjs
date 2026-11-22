@@ -62,6 +62,11 @@ const PLANTS = [
   ["sail", "arrival standing capped at 50", "state.diaspora[destId] = Math.min(100, (state.diaspora[destId] || 0) + 5);", "state.diaspora[destId] = Math.min(50, (state.diaspora[destId] || 0) + 5);", /arrival raises/],
   ["settlement", "audit wind ratio swapped", "`${state.stats.goodWinds} Tailwind / ${state.stats.badWinds} Adverse", "`${state.stats.badWinds} Tailwind / ${state.stats.goodWinds} Adverse", /audit tallies/],
   ["settlement", "freight tally drops luxury tonnage", "state.stats.luxuryTonsShipped += luxury;", "state.stats.luxuryTonsShipped += 0;", /audit tallies/],
+  // Added after the re-verification of 7e67126.
+  ["settlement", "bankruptcy threshold −250 → −260", "state.cash < -250", "state.cash < -260", /−250 continues, −251 ends/],
+  ["sail", "headwind hull floor 5 → 0", /Math\.max\(5, state\.hull - dmg\);(\s*eventNotes\.push\(`Fought)/g, "Math.max(0, state.hull - dmg);$1", /floors: hull never drops below 5/],
+  ["sail", "storm hull floor 5 → 0", /Math\.max\(5, state\.hull - dmg\);(\s*eventNotes\.push\(`Struck)/g, "Math.max(0, state.hull - dmg);$1", /floors: hull never drops below 5/],
+  ["sail", "crew health not floored at 0", "state.crewHealth = Math.max(0, state.crewHealth - crewHealthLoss);", "state.crewHealth = state.crewHealth - crewHealthLoss;", /floors: hull never drops below 5/],
   // Game modes (main 8267088, 29f2354).
   ["modes", "play mode keeps a typed target", ": state.targetProfit;", ": parseInt(document.getElementById(\"input-target-profit\").value, 10) || state.targetProfit;", /play mode ignores the student form/],
   ["modes", "student mode skips validation", "if (student && (!name", "if (false && (!name", /student mode refuses to start/],

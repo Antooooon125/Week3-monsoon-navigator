@@ -119,7 +119,7 @@ node --test "tests/engine/*.test.mjs"
 node tests/engine/planted-defects.mjs
 ```
 
-The second command makes 43 small changes to a temporary copy of `index.html`, one at a time, and checks that each is caught by the test it targets, that some tests still pass (so a copy that fails to load is not counted as caught), and that `index.html` has the same hash afterwards. The browser page remains the check named in CONTRIBUTING.md.
+The second command makes 47 small changes to a temporary copy of `index.html`, one at a time, and checks that each is caught by the test it targets, that some tests still pass (so a copy that fails to load is not counted as caught), and that `index.html` has the same hash afterwards. The browser page remains the check named in CONTRIBUTING.md.
 
 ## 4. Known defects
 

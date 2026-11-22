@@ -94,7 +94,7 @@ test("finishCampaign outcome badge: target met, and deficit", () => {
   assert.equal(deficit.el("audit-outcome-badge").textContent, "VENTURE DEFICIT");
 });
 
-test("cash below −250 D ends the campaign early", () => {
+test("cash below −250 D ends the campaign early: −250 continues, −251 ends", () => {
   const e = loadEngine().start();
   e.state.cash = -210;
   e.rng.push(NO_STORY);
@@ -106,6 +106,15 @@ test("cash below −250 D ends the campaign early", () => {
   assert.equal(e.rng.remaining, 0, "scripted draws left unused");
   assert.equal(e.state.ended, true);
   assert.equal(e.state.monthIndex, 2);
+
+  // The other side of the threshold: one wait (40 D) from −211 lands on −251 and ends.
+  const f = loadEngine().start();
+  f.state.cash = -211;
+  f.rng.push(NO_STORY);
+  f.g.waitInPort();
+  assert.equal(f.state.cash, -251);
+  assert.equal(f.state.ended, true);
+  assert.equal(f.state.monthIndex, 1);
 });
 
 test("after the campaign ends, no action changes the result", () => {

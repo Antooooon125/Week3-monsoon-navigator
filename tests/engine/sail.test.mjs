@@ -340,3 +340,16 @@ test("no voyage on a lane that does not exist, and none after the campaign ends"
   assert.equal(e.state.currentPort, "calicut");
   assert.equal(e.rng.calls, 0);
 });
+
+test("floors: hull never drops below 5, crew health never below 0", () => {
+  // Headwind, Aden → Calicut in January: damage 20, no turn-back, no pirates, no mutiny.
+  const head = voyage({ start: { port: "aden" }, to: "calicut",
+    setup: s => { s.hull = 10; s.crewHealth = 5; }, draws: [0.0, 0.99, NO_PIRATES, 0.99] });
+  assert.equal(head.state.hull, 5);
+  assert.equal(head.state.crewHealth, 0);         // 5 − 2 × 8 − 12 → 0, and mutiny risk 0.5 is drawn
+
+  // Transition storm, Calicut → Aden in April: damage 22.
+  const storm = voyage({ setup: s => { s.monthIndex = 3; s.hull = 10; s.crewHealth = 5; }, draws: [0.0, 0.0, NO_PIRATES, 0.99] });
+  assert.equal(storm.state.hull, 5);
+  assert.equal(storm.state.crewHealth, 0);
+});
