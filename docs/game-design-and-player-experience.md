@@ -126,7 +126,7 @@ Example compact decision brief: **Aden → Calicut, July, dhow, no navigator** (
 | Cargo and capacity | Actual current load and remaining space |
 | Alternatives | Compare later month, wait, change cargo or destination |
 
-The same route in January is estimated at 53 days, two charged months and 30 D wages (without navigator). A departure comparison does not itself include all consequences of waiting, changes in market values or realized losses. Label these distinctions. Never equate minimum transit time with maximum total profit.
+The same route in January is estimated at 53 days, two charged months and 30 D wages (without navigator). January is also a **Headwind (Hazard)** passage in the model: hull damage on every such voyage and a 35% chance of turning back. The lane's 1,450 nm is shorter than the great-circle distance (D10), so even the model's July figure is under review. A departure comparison does not itself include all consequences of waiting, changes in market values or realized losses. Label these distinctions. Never equate minimum transit time with maximum total profit.
 
 Preview should be freely reversible; commitment must be clear. Do not add repetitive confirmations to every small reversible action. Prevent accidental double commits, communicate disabled states and explain destructive actions in plain language. Buying/selling and time-advancing actions may have consequences that cannot safely be undone; distinguish planning cancellation from actual undo or a new replay.
 
@@ -146,7 +146,15 @@ Use the existing atlas visual vocabulary as a responsive consequence system, not
 | Standing threshold | State newly available discount/benefit if implemented | Port register and visible applicable cost |
 | Settlement | Show realized values and reason campaign ended | Personalized folio and complete audit |
 
-All illustrated feedback must be derived from actual state differences or structured events, not invented stories or re-running outcomes. The engine does not record visit counts (`state.visitedPorts` is a set), arrival months (D08) or cash history. So "port marks", a timestamped arrival thread and treasury changes over time need the reviewed read-only recording proposed in `docs/visual-evolution.md` before they can be shown. If records are insufficient, mark the limitation; do not parse ambiguous log text into false precision. D01/D07/D08 affect time and settlement; D02/D03 affect freight reporting. Gate richer visual claims on appropriate data fixes, as separate reviewed PRs.
+All illustrated feedback must be derived from actual state differences or structured events, not invented stories or re-running outcomes. Any trigger or display that cannot be derived from a before/after difference in `state` needs new recording. At `b607af9` that includes:
+- visit counts (`state.visitedPorts` is a set);
+- arrival months (D08);
+- cash history;
+- residence per port (only a global `stats.layoverMonths` exists);
+- adverse events and turnbacks, which exist only as English log text built inside `sailTo`;
+- lost and delivered cargo (`stats` counts tons loaded, D03).
+
+Visit counts and arrival timestamps could come from a separately reviewed, read-only recording such as the one proposed in `docs/visual-evolution.md`. That proposal is in PR #7, unmerged and unreviewed. It records only origin, destination, departure month, months and turnback. Treasury history, per-port residence and cargo loss need recording that it doesn't propose. The current prototype builds its event reports from the voyage-log text, which is the kind of parsing this section warns against; record that as a known limitation. If records are insufficient, mark the limitation; do not parse ambiguous log text into false precision. D01/D07/D08 affect time and settlement; D02/D03 affect freight reporting. Gate richer visual claims on appropriate data fixes, as separate reviewed PRs.
 
 **Game feel:** short, interruptible transitions; optional sound only if there is a meaningful, accessible purpose (off by default in classroom use); no obligatory waiting animation, screen shake, flashes or audio-only information. Respect reduced motion, focus, contrast, input responsiveness and small screens [3]. Rendering must never affect simulation state or consume random draws. An event card's dismissal should not remove the event from the ledger.
 
@@ -160,7 +168,7 @@ Use natural milestones instead of manufactured dramatic incidents. A conceptual 
 
 Potential milestones include first arrival, first adverse event, first discount, first profitable alternative comparison (only if the model can establish it), first solvency crisis, and first recovery. Trigger from actual events or validated state thresholds; do not introduce explicit prizes or bonuses, alter hazards to force drama, or label waiting as inherently wise.
 
-Measure decision intervals, repetition, abandoned turns, time spent planning and instances of strategy revision through permitted observation. A rhythm chart is an experiential hypothesis, not measured difficulty. Let playtesting establish whether the middle campaign repeats too much and whether students have time for reflection. Keep lesson-length constraints in the instructor guide.
+Measure decision intervals, repetition, abandoned turns, time spent planning and instances of strategy revision through permitted observation. A rhythm chart is an experiential hypothesis, not measured difficulty. Let playtesting establish whether the middle campaign repeats too much and whether students have time for reflection. Keep lesson-length constraints in an instructor guide (none exists yet).
 
 ## 9. Failure and recovery (P0/P1)
 
@@ -189,7 +197,7 @@ Sales / other income → Cash → Cargo purchases → Delivery → Sales
                           └→ Realized losses
 ```
 
-Track capacity, time, capital, voyage losses, future information and terminal settlement as constraints on the reinforcing reinvestment loop. Begin from the existing D05/D06 prior looks. Baseline §5 reports all 5,400 informed simulated runs reach the 1,200 D target; same-seed ship rankings reverse across the three policies. These runs use exact future-price knowledge and a surrogate liquidation method, not actual student play or necessarily paired exogenous risks. Do not call the target trivial for all players or either ship universally dominant.
+Track capacity, time, capital, voyage losses, future information and terminal settlement as constraints on the reinforcing reinvestment loop. Begin from the existing D05/D06 prior looks. Baseline §5 reports all 5,400 informed simulated runs reach the 1,200 D target; same-seed ship rankings reverse across the three policies. These runs use exact future-price knowledge and a stand-in for `finishCampaign` with the same money logic, not actual student play or necessarily paired exogenous risks. Do not call the target trivial for all players or either ship universally dominant.
 
 ### First bounded balance audit
 
@@ -200,7 +208,7 @@ Track capacity, time, capital, voyage losses, future information and terminal se
 - Report distribution, risk, loss, resource constraints, strategy ranking and sensitivity, not just maximal profit. Investigate cost-free repetition, unlimited-market assumptions, predictable-price loops and end-of-game exploits as hypotheses, not assumed diagnoses.
 - Identify the smallest decision-changing ablation or changed assumption. Study alternatives in Path B and seek historical support where needed. Do not tune for a predetermined pedagogical conclusion or arbitrary win rate.
 
-Use existing milestones M3/M4/M6 and relevant D IDs, not a new balance tracker. Keep sweeps local and bounded, with exact commands, seeds, model version, outputs and limitations. Do not launch large compute or paid CI without approval.
+Use the existing experiments M3/M4/M6 (milestone R7, with tests under R5) and relevant D IDs, not a new balance tracker. Keep sweeps local and bounded, with exact commands, seeds, model version, outputs and limitations. Do not launch large compute or paid CI without approval.
 
 **Acceptance:** A reproducible audit identifies which constraints actually affect choice, and clearly separates student-feasible policies, hindsight and oracle cases. Owner approval and documented revalidation precede any classroom economy change.
 
@@ -236,9 +244,24 @@ On import, validate schema, version compatibility, type/range constraints, state
 
 **Acceptance:** Round-trip fixtures restore all relevant state; incompatible or invalid saves fail safely; no prohibited identifiers appear in default exports; an explicit clear operation works. Document what may change across model versions, what RNG guarantees are and are not possible, and whether an assessed instructor scenario permits resume. Any engine/RNG/state refactor requires owner review (D13, R5).
 
+**Re-rolling.** With unseeded `Math.random()` (D13), saving before a voyage and reloading after a bad outcome lets a player redraw hazards until they get a better result. That quietly changes the risk the game is meant to teach, and it interacts with D05 and with assessment. Whether resume is allowed at all, and when, is an owner and instructor decision, to be made together with D13 and R5.
+
 ## 14. Formative games user research (P0 — first operational priority)
 
-Automated model runs prove neither usability nor educational effectiveness. The next milestone should be observing a small number of appropriate participants playing the existing prototype, before investing in many new features. Begin with internal adult volunteers or instructor-approved participants; a small exploratory round of roughly 5–8 is a suggested starting point, not a justified representative sample or a power calculation. For students/minors or any formal research, obtain required school/institutional approvals, consent/assent where applicable, and a clear data-retention plan before recruitment. Do not treat ordinary class participation as consent to research publication.
+Automated model runs prove neither usability nor educational effectiveness. The next step should be observing a small number of appropriate participants playing the existing prototype, before investing in many new features.
+
+**This section is not ethics or legal guidance. It has not been checked against the school's or any institution's policy.**
+
+**Before anything involving students,** including a pilot, obtain:
+- the school's approval;
+- written consent from a parent or guardian for each minor, and the student's own assent;
+- a data-retention plan naming who keeps any material, where, and when it will be deleted.
+
+Instructor approval alone is not enough. Any session with students whose results may be published, including aggregate summaries in this public repository, counts as research for this purpose. Do not treat ordinary class participation as consent to research or publication.
+
+**By default:** no audio or video recording, and no key linking session codes to identities. Without a key, the notes are anonymous. If a linking key is ever kept, the data is pseudonymous, not anonymous, and needs a named custodian and a deletion date. Recording needs its own separate consent.
+
+**Starting point:** begin with internal adult volunteers. A small exploratory round of roughly 5–8 sessions is a suggestion, not a justified representative sample or a power calculation.
 
 ### Protocol
 
@@ -289,9 +312,9 @@ If a setback does not occur, record not observed rather than failure. Do not inf
 
 ### Synthesis and iteration
 
-Classify findings by impact: cannot complete/unsafe, major misconception, significant friction, minor polish, or positive evidence. Reuse existing review IDs/dispositions under the repository's adopted protocol; avoid a separate issue namespace. (That protocol, `docs/review-process.md`, is in PR #5 and not yet merged.) Record observed counts with denominator (e.g. 3 of 6 sessions), assistance, uncertainty, and differences in test conditions. Do not generalize small convenience samples or confuse preference reports with behavioral evidence. Record no observed problems as “not observed,” not a proof of absence.
+Classify findings by impact: cannot complete/unsafe, major misconception, significant friction, minor polish, or positive evidence. When recording them as findings, map these onto the review-process severities: cannot complete/unsafe = blocker; major misconception = high; significant friction = medium; minor polish = low. Positive evidence is noted, not filed. Reuse existing review IDs/dispositions under the repository's adopted protocol; avoid a separate issue namespace. (That protocol, `docs/review-process.md`, is in PR #5 and not yet merged.) Record observed counts with denominator (e.g. 3 of 6 sessions), assistance, uncertainty, and differences in test conditions. Do not generalize small convenience samples or confuse preference reports with behavioral evidence. Record no observed problems as “not observed,” not a proof of absence.
 
-Select the highest-impact, lowest-complexity fix, state the expected behavioral improvement, implement it in a focused PR, and re-test with fresh participants where feasible. Keep alternative explanations and negative findings. Use aggregate, non-identifying summaries permitted for publication, with raw materials retained separately only under the agreed policy.
+Select the highest-impact, lowest-complexity fix, state the expected behavioral improvement, implement it in a focused PR, and re-test with fresh participants where feasible. Keep alternative explanations and negative findings. Publish only aggregate, non-identifying summaries, and only when the approvals and consents above cover publication. With 5–8 sessions even aggregates can identify people, so avoid small counts tied to identifiable groups or unique details. Retain raw materials only under the agreed policy, outside Git.
 
 For a later educational efficacy study, define learning outcomes, validated measures, comparison design and analysis in advance, and obtain relevant ethics approval. A usability pilot alone cannot establish increased learning or causal educational benefits.
 
@@ -315,17 +338,17 @@ Run the required browser transit fixture and record exact output. For the protot
 
 ## 16. Prioritized delivery plan
 
-In this table, "Track" means Path A (classroom), Path B (research) or the visual track, as defined in section 1. It is not the Track A–C categories in `docs/gameplay-evolution.md`.
+In this table, "Track" is spelled out as Path A (classroom game), Path B (research outside `index.html`) or the visual track, as defined in section 1. It is not the Track A–C categories in `docs/gameplay-evolution.md` (PR #8), and not the work packages A–E in `docs/visual-evolution.md` (PR #7).
 
 | Sequence | Deliverable | Track | Gate |
 |---|---|---|---|
-| 0 | Complete pending browser review of existing visual prototype; check current PRs | A/visual | Browser findings recorded; protected files and baseline preserved |
-| 1 | Formative playtest protocol and pilot; explicit experience pillars | A | Permission, scoped tasks, observations and prioritized findings; no identifying artifacts |
-| 2 | Address top observed comprehension/feedback gap; practice walkthrough concept | A | One focused change; observable re-test criterion; no engine mutation |
-| 3 | Optional practice voyage and contextual help, if supported by findings | A/B | State isolation; owner approval for required refactor; replayable tutorial |
-| 4 | Economy flow/invariants audit and held-out strategy experiments | B / R5–R7 | Exact reproduction, prior looks, actual settlement and information limits |
-| 5 | Pacing, milestone feedback and recovery iteration | A/visual | Actual event triggers, no forced events; accessibility and re-test |
-| 6 | Session continuity proposal and implementation | B/A | Approved privacy/state/RNG contract, malformed-save tests and safe restart |
+| 0 | Complete pending browser review of existing visual prototype; check current PRs | Path A / visual | Browser findings recorded; protected files and baseline preserved |
+| 1 | Formative playtest protocol and pilot; explicit experience pillars | Path A | Permission, scoped tasks, observations and prioritized findings; no identifying artifacts |
+| 2 | Address top observed comprehension/feedback gap; practice walkthrough concept | Path A | One focused change; observable re-test criterion; no engine mutation |
+| 3 | Optional practice voyage and contextual help, if supported by findings | Path A (engine changes need owner approval) | State isolation; owner approval for required refactor; replayable tutorial |
+| 4 | Economy flow/invariants audit and held-out strategy experiments | Path B; R5, R7 | Exact reproduction, prior looks, actual settlement and information limits |
+| 5 | Pacing, milestone feedback and recovery iteration | Path A / visual | Actual event triggers, no forced events; accessibility and re-test |
+| 6 | Session continuity proposal and implementation | Path A (state/RNG changes need owner approval) | Approved privacy/state/RNG contract, malformed-save tests and safe restart |
 | 7 | Personalized folio and emergent narrative | Visual | Correct derived records, limitations for known defects and real print review |
 
 The plan is conditional on findings: if an observed issue is more urgent, address it first with a justified narrow change. Use existing milestones and issue/review records. Do not introduce a permanent status table parallel to the tracker. Begin planning literature-supported alternatives in parallel, not by blocking all design work until the historical literature is complete.
@@ -344,11 +367,11 @@ The plan is conditional on findings: if an observed issue is more urgent, addres
 
 ## 18. References and precedent documents
 
-General design references are leads and conceptual foundations, not a completed game-studies literature review. The cited official landing pages, publisher metadata/abstract and guidance were located on 2026-11-22; no claim is made that all books/papers were read in full. Register and verify specific claims at the appropriate reading depth if they become load-bearing research evidence.
+General design references are leads and conceptual foundations, not a completed game-studies literature review. The cited official landing pages, publisher metadata/abstract and guidance were located on 2026-11-22; none was read in full. Reading depth on 2026-11-22: [1] landing page and abstract read; [2] not read, only the bibliographic record was located; [3] guideline index and version history read; [4] metadata only (Crossref). Register and verify specific claims at the appropriate reading depth if they become load-bearing research evidence.
 
 1. Hunicke, R., LeBlanc, M., & Zubek, R. (2004). *MDA: A Formal Approach to Game Design and Game Research*. [AAAI workshop record](https://aaai.org/papers/ws04-04-001-mda-a-formal-approach-to-game-design-and-game-research/). Framework terminology and methodological lens.
-2. Salen, K., & Zimmerman, E. (2003). *Rules of Play: Game Design Fundamentals*. MIT Press. ISBN 9780262240451 (checked against Open Library: *Rules of Play*, The MIT Press, 2003). [Publisher record](https://mitpress.ublish.com/book/rules-play). This link did not load on 2026-11-22, from a script or a browser; replace it if it stays unreachable. Candidate for deeper reading on meaningful play, discernible and integrated consequences; exact chapter locator to verify before formal extraction.
-3. Microsoft. *Xbox Accessibility Guidelines*, v3.2. [Guideline index](https://learn.microsoft.com/en-us/xbox/accessibility/guidelines); [version history](https://learn.microsoft.com/en-us/xbox/accessibility/xag-version-history), including the gameplay-tutorial guidance added to XAG 109 (Objective clarity). Version 3.2 is dated 8 June 2023. Adapt principles to browser classroom games; do not claim certification or legal compliance.
+2. Salen, K., & Zimmerman, E. (2003). *Rules of Play: Game Design Fundamentals*. MIT Press. ISBN 9780262240451 (checked against Open Library: *Rules of Play*, The MIT Press, 2003). [Open Library record](https://openlibrary.org/isbn/9780262240451). The earlier MIT Press link did not load on 2026-11-22, so it has been replaced. Candidate for deeper reading on meaningful play, discernible and integrated consequences; exact chapter locator to verify before formal extraction.
+3. Microsoft. *Xbox Accessibility Guidelines*, v3.2. [Guideline index](https://learn.microsoft.com/en-us/xbox/accessibility/guidelines); [version history](https://learn.microsoft.com/en-us/xbox/accessibility/xag-version-history), including the gameplay-tutorial guidance added to XAG 109 (Objective clarity) in v2.5 (30 July 2021). The current version, 3.2, is dated 8 June 2023. Adapt principles to browser classroom games; do not claim certification or legal compliance.
 4. Habgood, M. P. J., & Ainsworth, S. E. (2011). Motivating children to learn effectively: Exploring the value of intrinsic integration in educational games. *Journal of the Learning Sciences, 20*(2), 169–206. [DOI 10.1080/10508406.2010.508029](https://doi.org/10.1080/10508406.2010.508029). Motivates the design principle; the proposed playtest protocol does not reproduce that study.
 
 Project references (pinned checkpoints):
