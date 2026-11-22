@@ -108,7 +108,7 @@ It covers the deterministic sailing model only. The published Aden → Calicut e
 
 ### Engine tests (R5, first part)
 
-`tests/engine/` runs the real engine in Node: it evaluates the inline script of `index.html` unchanged, with a small DOM stand-in, and scripts `Math.random` so each hazard path can be forced. Any unscripted draw fails the test. They cover buying and selling with tariffs, waiting (port fees, standing, stories), sailing (wages, months, turn-back, jettison, storms, becalming, cargo loss, piracy, mutiny), loan interest, the real `finishCampaign` settlement and audit screen, previews and forecasts that must not change state or draw random numbers, and the same 480-row transit comparison as the browser page. D01, D07 and D08 are pinned as observed behaviour, labelled as defects: a fix for one of them is expected to fail its test, and should replace it.
+`tests/engine/` runs the real engine in Node: it evaluates the inline script of `index.html` unchanged, with a small DOM stand-in, and scripts `Math.random` so each hazard path can be forced. Any unscripted draw fails the test. They cover buying and selling with tariffs, waiting (port fees, standing, stories), sailing (wages, months, turn-back, jettison, storms, becalming, cargo loss, piracy, mutiny), loan interest, the real `finishCampaign` settlement and audit screen, previews and forecasts that must not change state or draw random numbers, and the same 480-row transit comparison as the browser page. D01, D02, D03, D07 and D08 are pinned as observed behaviour, labelled as defects: a fix for one of them is expected to fail its test, and should replace it.
 
 Run with Node 22 or later, from the repository root:
 
@@ -117,7 +117,7 @@ node --test "tests/engine/*.test.mjs"
 node tests/engine/planted-defects.mjs
 ```
 
-The second command makes 26 small changes to a temporary copy of `index.html`, one at a time, and checks that each is caught by the test it targets. The browser page remains the check named in CONTRIBUTING.md.
+The second command makes 28 small changes to a temporary copy of `index.html`, one at a time, and checks that each is caught by the test it targets. The browser page remains the check named in CONTRIBUTING.md.
 
 ## 4. Known defects
 

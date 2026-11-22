@@ -52,3 +52,44 @@ test("DEFECT D08 (current behaviour): arrival log entries carry the departure mo
   const voyage = e.logs().find(l => l.includes("Sailed Aden → Calicut"));
   assert.ok(voyage.startsWith("[M1 • Jan] Sailed Aden → Calicut (53d / 2mo"), voyage);
 });
+
+test("DEFECT D02 (current behaviour): pepper is labelled Semi-Bulk in the market but counted as luxury in the audit", () => {
+  const e = loadEngine().start();               // Calicut, January
+  e.g.buyCargoQty("pepper", 5);                 // 5 lots × 2 t = 10 t
+  const market = e.el("market-tbody").innerHTML;
+  const pepperRow = market.slice(market.indexOf("Black Pepper"), market.indexOf("Moluccan Cloves"));
+  assert.match(pepperRow, />Semi-Bulk</);       // what the student sees
+  e.rng.push(0.99);                             // tailwind to Aden: piracy draw only
+  e.g.sailTo("aden");
+  assert.equal(e.rng.remaining, 0, "scripted draws left unused");
+  assert.equal(e.state.stats.bulkTonsShipped, 0);
+  assert.equal(e.state.stats.luxuryTonsShipped, 10);
+  e.g.finishCampaign();
+  assert.equal(e.el("audit-cargo-mix").textContent, "0T Bulk / 10T Luxury Shipped");
+});
+
+test("DEFECT D03 (current behaviour): the freight tally counts cargo loaded, even on a voyage that turns back", () => {
+  const e = loadEngine().start({ port: "aden" });
+  e.state.cargo.teak = 3;                       // 30 t of bulk
+  e.rng.push(0.5, 0.3499);                      // headwind damage, turned back
+  e.g.sailTo("calicut");
+  assert.equal(e.rng.remaining, 0, "scripted draws left unused");
+  assert.equal(e.state.currentPort, "aden");    // nothing was delivered
+  assert.equal(e.state.stats.bulkTonsShipped, 30);
+  e.g.finishCampaign();
+  assert.equal(e.el("audit-cargo-mix").textContent, "30T Bulk / 0T Luxury Shipped");
+});
+
+test("DEFECT D03 (current behaviour): cargo lost at sea still counts as shipped", () => {
+  const e = loadEngine().start({ port: "aden" });
+  e.state.cargo.teak = 3;                       // 30 t bulk
+  e.state.cargo.cloves = 2;                     // 2 t luxury
+  e.rng.push(0.0, 0.35, 0.0, 0.0);              // damage, no turn-back, jettison 1 teak, pirates take 1 clove
+  e.g.sailTo("calicut");
+  assert.equal(e.rng.remaining, 0, "scripted draws left unused");
+  assert.equal(e.state.currentPort, "calicut");
+  assert.equal(e.state.cargo.teak, 2);          // 20 t arrived
+  assert.equal(e.state.cargo.cloves, 1);        // 1 t arrived
+  assert.equal(e.state.stats.bulkTonsShipped, 30);
+  assert.equal(e.state.stats.luxuryTonsShipped, 2);
+});

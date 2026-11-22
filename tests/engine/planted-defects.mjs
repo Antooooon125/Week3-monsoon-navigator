@@ -47,6 +47,8 @@ const PLANTS = [
   ["preview", "computeTransit draws a random number", "const activeIdx = monthIdxOverride", "Math.random(); const activeIdx = monthIdxOverride", /leave state unchanged and draw no random/],
   ["preview", "getWaitingCosts changes standing", "const { currentPort } = state;", "const { currentPort } = state; state.diaspora[currentPort] = (state.diaspora[currentPort] || 0) + 1;", /leave state unchanged and draw no random/],
   ["transit", "dhow α 0.85 → 0.86", "agility: 0.85,", "agility: 0.86,", /matches all 480 rows/],
+  ["defect pin", "D02 stand-in: count semi-bulk as bulk", "if (c.category === \"Bulk\") bulk += tons;", "if (c.category !== \"Luxury\") bulk += tons;", /DEFECT D02/],
+  ["defect pin", "D03 stand-in: skip the tally on headwind voyages", "state.stats.bulkTonsShipped += bulk;", "state.stats.bulkTonsShipped += calc.isHeadwind ? 0 : bulk;", /DEFECT D03/],
   ["defect pin", "D01 stand-in: clamp time at month 24", "state.monthIndex += months;", "state.monthIndex = Math.min(CAMPAIGN_MONTHS, state.monthIndex + months);", /DEFECT D01/],
   ["defect pin", "D07 stand-in: label early ends", "addLog(`Month 24 Liquidation:", "addLog(`${state.monthIndex >= CAMPAIGN_MONTHS ? \"Month 24\" : \"Early\"} Liquidation:", /DEFECT D07/],
   ["defect pin", "D08 stand-in: log voyages at the arrival month", "addLog(`${routeLabel} (", "state.monthIndex += calc.months; addLog(`${routeLabel} (", /DEFECT D08/]
