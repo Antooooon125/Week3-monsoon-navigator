@@ -63,3 +63,4 @@ The licence and credit wording still awaits the copyright holder's confirmation.
 - In Play Only, the intro steps read "Navigate & trade / Results" and the audit eyebrow "Results / voyage evidence". The engine's "(Goal: +1200 D)" on the return line is inherited and unchanged.
 - The market region's label no longer tells readers to scroll sideways. The page no longer calls itself a prototype.
 - The builder drops the unused `.harbor-art` CSS, so the page references no image file.
+- At 200 % text the toolbar, market header and audit rows wrap. Before this, the page widened to 541 px at 375 px (the original page's audit reaches 749 px at the same setting).

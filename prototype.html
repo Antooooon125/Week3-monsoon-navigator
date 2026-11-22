@@ -592,7 +592,7 @@ input,select,textarea{border:1px solid var(--line);color:var(--ink);background:v
 label{line-height:1.5}h1,h2,h3,h4{font-family:var(--f-display);font-stretch:105%;font-weight:700;line-height:1.15}h2{letter-spacing:-.03em}h3{font-size:1.15rem!important}small{font-size:.875rem}
 body>header{position:relative;background:var(--bg);border-bottom:1px solid var(--line);padding:16px 28px;z-index:5;backdrop-filter:none}
 body>header>div{max-width:1400px;margin:auto}body>header h1{font-weight:850;font-stretch:110%;letter-spacing:-.04em;font-size:1.25rem}body>header .w-9{background:var(--accent);color:var(--bg);border:0;border-radius:0;font-size:1rem}
-.atlas-toolbar{display:flex;gap:8px;align-items:center;margin-left:auto}.atlas-toolbar button{padding:6px 12px;font-size:.875rem}.atlas-toolbar a{font-size:.875rem;text-underline-offset:3px}
+.atlas-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-left:auto;min-width:0}.atlas-toolbar button{padding:6px 12px;font-size:.875rem}.atlas-toolbar a{font-size:.875rem;text-underline-offset:3px}
 #hud-bar{width:100%;padding-top:14px;border-top:1px solid var(--line);margin-top:8px;gap:8px}#hud-bar>div{padding:10px 14px;background:var(--surface);border:1px solid var(--line);flex:1;min-width:125px}#hud-bar>div span:last-child{display:block;font-size:1.4rem;margin:2px 0 0}#hud-bar>button{padding:8px 12px}
 main{width:100%;margin:auto;padding:24px!important}#phase-setup{max-width:1220px}#phase-setup>div{background:none;border:none;padding:0;box-shadow:none}
 .atlas-intro{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;align-items:center;margin:20px 0 40px;padding-bottom:32px;border-bottom:1px solid var(--line)}
@@ -691,6 +691,9 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-trade td:last-child button:nth-child(n+4){background:transparent;color:#19363c;border-color:#7d9a90}
   .atlas-trade td:last-child button:hover:not(:disabled){background:#963b70;border-color:#963b70;color:#fff}
   .atlas-trade #market-tariff-rate{color:#19363c}
+  .atlas-trade .justify-between{flex-wrap:wrap;gap:4px 12px}
+  #pdf-export-target .justify-between{flex-wrap:wrap;gap:4px 12px}#audit-timestamp,#audit-diaspora-score{white-space:normal;overflow-wrap:anywhere}
+  #phase-audit h2,#phase-audit h3,#phase-audit .grid>div,#phase-audit .justify-between>*{overflow-wrap:anywhere;min-width:0}#phase-audit .justify-between{flex-wrap:wrap;gap:4px 12px}
   .atlas-trade{--warn:#674210;--accent:#83305f}
   .atlas-export-note{flex-basis:100%;font-size:.8125rem;color:var(--muted);margin:4px 0 0}
   #market-tbody tr td:first-child::before{content:"";display:block;width:16px;height:3px;background:var(--material);margin-bottom:6px}
