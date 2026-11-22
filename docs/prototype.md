@@ -47,3 +47,12 @@ Branch `fix/atlas-on-main` merges game `main` (`ba2f279`: Play Only / Student Mo
 - The builder writes every breakpoint rule after the base rules (`grid-cols-1 sm:grid-cols-2` had collapsed), and removes the Google Fonts `@import` whole.
 
 `tests/prototype-engine.test.mjs`: test 3 now selects Student Mode first; the ungated export test is replaced by one that pins the gate; there are new tests for the Play Only default, utility order and Play Only audit wording. 17/17 pass.
+
+### Resolutions recommended by the collaborator (2026-11-22)
+
+- **Links:** the header's "Original game" link becomes "Classic version". It points to `classic.html` where this page is deployed as `index.html`, and to `index.html` here. A separate "Original source" link goes to this repository.
+- **Credit:** the footer credits the original game (Amnuayvit Thitibordin, KVIS; CC BY-NC-SA 4.0 with the Commercial Derivative Exception) and the Atlas adaptation (art direction by Thanakrit Wongsatit, with AI assistance; CC BY-NC-SA 4.0, without the exception). The game's own credit line is kept.
+- **Drawings:** vessel cards read "Original schematic illustration; reference photograph: …". The photograph is linked separately; the drawings are not presented as adaptations of it.
+- **PDF:** one action, "Print / Save as PDF". The duplicate export button is hidden, because both open the same print dialog on this offline page. This is a deliberate change from the original game's direct PDF download.
+
+The licence and credit wording still awaits the copyright holder's confirmation.

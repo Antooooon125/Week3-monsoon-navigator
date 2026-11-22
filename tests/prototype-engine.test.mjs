@@ -172,3 +172,14 @@ test('Play Only audit text names no target or prediction; Student Mode keeps the
   assert.match(student.elements.get('atlas-audit-summary').textContent,/against your 1,200 D profit target/);
   assert.match(student.elements.get('atlas-audit-prompt').textContent,/prediction/);
 });
+
+test('one print action, credits and drawing provenance as resolved for the KVIS deployment',()=>{
+  const game=load({atlas:true});
+  assert.equal(game.elements.get('btn-print-audit').textContent,'Print / Save as PDF');
+  assert.ok(game.elements.get('btn-export-pdf').classList.contains('hidden'),'duplicate export button hidden');
+  assert.match(game.elements.get('atlas-export-note').textContent,/print dialog/);
+  game.run('startSimulation()');
+  assert.match(game.elements.get('ship-credit').textContent,/^Original schematic illustration; reference photograph: /);
+  assert.equal(game.elements.get('atlas-classic-link').href,'classic.html');
+});
+
