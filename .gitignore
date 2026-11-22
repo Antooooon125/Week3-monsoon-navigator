@@ -1,0 +1,23 @@
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# Local environments and caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+node_modules/
+.pytest_cache/
+
+# Local outputs that must not be committed: exported audit PDFs can hold
+# student names, and downloaded sources can be restricted. The trailing *
+# also catches browser duplicates such as "Name_ID_Week_3 (1).pdf".
+*_Week_3*.pdf
+downloads/
+scratch/
+.env
