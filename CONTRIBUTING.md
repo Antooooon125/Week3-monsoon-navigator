@@ -11,7 +11,7 @@ Monsoon Navigator is a classroom game first. These rules keep its teaching model
 | Mechanics or parameters | Any value or function in baseline section 2: prices, tariffs, ship values, winds, hazard odds, standing, debt, campaign length, scoring | Needs the owner's agreement **before** the PR is opened. Regenerate the transit snapshot in the same PR if the sailing model changes, and update baseline sections 2–4. |
 | Historical claims and sources | Port stories, glossary, README history, captions | Cite the source in the PR. Say whether it was read in full, in part or only found. Never invent quotations, page numbers or DOIs. |
 | Research (Path B) | Alternative sailing models, sensitivity studies | Lives outside `index.html` and never edits it to make an experiment run. Write the pre-registration before looking at the results, and cite any earlier look (baseline section 5). |
-| Licence and attribution | `LICENSE`, credits, reuse of other projects' files | The owner decides. Do not copy files from CC BY-NC-SA projects until the licence question in baseline section 6 is settled. |
+| Licence and attribution | `LICENSE`, `LICENSE.md`, credits, reuse of other projects' files | The owner decides. The project licence is in `LICENSE.md` (baseline section 6). Before reusing another project's files, record their source, licence and changes, and check compatibility. The Commercial Derivative Exception doesn't cover material the owner doesn't hold rights in. |
 
 Do not combine a large visual refactor with a mechanics change or a research conclusion in one PR.
 
