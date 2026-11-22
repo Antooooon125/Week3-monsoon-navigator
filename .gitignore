@@ -15,8 +15,9 @@ node_modules/
 .pytest_cache/
 
 # Local outputs that must not be committed: exported audit PDFs can hold
-# student names, and downloaded sources can be restricted.
-*_Week_3.pdf
+# student names, and downloaded sources can be restricted. The trailing *
+# also catches browser duplicates such as "Name_ID_Week_3 (1).pdf".
+*_Week_3*.pdf
 downloads/
 scratch/
 .env

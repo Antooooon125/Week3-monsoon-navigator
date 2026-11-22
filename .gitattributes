@@ -1,4 +1,8 @@
-# Text files are stored with LF line endings.
+# Text files are stored with LF line endings in git, and eol=lf also checks
+# them out with LF in every working tree. That overrides core.autocrlf, so
+# Windows checkouts get LF rather than CRLF. Editors that handle LF need no
+# change; to keep CRLF checkouts instead, this line would become
+# "* text=auto".
 * text=auto eol=lf
 
 # Binary assets
@@ -11,8 +15,9 @@
 *.woff binary
 *.woff2 binary
 
-# index.html is stored with mixed line endings (CRLF with some LF lines).
-# Normalising it would rewrite every line of the protected classroom file and
-# hide real changes in the diff. Leave it as stored until a separate,
-# reviewed PR normalises it on its own.
-index.html -text
+# The root index.html is stored with mixed line endings (CRLF with some LF
+# lines). Normalising it would rewrite every line of the protected classroom
+# file and hide real changes in the diff. Leave it as stored until a
+# separate, reviewed PR normalises it on its own. The leading slash limits
+# this exemption to the root file, not any index.html elsewhere.
+/index.html -text

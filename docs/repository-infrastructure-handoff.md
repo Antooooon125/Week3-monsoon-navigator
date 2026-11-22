@@ -1,16 +1,16 @@
 # Monsoon Navigator — repository infrastructure and agent governance
 
-**Project:** Monsoon Navigator — An Atlas of Moving Worlds  
+**Project:** Monsoon Navigator (*An Atlas of Moving Worlds* is the working title of the externally approved art direction, which is not in this repository)  
 **Status:** Proposed implementation handoff; not authorization to modify the engine or repository.  
 **Audit date:** 2026-11-22 (KST)  
 **Inspected revision:** [`b607af9dce751bae56528655a65afc362e21d8c7`](https://github.com/Antooooon125/Week3-monsoon-navigator/commit/b607af9dce751bae56528655a65afc362e21d8c7)  
-**Committed:** in the `infra/agent-governance` PR, together with the first infrastructure files (I01, I02 and the I05 procedure). See the note at the end of section 13 for how they differ from the drafts below.
+**Committed:** in PR #5 (`infra/agent-governance`), together with the first infrastructure files. The implementation note in section 13, under "First PR", records what that PR added and how it departs from this proposal.
 
 ## 1. Purpose and boundaries
 
 Build the infrastructure that allows historical claims, observations, computational models, visual representations and teaching decisions to be traced, challenged, reproduced and corrected across human and AI contributors. Adopt the methodological strengths of the public repositories listed in section 3, without importing unnecessary complexity. They belong to Azuromalachite, a collaborator here, not to the owner of this repository.
 
-**Terminology.** "Maintainer" in this document means the **repository owner**, the person CONTRIBUTING.md names as deciding on mechanics, licence and scope. The committed AGENTS.md uses "owner" to match CONTRIBUTING.md.
+**Terminology.** "Maintainer" in this document means the **repository owner**. CONTRIBUTING.md reserves two decisions to the owner: agreement before any change to mechanics or parameters, and anything about licence and attribution. Other decisions this document gives the maintainer, such as publication and graduation into the game, are proposals until the owner adopts them. The committed AGENTS.md uses "owner" to match CONTRIBUTING.md.
 
 This handoff supplements, rather than replaces, the existing [`docs/research-directions-and-milestones.md`](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/b607af9dce751bae56528655a65afc362e21d8c7/docs/research-directions-and-milestones.md). Keep R0–R8, M1–M6, P01–P08 and Q01–Q10 as defined there; do not create a competing research milestone taxonomy. Infrastructure items below use I01–I10 solely as checklist identifiers.
 
@@ -77,82 +77,13 @@ Do not repeat constants, claim statuses or milestone state in multiple independe
 | Known classroom defects | `docs/baseline.md` D01–D13 and F01–F04 | Existing |
 | Independent review findings | `docs/open-findings.md`, `reviews/` | Proposed; cross-reference existing defect IDs |
 
-## 5. Proposed root AGENTS.md (ready-to-use draft)
+## 5. Root AGENTS.md
 
-Extract the text between the following delimiters into a new root `AGENTS.md`. Review against current `CONTRIBUTING.md` and baseline before opening a PR. This draft does not pretend that proposed infrastructure already exists.
+The agent contract is the root [AGENTS.md](../AGENTS.md). It is the only operational version, and it is subordinate to CONTRIBUTING.md. [CLAUDE.md](../CLAUDE.md) imports it.
 
-<!-- BEGIN AGENTS.MD -->
+This section used to hold the full ready-to-use draft. It was removed so the repository doesn't carry two operational copies of the contract that could drift apart. The draft is preserved at [commit `bed26b0`, section 5](https://github.com/Antooooon125/Week3-monsoon-navigator/blob/bed26b0c89f3dbc2b4b6aa2cfa0b97bf4a1461be/docs/repository-infrastructure-handoff.md#5-proposed-root-agentsmd-ready-to-use-draft). The root file departs from it in several ways, including terminology, the ID families, every-PR checks, line endings and design wording. The independent review of PR #5 lists the differences, and `git diff` against that commit shows them exactly.
 
-### AGENTS.md — working contract for Monsoon Navigator
-
-#### Mission and authority
-
-Monsoon Navigator is a classroom history simulation, supported by an independent historical and computational research track. Teach how environmental seasonality constrains and enables commerce and human relationships. Research is allowed to contradict the game; simulation output is not itself historical proof.
-
-The repository maintainer has final authority. Follow `CONTRIBUTING.md` for approvals; use `docs/baseline.md` for protected mechanics and known defects. If these instructions conflict with an owner decision or the contribution contract, report the conflict rather than silently choosing. Do not assume a request for research or visuals authorizes modifications to gameplay.
-
-#### Before starting
-
-1. Inspect the current branch, working tree, recent commits and relevant open PRs; preserve unrelated human changes. Do not discard or overwrite uncommitted work.
-2. Read `CONTRIBUTING.md`, `docs/baseline.md` and `docs/research-directions-and-milestones.md`. Check the most recent relevant handoff and open findings if present.
-3. Identify whether the task concerns presentation, bug repair, evidence, research or protected mechanics. Keep these changes separate where possible.
-4. State the intended deliverable and minimum verification. Use the existing milestone/experiment/defect IDs, not a new tracking vocabulary.
-
-#### Where information belongs
-
-- The game implementation owns actual runtime behavior. The baseline pins its expected behavior and records known defects.
-- The milestone tracker owns project status and research priorities.
-- Once established, evidence registries own historical statements, source provenance and assets; observation records own extracted data; research protocols and outputs own model-specific results.
-- Approved design documents own visual rules once committed. Missing documents are not evidence of approval to invent a replacement.
-- Generated tables, bundles and figures are downstream products. Modify their source records or generator, then regenerate; do not silently patch derived results.
-
-#### Non-negotiable rules
-
-- Do not edit a protected constant or function listed in `docs/baseline.md` without maintainer agreement required by `CONTRIBUTING.md`. A presentation PR must preserve the engine and transit snapshot. A bug-fix PR identifies the defect, shows before/after behavior and updates its disposition.
-- Never weaken a test, fixture, claim status or expected result merely to obtain a passing check. If a deliberate approved change moves the baseline, record why and update all affected tests and evidence.
-- Separate historical observation, navigational advice, modern climatology, reconstruction, interpretation, game assumption and model result. Display simulated days, costs, probabilities and wind parameters as such. Do not give unsupported metrics an appearance of empirical precision.
-- Do not claim to have read a source merely because it was found, downloaded or summarized by another agent. Record actual reading depth, locator, access date and limitations. Never invent a quotation, identifier, date, page or citation.
-- Preserve original historical place names, dates, units, currencies and language where relevant. Record transformations and their uncertainty. Do not collapse separate periods into a simultaneous network without labeling the abstraction.
-- Register a research question, comparison plan, decision rule, thresholds, ranges and known prior looks before new confirmatory runs. Report null and negative results, failed runs and deviations. Keep research models outside `index.html`.
-- A fix is not independently verified by its author alone. Use a reviewer who can inspect the pinned revision, rerun the reproduction or re-read the source, and state what remains uncertain.
-- Never commit real student names, IDs, identifiable screenshots, reports, private communications, unpublished class work or credentials. Use fictional fixtures. Record any approved exceptions under the applicable privacy/permission policy before publication.
-- Preserve creator credit and asset provenance. Respect the maintainer's unresolved license boundary: no copying CC BY-NC-SA project files until the issue is settled. Do not commit restricted PDFs, full copyrighted texts, or unapproved third-party assets.
-- Keep the visual design accessible and honest: 60:30:10 compositions are a guideline, not a data encoding; seasonal iridescence is illustrative unless derived from an explicitly documented field. Stable semantic states, contrast, keyboard access and reduced motion take precedence over ornament.
-- Prefer small, inexpensive, locally reproducible checks. Do not trigger large downloads, lengthy sweeps, paid runners or cloud compute without the required budget approval. Never enable auto-merge or change repository permissions, billing, rulesets or licenses merely to finish a task.
-
-#### Existing verification commands
-
-Serve the repository root locally:
-
-```sh
-python3 -m http.server 8000
-```
-
-Open `http://localhost:8000/tools/baseline-check.html`. Record the exact MATCH/MISMATCH result. The fixture contains 480 deterministic transit rows. This test does not verify economic correctness, actual historical voyages or all gameplay paths.
-
-The optional `?sweep=300` route reruns an exploratory strategy sweep; it is not a required check for routine documentation or presentation work. Use `?snapshot` only to generate a replacement fixture for an approved baseline-moving change, following `CONTRIBUTING.md`.
-
-When additional validators and tests are merged, use their documented commands. Do not claim they exist or pass before checking the repository. Prefer `python3` for local shell commands; use pinned explicit runtimes for CI.
-
-#### Completion and handoff
-
-Before declaring a change done, identify the revision, files changed, reason and affected milestone. For engine-related work report the baseline check; for visual work inspect desktop and phone layouts and capture non-identifying screenshots; for evidence work specify source access and independent verification state; for research work include executable reproduction instructions and all outcomes. Report failed or skipped checks, external dependencies, limitations and open owner decisions. A test that was not run is not a pass.
-
-Use narrowly scoped branches/PRs, imperative commit subjects and an explanation of why. Do not push or merge on behalf of the maintainer without authorization. Update the living tracker and relevant findings when the acceptance gate is actually met. Store a dated handoff when a subsequent contributor needs context that cannot be recovered easily from the code and tracker.
-
-<!-- END AGENTS.MD -->
-
-The committed root [AGENTS.md](../AGENTS.md) is the authoritative version; the draft above is kept as the record of the proposal. The committed file differs in these ways:
-
-- "Owner" replaces "maintainer", to match CONTRIBUTING.md.
-- It says CONTRIBUTING.md wins in a conflict.
-- It lists the existing IDs.
-- It adds a line-ending rule for `index.html`.
-- It says that shared seeds are not shared random events.
-- It turns the 60:30:10 and iridescence wording into a general honesty rule until the design documents are committed.
-- It notes that no CI exists yet.
-
-For the standalone file, promote the title to `# AGENTS.md — working contract for Monsoon Navigator` and each `####` subheading to `##`. The companion `CLAUDE.md` can consist of `@AGENTS.md` plus a short note to follow that single shared contract rather than creating divergent instructions.
+Merge PR #5 with a merge commit, not a squash, so `bed26b0` stays in `main`'s history and the link stays stable.
 
 ## 6. Independent review and findings
 
@@ -216,6 +147,8 @@ Derive CSV/JSON analysis tables reproducibly from the canonical records; documen
 | L4 — research validity | Independent models, historical comparisons, sensitivity, uncertainty | Pending R3/R4 and registrations |
 | L5 — pedagogy | Teacher-approved inquiry, interpretable debrief, evidence limits | Narrative basis present; validation not documented |
 
+L0–L5 are verification-layer labels (see AGENTS.md, "ID families"). They describe kinds of test, not milestones or statuses.
+
 The first new engine tests should use actual game functions, including `finishCampaign`, rather than silently substituting the harness's liquidation routine. Check buy/sell arithmetic, tariffs, debt accrual, standing discounts, crew and hull transitions, forced storms/turnbacks, cargo loss, UI forecast purity, chronological logs and campaign end. Track D01 (deadline), D02/D03 (freight), D07/D08 (end/date), D09 (description), D10/D11 (geometry/wind), D12 (PDF) and D13 (replay). Known defects should be documented as observed and explicitly tagged pending fixes; do not encode wrong behavior as a normative desired outcome or sneak fixes into infrastructure PRs.
 
 For stochastic studies, distinguish sharing a seed from sharing the same exogenous draws. If policies consume different RNG sequences, use purpose-specific streams or an externally defined event design when the intended comparison requires it; document limitations. Changes to the classroom RNG need separate maintainer approval.
@@ -238,7 +171,7 @@ Keep artifacts only as long as needed (e.g. seven days for non-release screensho
 
 ## 10. Design, accessibility and semantic rendering
 
-The approved art direction is *An Atlas of Moving Worlds*: chromatic overprinting for prediction, oceanic iridescence for navigation, translucent material ecology for trade, atmospheric instability for disruptions, and the printed merchant ledger for audit. Use the separate approved design documents rather than expanding them here. Their proposal uses 60:30:10 compositions, shared typography and semantic state colors; the ratios are compositional heuristics, not rigid pixel tests.
+The art direction approved externally (not committed to this repository) is *An Atlas of Moving Worlds*: chromatic overprinting for prediction, oceanic iridescence for navigation, translucent material ecology for trade, atmospheric instability for disruptions, and the printed merchant ledger for audit. Use the separate approved design documents rather than expanding them here. Their proposal uses 60:30:10 compositions, shared typography and semantic state colors; the ratios are compositional heuristics, not rigid pixel tests.
 
 Test layout at 375 px and desktop, absence of unintended horizontal overflow, keyboard focus and operation, reduced-motion behavior, contrast, route and season labels, selected route differentiation, commodity identity across views, and print/PDF pagination. Confirm preview controls do not mutate state, animated effects do not alter the RNG or advance time, and changes to visual rendering do not introduce unregistered claims. Use deterministic fictional inputs for screenshots. Distinguish illustrative wind fields from empirical or reconstructed geophysical data; no visual upgrade is evidence of physical accuracy. Preserve source credit and asset provenance. Prefer local/offline fonts and dependencies only with verified redistribution permissions.
 
@@ -269,15 +202,15 @@ Store dated handoffs under `docs/handoffs/` only when useful. Keep milestone sta
 
 ## 13. Infrastructure implementation tracker
 
-Status refers to the inspected revision, not a live query. All open items are proposed; completion requires an evidence link and the relevant gate. Do not fill a repository with empty directories just to match this layout.
+**Dated snapshot: 2026-11-22, after PR #5's review follow-up, before merge.** I01–I10 are infrastructure checklist IDs (AGENTS.md, "ID families"). This table is a checklist, not a status board: the milestone tracker owns status. All open items are proposed, and completion requires an evidence link and the relevant gate. Do not fill a repository with empty directories just to match this layout.
 
 | ID | Priority | Infrastructure | Milestone alignment | Status | Acceptance gate |
 |---|---|---|---|---|---|
-| I01 | P0 | Agent governance | R1 | Open | Original AGENTS.md and CLAUDE.md consistent with existing contribution rules |
-| I02 | P0 | Hygiene and PR contract | R1 | Open | Ignore rules, text conventions, PR template; no engine changes |
+| I01 | P0 | Agent governance | R1 | In PR #5, addressed awaiting review | Original AGENTS.md and CLAUDE.md consistent with existing contribution rules |
+| I02 | P0 | Hygiene and PR contract | R1 | In PR #5, addressed awaiting review | Ignore rules, text conventions, PR template; no engine changes |
 | I03 | P0 | Evidence infrastructure | R1–R2 | Open | Source/claim/asset example records, bibliography, validator and fail/pass fixtures |
 | I04 | P0 | Regression and CI | R5 | Partial | Existing transit fixture retained; new arithmetic, hazards, audit and validation checks with bounded CI |
-| I05 | P0 | Independent review | R2–R5 | Open | Review procedure, open-findings index and first independently verified disposition |
+| I05 | P0 | Independent review | R2–R5 | Partial: procedure and index in PR #5; no independently verified disposition yet | Review procedure, open-findings index and first independently verified disposition |
 | I06 | P1 | Observation data architecture | R3–R4 | Open | Pilot schemas + sourced records + deterministic export + integrity checks |
 | I07 | P1 | Design infrastructure | Parallel visual track | Drafts only | Approved docs committed; semantic/layout tests and asset provenance |
 | I08 | P0 before publication | Privacy, citations and licenses | Before release/data reuse | Open | Student-data safeguards verified; owner-approved attribution and license scope |
@@ -286,9 +219,9 @@ Status refers to the inspected revision, not a live query. All open items are pr
 
 I04 is partial solely because R0 transit and the exploratory harness exist. I08 begins immediately as a precaution; its license decision remains an owner gate even if other infrastructure proceeds.
 
-### Next PR — `infra/agent-governance`
+### First PR — `infra/agent-governance` (PR #5)
 
-**Allowed scope:** new original root `AGENTS.md`, `CLAUDE.md`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `docs/review-process.md`, minimal `docs/open-findings.md`, and small navigational links in existing documentation if needed. Use the draft in section 5. Keep the first PR narrow: no historical new claims, no license edits, no protected engine changes, no research outputs masquerading as validation.
+**Allowed scope:** new original root `AGENTS.md`, `CLAUDE.md`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `docs/review-process.md`, minimal `docs/open-findings.md`, and small navigational links in existing documentation if needed. The draft formerly in section 5 is preserved at the pinned link there. Keep the first PR narrow: no historical new claims, no license edits, no protected engine changes, no research outputs masquerading as validation.
 
 Suggested PR contract:
 
@@ -314,19 +247,21 @@ Suggested PR contract:
 
 **Implementation note (`infra/agent-governance`, 2026-11-22).** This PR adds AGENTS.md, CLAUDE.md, `.gitattributes`, `.gitignore`, the PR template, docs/review-process.md, docs/open-findings.md and this file.
 
-- **`.gitattributes` exempts `index.html`.** It is stored with mixed line endings. A blanket `text=auto eol=lf` would mark the protected file for a full rewrite, so normalising it is left to its own reviewed PR. The other text files are already stored with LF, so the rule changes none of them.
-- **`.gitignore` covers exported audit PDFs** (`*_Week_3.pdf`), because they can carry student names.
+- **`.gitattributes` exempts the root `/index.html`.** It is stored with mixed line endings. A blanket `text=auto eol=lf` would mark the protected file for a full rewrite, so normalising it is left to its own reviewed PR. The other text files are already stored with LF, so the rule changes none of them.
+- **`.gitignore` covers exported audit PDFs** (`*_Week_3*.pdf`, which includes browser duplicates such as `… (1).pdf`), because they can carry student names.
 - **Not yet done:**
   - CI (R5).
   - The student-data policy (I08).
   - `reviews/`, until the first review exists.
 - **I05** is partial: the procedure and index exist, but no independently verified disposition does yet.
+- **Review follow-up.** An independent fresh-agent review of `bed26b0` returned *approve with changes*: 3 medium and 11 low findings. A single follow-up commit addresses all 14. They are `addressed_awaiting_review` until someone other than the author re-checks them.
 
 ### Follow-on PRs
 
 | Order | Suggested branch | Smallest meaningful deliverable |
 |---|---|---|
-| 1 | `infra/agent-governance` | I01/I02 and review protocol; privacy prohibition in agent rules |
+| 1 | `infra/agent-governance`, **PR #5** (open, this PR) | I01/I02 and review protocol; privacy prohibition in agent rules |
+| — | `docs/pre-literature-readiness`, **PR #6** (open) | Literature intake and provenance conventions; added after this sequence was written |
 | 2 | `research/r1-evidence` | Original registry skeleton, bibliography, validator and planted defects |
 | 3 (parallel) | `test/r5-model-invariants` | Actual-engine deterministic accounting/forecast tests and minimal CI |
 | 4 (parallel) | `research/r2-claims` | Inventory current claims and protected parameters, honest status and anchors |

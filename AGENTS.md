@@ -6,14 +6,32 @@ This file is for anyone, human or AI, working in this repository. It adds workin
 
 Monsoon Navigator is a classroom history simulation, supported by a separate historical and computational research track. It teaches how seasonal winds constrain and enable commerce and human relationships. Research may contradict the game, and simulation output is not historical proof.
 
-The **repository owner** has final authority, as in CONTRIBUTING.md. Use [docs/baseline.md](docs/baseline.md) for the protected mechanics and known defects. A request for research or visual work does not authorise changes to gameplay.
+CONTRIBUTING.md reserves two decisions to the **repository owner**: agreement before any change to mechanics or parameters, and anything about licence and attribution. When it's unclear whether a change falls under either, ask the owner rather than deciding. Use [docs/baseline.md](docs/baseline.md) for the protected mechanics and known defects. A request for research or visual work does not authorise changes to gameplay.
 
 ## Before starting
 
 1. Check the current branch, working tree, recent commits and open PRs. Keep unrelated changes, and never discard or overwrite uncommitted work.
-2. Read CONTRIBUTING.md, docs/baseline.md and [docs/research-directions-and-milestones.md](docs/research-directions-and-milestones.md). Check [docs/open-findings.md](docs/open-findings.md) and any recent handoff in `docs/handoffs/`.
-3. Decide which kind of change the task is: presentation, bug fix, evidence, research or protected mechanics. Keep different kinds in separate PRs where possible.
-4. State the deliverable and the minimum verification before starting. Use the existing IDs (R0–R8, M1–M6, P01–P08, Q01–Q10, D01–D13, F01–F04); do not invent a new tracking vocabulary.
+2. Read CONTRIBUTING.md, docs/baseline.md and [docs/research-directions-and-milestones.md](docs/research-directions-and-milestones.md). Then check:
+   - [docs/open-findings.md](docs/open-findings.md);
+   - [docs/repository-infrastructure-handoff.md](docs/repository-infrastructure-handoff.md);
+   - any dated handoff in `docs/handoffs/` (the folder doesn't exist yet; create it with the first dated handoff).
+3. Decide which kind of change the task is. CONTRIBUTING.md defines six kinds: presentation, bug fix, mechanics or parameters, historical claims and sources, research, and licence and attribution. Keep different kinds in separate PRs where possible.
+4. State the deliverable and the minimum verification before starting. Use only the ID families below, each where it is defined, and do not invent new ones.
+
+### ID families
+
+| Family | IDs | Defined in | Used for |
+| --- | --- | --- | --- |
+| Milestones | R0–R8 | docs/research-directions-and-milestones.md | Project milestones and their status (the only status board) |
+| Experiments | M1–M6 | the same tracker | Proposed research experiments |
+| Work packages | P01–P08 | the same tracker | Research work packages |
+| Tickets | Q01–Q10 | the same tracker | The first work queue |
+| Classroom defects | D01–D13, F01–F04 | docs/baseline.md §4 | Known defects (D) and fixed ones (F) |
+| Review findings | RVnn-mm | docs/review-process.md | New findings from a numbered review; reuse a D or F ID when it's the same defect |
+| Infrastructure checklist | I01–I10 | docs/repository-infrastructure-handoff.md §13 | A checklist of infrastructure items. Not a status board: record progress in the tracker |
+| Verification layers | L0–L5 | docs/repository-infrastructure-handoff.md §8 | Kinds of test (syntax, deterministic, accounting, stochastic, research, pedagogy). Not milestones |
+
+The disposition values in docs/review-process.md (`open`, `addressed_awaiting_review`, and so on) are the only finding statuses.
 
 ## Where information belongs
 
@@ -40,7 +58,7 @@ The **repository owner** has final authority, as in CONTRIBUTING.md. Use [docs/b
   - A shared seed is not a shared set of random events.
 - **Review.** An author alone does not verify a fix. A reviewer works from the pinned revision, reruns the reproduction or re-reads the source, and says what is still uncertain. See [docs/review-process.md](docs/review-process.md).
 - **Privacy.** Never commit real student names, IDs, identifiable screenshots, reports, private communications, unpublished class work or credentials. Use fictional names in fixtures, screenshots and exported PDFs.
-- **Credit and licences.** Keep creator credit and asset provenance. The licence question in docs/baseline.md §6 and issue #4 is unresolved, so do not copy files from CC BY-NC-SA projects. Do not commit restricted PDFs, full copyrighted texts or unapproved third-party assets.
+- **Credit and licences.** Keep creator credit and asset provenance. The licence question in docs/baseline.md §6 and [issue #4](https://github.com/Antooooon125/Week3-monsoon-navigator/issues/4) is unresolved, so do not copy files from CC BY-NC-SA projects. Do not commit restricted PDFs, full copyrighted texts or unapproved third-party assets.
 - **Visual honesty.** Accessibility (stable meaning, contrast, keyboard use, reduced motion) comes before ornament. A wind field or colour effect is illustrative unless it comes from a documented data source, and must be labelled that way. Follow the approved design documents once they are committed.
 - **Cost and permissions.**
   - Prefer small checks that anyone can run locally.
@@ -64,15 +82,17 @@ There is no CI yet. When other checks are added, use their documented commands, 
 
 ## Finishing and handing off
 
-Before calling a change done, state the revision, files changed, reason and affected milestone or defect. What else to report depends on the kind of work:
+Before calling a change done, state the revision, files changed, reason and affected milestone or defect.
+
+**Every PR**, whatever its kind, reports the baseline check result line, as CONTRIBUTING.md's "Every PR" section requires. A documentation-only PR runs it too. What else to report depends on the kind of work:
 
 | Work | Also report |
 | --- | --- |
-| Engine-related | The baseline check result line |
-| Visual | Phone and desktop screenshots with fictional data |
+| Engine-related or bug fix | Behaviour before and after; the defect row updated |
+| Visual | Before and after screenshots, at phone and desktop widths, with fictional data |
 | Evidence | Source access and whether anyone else checked it |
 | Research | Reproduction instructions and every outcome |
 
 Report failed or skipped checks, limitations and decisions still open for the owner. A check that wasn't run is not a pass.
 
-Use narrow branches and PRs, imperative commit subjects, and say why. Do not push or merge without authorisation. Update the tracker and docs/open-findings.md only when a gate is actually met. Leave a dated handoff in `docs/handoffs/` when the next person needs context that the code and tracker don't give.
+Use narrow branches and PRs, imperative commit subjects, and say why. Do not push or merge without authorisation. Update the tracker and docs/open-findings.md only when a gate is actually met. When the next person needs context that the code and tracker don't give, leave a dated handoff in `docs/handoffs/`, named `YYYY-MM-DD-topic.md`.

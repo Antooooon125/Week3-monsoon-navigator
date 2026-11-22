@@ -27,7 +27,7 @@ Scripts and small inputs that are safe to publish go in `reviews/artifacts/rNN/`
 
 ## Findings
 
-- **IDs.** Give a new finding an ID of the form `RVnn-mm` (review nn, finding mm). If it is the same defect as an existing D or F row in docs/baseline.md, use that ID instead of creating a duplicate.
+- **IDs.** Give a new finding an ID of the form `RVnn-mm` (review nn, finding mm). This is the review-finding family listed in AGENTS.md ("ID families"). If it is the same defect as an existing D or F row in docs/baseline.md, use that ID instead of creating a duplicate. RV IDs are not milestones, and fixing one does not move a milestone in the tracker.
 - **What to record:** severity (blocker / high / medium / low), exact location, what happens, what should happen, the reproduction or source, the proposed correction, the test that will show it fixed, the owner's decision if one was needed, and the reviewer's disposition.
 - **What kind of finding it is:**
   - an error confirmed by evidence;

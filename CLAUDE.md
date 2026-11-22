@@ -1,3 +1,3 @@
 @AGENTS.md
 
-Follow AGENTS.md: it is the single working contract for every contributor and agent in this repository. Do not add separate or divergent instructions here.
+AGENTS.md is the single agent contract for this repository, and it is subordinate to CONTRIBUTING.md, which governs all contributions. Do not add separate or divergent instructions here.
