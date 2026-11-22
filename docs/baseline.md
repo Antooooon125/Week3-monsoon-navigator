@@ -104,7 +104,20 @@ To run it, serve the repository root over HTTP (for example `python3 -m http.ser
 
 The check was tested both ways. At this revision it reports MATCH. With the dhow's α changed from 0.85 to 0.86, it reported MISMATCH with 96 rows changed. That change was then reverted.
 
-It covers the deterministic sailing model only. Trading arithmetic, random hazards, the ledger and the audit are not yet covered (roadmap R5). The published Aden → Calicut example is in the snapshot: dhow, no navigator, 14 days in July and 53 in January.
+It covers the deterministic sailing model only. The published Aden → Calicut example is in the snapshot: dhow, no navigator, 14 days in July and 53 in January.
+
+### Engine tests (R5, first part)
+
+`tests/engine/` runs the real engine in Node: it evaluates the inline script of `index.html` unchanged, with a small DOM stand-in, and scripts `Math.random` so each hazard path can be forced. Any unscripted draw fails the test. They cover buying and selling with tariffs, waiting (port fees, standing, stories), sailing (wages, months, turn-back, jettison, storms, becalming, cargo loss, piracy, mutiny), loan interest, the real `finishCampaign` settlement and audit screen, previews and forecasts that must not change state or draw random numbers, and the same 480-row transit comparison as the browser page. D01, D07 and D08 are pinned as observed behaviour, labelled as defects: a fix for one of them is expected to fail its test, and should replace it.
+
+Run with Node 22 or later, from the repository root:
+
+```
+node --test "tests/engine/*.test.mjs"
+node tests/engine/planted-defects.mjs
+```
+
+The second command makes 26 small changes to a temporary copy of `index.html`, one at a time, and checks that each is caught by the test it targets. The browser page remains the check named in CONTRIBUTING.md.
 
 ## 4. Known defects
 
