@@ -71,3 +71,4 @@ The licence and credit wording still awaits the copyright holder's confirmation.
 - The "Classic version" link is a plain `href="classic.html"`. In this repository there is no `classic.html` beside `prototype.html`; the link is for the KVIS deployment.
 - The footer's Atlas credit is marked "(proposed, pending the copyright holder’s confirmation)".
 - The packaging test now extracts every `href`, `src` and `url()` (quoted or not, and quoted JS assignments). Each must be absolute, an anchor, a `${…}` template, or `classic.html` / `index.html`. It fails on each of eight planted relative references.
+- The event reports read only voyage log entries (those containing " | Events: "). Survival's charter line names "Cyclone & Piracy Crisis". It matched the cyclone pattern, opened the game with a false cyclone report, and suppressed the first real one. A seeded event-card check in the KVIS repository (`tests/03/atlas-events.test.mjs`) found this.

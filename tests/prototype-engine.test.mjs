@@ -211,3 +211,11 @@ test('packaging: every reference is absolute, an anchor, or classic.html / index
     assert.ok(unresolvedReferences(prototype.replace('</body>',plant+'</body>')).length===1,plant);
 });
 
+test('the Survival charter line, which names "Cyclone & Piracy Crisis", shows no event card',()=>{
+  // Found by the KVIS seeded event-card check: the charter entry matched /cyclone/ and
+  // suppressed the game's first real cyclone report.
+  const game=load({atlas:true,random:.99});game.run('selectDifficulty("survival");startSimulation()');
+  assert.equal(game.elements.get('atlas-event').hidden,true);
+  assert.match(game.snapshot().logs[0],/Cyclone & Piracy Crisis/);
+});
+
