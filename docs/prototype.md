@@ -56,3 +56,10 @@ Branch `fix/atlas-on-main` merges game `main` (`ba2f279`: Play Only / Student Mo
 - **PDF:** one action, "Print / Save as PDF". The duplicate export button is hidden, because both open the same print dialog on this offline page. This is a deliberate change from the original game's direct PDF download.
 
 The licence and credit wording still awaits the copyright holder's confirmation.
+
+### Review follow-ups (2026-11-22)
+
+- The Sources dialog's "model description" link points to this repository's README at `ba2f279`. A relative `README.md` link missed on the KVIS site.
+- In Play Only, the intro steps read "Navigate & trade / Results" and the audit eyebrow "Results / voyage evidence". The engine's "(Goal: +1200 D)" on the return line is inherited and unchanged.
+- The market region's label no longer tells readers to scroll sideways. The page no longer calls itself a prototype.
+- The builder drops the unused `.harbor-art` CSS, so the page references no image file.

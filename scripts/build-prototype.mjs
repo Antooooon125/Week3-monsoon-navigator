@@ -72,9 +72,11 @@ for(const min of Object.keys(media).map(Number).sort((a,b)=>a-b))utility+=media[
 let output=original
   .replace(/<script\b[^>]*\bsrc=[^>]*><\/script>\s*/g,'')
   .replace(/@import url\((['"]).*?\1\);?/g,'')
+  // The adapter removes the harbour illustration; drop its CSS so the page references no image file.
+  .replace(/\s*\.harbor-art \{[^}]*\}/,'')
   .replace('<html lang="en" class="dark">','<html lang="en">')
   .replace(/<title>.*?<\/title>/,'<title>Monsoon Navigator — An Atlas of Moving Worlds</title>')
-  .replace('</head>',`<meta name="description" content="Plan a merchant voyage through the seasonal Indian Ocean. An Atlas of Moving Worlds: a playable visual prototype.">\n<style id="atlas-fonts">${fontLicences}\n${fontCSS}</style>\n<style id="atlas-utilities">${utility}</style>\n<style id="atlas-style">${styles}</style>\n</head>`)
+  .replace('</head>',`<meta name="description" content="Plan a merchant voyage through the seasonal Indian Ocean. Monsoon Navigator, presented as An Atlas of Moving Worlds.">\n<style id="atlas-fonts">${fontLicences}\n${fontCSS}</style>\n<style id="atlas-utilities">${utility}</style>\n<style id="atlas-style">${styles}</style>\n</head>`)
   .replace('</body>',`<script id="atlas-adapter">${adapter}</script>\n</body>`);
 writeFileSync(resolve(root,'prototype.html'),output);
 console.log('Built prototype.html; original simulation script preserved verbatim.');

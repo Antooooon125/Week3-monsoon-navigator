@@ -168,9 +168,12 @@ test('Play Only audit text names no target or prediction; Student Mode keeps the
   const play=load({atlas:true});play.run('startSimulation();finishCampaign()');
   assert.doesNotMatch(play.elements.get('atlas-audit-summary').textContent,/target/);
   assert.doesNotMatch(play.elements.get('atlas-audit-prompt').textContent,/prediction/);
+  assert.equal(play.elements.get('atlas-audit-eyebrow').textContent,'Results / voyage evidence');
+  assert.doesNotMatch(play.elements.get('atlas-steps').innerHTML,/Predict|Audit/);
   const student=load({atlas:true});student.run('selectGameMode("student");startSimulation();finishCampaign()');
   assert.match(student.elements.get('atlas-audit-summary').textContent,/against your 1,200 D profit target/);
   assert.match(student.elements.get('atlas-audit-prompt').textContent,/prediction/);
+  assert.equal(student.elements.get('atlas-audit-eyebrow').textContent,'Audit / prediction and evidence');
 });
 
 test('one print action, credits and drawing provenance as resolved for the KVIS deployment',()=>{
@@ -181,5 +184,12 @@ test('one print action, credits and drawing provenance as resolved for the KVIS 
   game.run('startSimulation()');
   assert.match(game.elements.get('ship-credit').textContent,/^Original schematic illustration; reference photograph: /);
   assert.equal(game.elements.get('atlas-classic-link').href,'classic.html');
+});
+
+test('packaging: no relative links or images that would miss beside the deployed page',()=>{
+  // B2: href="README.md" resolved to projects/03/README.md on the KVIS site (404).
+  assert.doesNotMatch(prototype,/href="README\.md"/);
+  assert.doesNotMatch(prototype,/harbor-atlas\.jpg/);
+  assert.doesNotMatch(prototype,/playable visual prototype/);
 });
 
