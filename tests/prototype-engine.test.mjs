@@ -183,13 +183,31 @@ test('one print action, credits and drawing provenance as resolved for the KVIS 
   assert.match(game.elements.get('atlas-export-note').textContent,/print dialog/);
   game.run('startSimulation()');
   assert.match(game.elements.get('ship-credit').textContent,/^Original schematic illustration; reference photograph: /);
-  assert.equal(game.elements.get('atlas-classic-link').href,'classic.html');
+  assert.match(prototype,/<a id="atlas-classic-link" href="classic\.html">Classic version<\/a>/);
+  assert.match(prototype,/\(proposed, pending the copyright holder’s confirmation\)/);
 });
 
-test('packaging: no relative links or images that would miss beside the deployed page',()=>{
+// Every reference a page makes: HTML attributes (quoted or not), quoted JS property
+// assignments such as el.href='x', and CSS url(). Template values (${...}) and
+// assignments of variables are dynamic and are not checked here.
+export function pageReferences(html){
+  const refs=[];
+  for(const m of html.matchAll(/(?<=[\s<"'])(?:xlink:)?(href|src|srcset|action|poster)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"'`]+))/gi))refs.push(m[2]??m[3]??m[4]);
+  for(const m of html.matchAll(/\.(href|src)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)/g))refs.push(m[2]??m[3]??m[4]);
+  for(const m of html.matchAll(/(?<![\w.])url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s]*))\s*\)/gi))refs.push(m[1]??m[2]??m[3]);
+  return refs;
+}
+export const ALLOWED_LOCAL=['classic.html','index.html'];
+export function unresolvedReferences(html){
+  return pageReferences(html).filter(ref=>!(/^(?:https?:|data:|mailto:|#)/i.test(ref)||ref.startsWith('${')||ALLOWED_LOCAL.includes(ref)));
+}
+
+test('packaging: every reference is absolute, an anchor, or classic.html / index.html',()=>{
   // B2: href="README.md" resolved to projects/03/README.md on the KVIS site (404).
-  assert.doesNotMatch(prototype,/href="README\.md"/);
-  assert.doesNotMatch(prototype,/harbor-atlas\.jpg/);
+  assert.deepEqual(unresolvedReferences(prototype),[]);
   assert.doesNotMatch(prototype,/playable visual prototype/);
+  // The check must catch each way a relative reference can be written.
+  for(const plant of [`<a href="README.md">`,`<a href='README.md'>`,`<a href=./README.md>`,`<a href="docs/prototype.md">`,`<img src="harbour.jpg">`,`<style>i{background:url(./Harbor-Atlas.jpg)}</style>`,`<script>x.href='notes.html'</script>`,`<link rel=icon href=favicon.ico>`])
+    assert.ok(unresolvedReferences(prototype.replace('</body>',plant+'</body>')).length===1,plant);
 });
 

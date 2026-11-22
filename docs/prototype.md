@@ -64,3 +64,10 @@ The licence and credit wording still awaits the copyright holder's confirmation.
 - The market region's label no longer tells readers to scroll sideways. The page no longer calls itself a prototype.
 - The builder drops the unused `.harbor-art` CSS, so the page references no image file.
 - At 200 % text the toolbar, market header and audit rows wrap. Before this, the page widened to 541 px at 375 px (the original page's audit reaches 749 px at the same setting).
+
+### Second re-review follow-ups (2026-11-22)
+
+- The builder no longer pins `html{font-size:16px}`, so the reader's browser text-size setting is honoured, as in the original page. At 375 px with a 24 px or 32 px browser default, every page state still fits.
+- The "Classic version" link is a plain `href="classic.html"`. In this repository there is no `classic.html` beside `prototype.html`; the link is for the KVIS deployment.
+- The footer's Atlas credit is marked "(proposed, pending the copyright holder’s confirmation)".
+- The packaging test now extracts every `href`, `src` and `url()` (quoted or not, and quoted JS assignments). Each must be absolute, an anchor, a `${…}` template, or `classic.html` / `index.html`. It fails on each of eight planted relative references.

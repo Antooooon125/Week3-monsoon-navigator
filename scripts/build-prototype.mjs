@@ -46,7 +46,7 @@ for (let n=1;n<=12;n++) {rules.set('grid-cols-'+n,`grid-template-columns:repeat(
 for(const name of ['rounded','rounded-md','rounded-lg','rounded-xl']) rules.set(name,'border-radius:5px');
 // Include tokens from both static markup and dynamic templates, including conditional classes.
 const tokens = new Set((original+adapter).match(/[a-zA-Z0-9_-]+(?::[a-zA-Z0-9_-]+)*-?\[[^\]\s]+\](?:\/\d+)?|[a-zA-Z0-9_-]+(?::[a-zA-Z0-9_./-]+)*/g));
-let utility = '*{box-sizing:border-box}html{font-size:16px}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed}h1,h2,h3,h4,p,figure{margin:0}ul{padding:0;list-style:none}a{color:inherit}img,svg{max-width:100%}table{border-spacing:0}th,td{vertical-align:top} [class*="space-y-"]>*+*{margin-top:var(--stack)}[class*="space-x-"]>*+*{margin-left:var(--inline-gap)}\n';
+let utility = '*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed}h1,h2,h3,h4,p,figure{margin:0}ul{padding:0;list-style:none}a{color:inherit}img,svg{max-width:100%}table{border-spacing:0}th,td{vertical-align:top} [class*="space-y-"]>*+*{margin-top:var(--stack)}[class*="space-x-"]>*+*{margin-left:var(--inline-gap)}\n';
 const media={};
 const escape = s => s.replace(/[^a-zA-Z0-9_-]/g,c=>'\\'+c);
 for(const token of tokens){
