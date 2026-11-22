@@ -143,9 +143,16 @@ function economySweep(seeds = 300, startPort = "calicut") {
   };
   const quantile = (xs, p) => { const s = [...xs].sort((a, b) => a - b); return s[Math.floor(p * (s.length - 1))]; };
   const policies = ["sailAlways", "avoidHeadwind", "avoidHeadwindAndTransition"];
-  const out = { seeds, startPort, target: 1200, cells: [], pairedSailAlways: {} };
+  // sameSeed: dhow vs junk run on the same seed under the same policy. This is
+  // NOT common random numbers: the two ships make different voyages and so
+  // consume the random stream differently, so the hazards they meet differ.
+  const out = {
+    seeds, startPort, target: 1200, cells: [], sameSeed: {},
+    sameSeedNote: "Same seed, not common random numbers; the ships meet different hazards."
+  };
   try {
     for (const diffKey of ["normal", "hard", "survival"]) {
+      const netsBy = {};
       for (const vessel of Object.keys(VESSELS)) {
         for (const policy of policies) {
           const nets = [];
@@ -154,6 +161,7 @@ function economySweep(seeds = 300, startPort = "calicut") {
             harnessReset(vessel, diffKey, startPort, s);
             nets.push(harnessPlay(policy).net);
           }
+          netsBy[`${vessel}/${policy}`] = nets;
           out.cells.push({
             difficulty: diffKey, vessel, policy, startEquity: DIFFICULTIES[diffKey].cash - DIFFICULTIES[diffKey].debt,
             min: Math.min(...nets), p10: quantile(nets, 0.1), median: quantile(nets, 0.5), p90: quantile(nets, 0.9),
@@ -161,13 +169,15 @@ function economySweep(seeds = 300, startPort = "calicut") {
           });
         }
       }
-      let dhowWins = 0;
-      for (let s = 1; s <= seeds; s++) {
-        harnessReset("dhow", diffKey, startPort, s); const a = harnessPlay("sailAlways").net;
-        harnessReset("junk", diffKey, startPort, s); const b = harnessPlay("sailAlways").net;
-        if (a > b) dhowWins++;
+      for (const policy of policies) {
+        const d = netsBy[`dhow/${policy}`], j = netsBy[`junk/${policy}`];
+        out.sameSeed[policy] = out.sameSeed[policy] || {};
+        out.sameSeed[policy][diffKey] = {
+          dhowBeatsJunk: d.filter((x, i) => x > j[i]).length,
+          ties: d.filter((x, i) => x === j[i]).length,
+          of: seeds
+        };
       }
-      out.pairedSailAlways[diffKey] = { dhowBeatsJunk: dhowWins, of: seeds };
     }
   } finally {
     Math.random = originals.random;
