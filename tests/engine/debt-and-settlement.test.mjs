@@ -76,7 +76,7 @@ test("finishCampaign at month 24: sells cargo at the month-23 price, deducts the
   assert.equal(e.el("audit-net-profit").textContent, "+335 D");
   assert.equal(e.el("audit-roi").textContent, "112% (Goal: +1200 D)");
   assert.equal(e.el("audit-outcome-badge").textContent, "PROFITABLE VOYAGE • BELOW TARGET");
-  assert.equal(e.el("audit-student-meta").textContent, "Student: Test Student | ID: T-0000");
+  assert.equal(e.el("audit-student-meta").textContent, "Student: Test Student | Student no.: T-0000");
   assert.ok(e.el("phase-sim").classList.contains("hidden"));
   assert.ok(!e.el("phase-audit").classList.contains("hidden"));
   assert.equal(e.el("audit-log-table").innerHTML.split("</div>").length - 1, e.state.logs.length);
@@ -91,7 +91,7 @@ test("finishCampaign outcome badge: target met, and deficit", () => {
 
   const deficit = loadEngine().start();
   deficit.g.finishCampaign();                 // net exactly 0
-  assert.equal(deficit.el("audit-outcome-badge").textContent, "VENTURE DEFICIT • AUDIT REQUIRED");
+  assert.equal(deficit.el("audit-outcome-badge").textContent, "VENTURE DEFICIT");
 });
 
 test("cash below −250 D ends the campaign early", () => {

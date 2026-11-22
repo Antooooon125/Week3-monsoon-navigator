@@ -22,7 +22,7 @@ import { DEFAULT_INDEX } from "./load-engine.mjs";
 const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
 
 // [kind, change, find, replace, test-name pattern that must fail]
-// `find` is a string or a /g regex (index.html mixes CRLF and LF line endings,
+// `find` is a string or a /g regex (index.html has used both CRLF and LF line endings,
 // so a change spanning lines uses \s* rather than a literal newline).
 const PLANTS = [
   ["trade", "Calicut tariff 4% → 5%", "tariff: 0.04,", "tariff: 0.05,", /buying adds the port tariff/],
@@ -62,6 +62,10 @@ const PLANTS = [
   ["sail", "arrival standing capped at 50", "state.diaspora[destId] = Math.min(100, (state.diaspora[destId] || 0) + 5);", "state.diaspora[destId] = Math.min(50, (state.diaspora[destId] || 0) + 5);", /arrival raises/],
   ["settlement", "audit wind ratio swapped", "`${state.stats.goodWinds} Tailwind / ${state.stats.badWinds} Adverse", "`${state.stats.badWinds} Tailwind / ${state.stats.goodWinds} Adverse", /audit tallies/],
   ["settlement", "freight tally drops luxury tonnage", "state.stats.luxuryTonsShipped += luxury;", "state.stats.luxuryTonsShipped += 0;", /audit tallies/],
+  // Game modes (main 8267088, 29f2354).
+  ["modes", "play mode keeps a typed target", ": state.targetProfit;", ": parseInt(document.getElementById(\"input-target-profit\").value, 10) || state.targetProfit;", /play mode ignores the student form/],
+  ["modes", "student mode skips validation", "if (student && (!name", "if (false && (!name", /student mode refuses to start/],
+  ["modes", "export reflection minimum 15 → 10", "state.reflection.length >= 15", "state.reflection.length >= 10", /audit export needs student mode/],
   ["defect pin", "D02 stand-in: count semi-bulk as bulk", "if (c.category === \"Bulk\") bulk += tons;", "if (c.category !== \"Luxury\") bulk += tons;", /DEFECT D02/],
   ["defect pin", "D03 stand-in: skip the tally on headwind voyages", "state.stats.bulkTonsShipped += bulk;", "state.stats.bulkTonsShipped += calc.isHeadwind ? 0 : bulk;", /DEFECT D03/],
   ["defect pin", "D01 stand-in: clamp time at month 24", "state.monthIndex += months;", "state.monthIndex = Math.min(CAMPAIGN_MONTHS, state.monthIndex + months);", /DEFECT D01/],

@@ -40,7 +40,12 @@ function makeElement(id) {
     classList: {
       add: (...c) => c.forEach(x => classes.add(x)),
       remove: (...c) => c.forEach(x => classes.delete(x)),
-      toggle: c => (classes.has(c) ? classes.delete(c) : classes.add(c)),
+      // DOMTokenList.toggle(token, force): force true adds, false removes, absent flips.
+      toggle: (c, force) => {
+        const on = force === undefined ? !classes.has(c) : Boolean(force);
+        if (on) classes.add(c); else classes.delete(c);
+        return on;
+      },
       contains: c => classes.has(c)
     },
     setAttribute(name, v) { el.attributes[name] = String(v); },
@@ -128,20 +133,27 @@ export function loadEngine({ index = process.env.MONSOON_INDEX || DEFAULT_INDEX,
     lane(from, to) { return api.SEA_LANES.find(l => l.from === from && l.to === to); },
     // Logs oldest first (the game keeps them newest first).
     logs() { return [...api.state.logs].reverse(); },
-    // The game's real setup path: selectVessel, selectDifficulty, startSimulation.
-    // Student details are fictional, as CONTRIBUTING.md requires.
-    start({ vessel = "dhow", difficulty = "normal", port = "calicut", target = 1200 } = {}) {
+    // The game's real setup path: selectGameMode, selectVessel, selectDifficulty,
+    // startSimulation. Student mode (the default here) fills the student form,
+    // with fictional details as CONTRIBUTING.md requires; play mode fills only
+    // the starting port, as the page does.
+    start({ mode = "student", vessel = "dhow", difficulty = "normal", port = "calicut", target = 1200 } = {}) {
       const set = (id, value) => { document.getElementById(id).value = value; };
-      set("input-name", "Test Student");
-      set("input-id", "T-0000");
-      set("input-target-profit", String(target));
-      set("input-hypothesis", "Sail the dhow with the SW monsoon carrying pepper.");
+      context.selectGameMode(mode);
+      if (mode === "student") {
+        set("input-name", "Test Student");
+        set("input-id", "T-0000");
+        set("input-target-profit", String(target));
+        set("input-hypothesis", "Sail the dhow with the SW monsoon carrying pepper.");
+      }
       set("input-start-port", port);
       context.selectVessel(vessel);
       context.selectDifficulty(difficulty);
       context.startSimulation();
       // A rejected setup leaves month 0 at Calicut too, so check what only a successful start writes.
-      const started = api.state.studentName === "Test Student" && api.state.logs.some(l => l.includes("Charter signed"));
+      const name = mode === "student" ? "Test Student" : "";
+      const started = api.state.mode === mode && api.state.studentName === name &&
+        api.state.logs.some(l => l.includes("Charter signed"));
       if (!started || api.state.monthIndex !== 0 || api.state.currentPort !== port) throw new Error("startSimulation did not start the campaign");
       return this;
     }

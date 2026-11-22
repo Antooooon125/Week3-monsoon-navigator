@@ -46,7 +46,7 @@ test("DEFECT D07 (current behaviour): a campaign ended by debt is logged as \"Mo
   assert.equal(liquidation, "[M4 • Apr] Month 24 Liquidation: Sold 1× Black Pepper at Calicut for 74 D.", pin("D07"));
   // Nothing in the audit says the campaign ended early.
   assert.ok(!e.logs().some(l => /early|bankrupt|insolv/i.test(l)));
-  assert.equal(e.el("audit-outcome-badge").textContent, "VENTURE DEFICIT • AUDIT REQUIRED");
+  assert.equal(e.el("audit-outcome-badge").textContent, "VENTURE DEFICIT");
 });
 
 test("DEFECT D08 (current behaviour): arrival log entries carry the departure month", () => {
