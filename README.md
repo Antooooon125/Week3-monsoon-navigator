@@ -31,7 +31,7 @@ The five-port map compresses several centuries into one playable circuit. Presen
 
 ## What the prototype contains
 
-The pasted HTML is the playable source. The attached `gemini-code-1795190967723.md` provides the curriculum rationale and proposed mechanics. Its suggested filename, lesson activities and implementation descriptions serve as reference material. The map-and-source activity is a separate teaching step.
+`index.html` is the playable source. The curriculum brief it was built from, which gave the rationale and proposed mechanics, is not included in this repository. Its suggested filename, lesson activities and implementation descriptions serve as reference material. The map-and-source activity is a separate teaching step.
 
 The game uses one HTML page with inline SVG, vanilla JavaScript and Tailwind’s browser CDN. To run the prototype locally, download and open `index.html` in a modern browser with internet access. `PORTS`, `SEA_LANES`, `VESSELS` and `COMMODITIES` define the model. `computeTransit` uses the cosine of the angle between the route and the departure month’s downwind direction, applies transition-season and navigator modifiers, and rounds travel into whole campaign months. A shared in-memory `state` holds the voyage, finances and log. The page has no backend or save-and-resume mechanism. Client-side export uses html2canvas and jsPDF, with browser printing as a fallback.
 
@@ -44,7 +44,7 @@ The game uses one HTML page with inline SVG, vanilla JavaScript and Tailwind’s
 | Medium | The market labels pepper **Semi-Bulk** while the audit counts it as luxury. The freight tally includes cargo on departures that turn back and cargo later lost en route. | Show semi-bulk as a distinct category and define whether the audit measures tons loaded or delivered. |
 | Medium | Browser print is available, but Tailwind styling, PDF libraries and fonts rely on remote resources. The PDF filename sanitizer replaces non-ASCII characters with underscores. | Ship compiled CSS and local dependencies for an offline release. Test the multi-page PDF and print fallback with fictional student details, including non-Latin names. [Tailwind CDN guidance](https://v3.tailwindcss.com/docs/upgrade-guide) |
 
-**Verification.** The original inline script ran in Node with a simulated DOM and controlled random outcomes. Checks covered route timing, buying and selling, wind preview, standing discounts, end-of-campaign audit data and invocation of the print fallback. Browser layout and PDF rendering still need hands-on verification.
+**Verification.** The original inline script ran in Node with a simulated DOM and controlled random outcomes. Checks covered route timing, buying and selling, wind preview, standing discounts, end-of-campaign audit data and invocation of the print fallback. That harness is not committed to this repository. Browser layout and PDF rendering still need hands-on verification.
 
 ## Attribution and license
 
