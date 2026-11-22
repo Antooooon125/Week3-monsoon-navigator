@@ -117,7 +117,7 @@ Each defect stays in the baseline until a separate, reviewed bug-fix PR changes 
 | D03 | The freight tally counts cargo loaded, including voyages that turn back and cargo later lost | README | open |
 | D04 | Tailwind CSS, PDF libraries and fonts load from remote servers; the PDF filename turns non-ASCII names into underscores | README | open |
 | D05 | The profit target is always met: all 5,400 runs in the section 5 sweep end above 1,200 D | review, sweep | open |
-| D06 | The junk beats the dhow in every matched run in the sweep, so there is no ship trade-off at these values | review, sweep | open |
+| D06 | Which ship wins is set by the strategy, not by the seed. In same-seed runs the junk wins 300 of 300 under *sail always* and *avoid headwind and transition*, and the dhow wins 300 of 300 under *avoid headwind*, at every difficulty (section 5). The trade-off the README describes, lower overhead versus a bigger hold, is not what decides it. (Corrected 2026-11-22; the first wording generalised the *sail always* result to all strategies.) | review, sweep | open |
 | D07 | A campaign ended by cash below −250 D is logged as "Month 24 Liquidation" and labelled like a completed one | code reading | open |
 | D08 | Arrival log entries carry the departure month | code reading | open |
 | D09 | Calicut's description says "zero piracy risk near harbor", but its piracy risk is 0.04 | code reading | open |
@@ -145,9 +145,24 @@ Each strategy sells everything on arrival and fills the hold by the ratio of des
 | survival (600 D) | dhow | 36,319 / 76,409 | 170,258 / 175,372 | 172,317 / 176,596 |
 | survival (600 D) | junk | 118,357 / 139,119 | 145,223 / 147,106 | 396,683 / 401,618 |
 
-Net profit in D. Every one of the 5,400 runs met the 1,200 D target. In matched *sail always* runs, the dhow beat the junk in 0 of 300 at each difficulty.
+Net profit in D. Every one of the 5,400 runs met the 1,200 D target.
 
-**Consequence for the research track.** The roadmap's M3 (when is a larger ship advantageous) and M4 (when does waiting pay) can no longer be blind tests of the current values. Avoiding headwinds beats sailing regardless of wind, and no tested case favours the smaller ship. Their pre-registrations must cite this section as a prior look.
+**Dhow against junk on the same seed** (dhow wins out of 300; no ties):
+
+| Strategy | normal | hard | survival |
+| --- | --- | --- | --- |
+| Sail always | 0 | 0 | 0 |
+| Avoid headwind | 300 | 300 | 300 |
+| Avoid headwind and transition | 0 | 0 | 0 |
+
+These pairs share a seed, not common random numbers. The two ships make different voyages, so they draw different hazards from the same stream. Under the two *avoid* strategies the spread between seeds is small (minimum within about 3% of the median), so the strategy, not chance, decides the ranking. An earlier version of this section reported only the *sail always* row and concluded that no case favoured the smaller ship. That was wrong.
+
+**Consequence for the research track.** The roadmap's M3 (when is a larger ship advantageous), M4 (when does waiting pay) and M6 (robustness) can no longer be blind tests of the current values. These results have already been seen:
+
+- By median, avoiding headwinds beats sailing regardless of wind for both ships at every difficulty.
+- Which ship wins reverses with the strategy.
+
+Their pre-registrations must cite this section as a prior look.
 
 ## 6. Licensing: open question for the owner
 
