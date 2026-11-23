@@ -23,12 +23,6 @@
     malacca:['Asian Maritime Networking Centered in Fifteenth Century Melaka','https://doi.org/10.1163/15685209-12341569'],
     quanzhou:['Quanzhou in Song–Yuan China','https://whc.unesco.org/en/list/1561/']
   };
-  const materialTints={teak:['#d8b784','#4b5640'],porcelain:['#ece8db','#b8c6d9'],textiles:['#d9c8ab','#c84238'],pepper:['#c6d2aa','#7e9857'],cloves:['#d4b19c','#8d9e68'],ivory:['#e7dfc9','#527976']};
-  const specimen=(id)=>{
-    const [tint,detail]=materialTints[id];
-    return svg(`<defs><linearGradient id="material-${id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${tint}"/><stop offset="1" stop-color="${detail}" stop-opacity=".16"/></linearGradient></defs><ellipse cx="70" cy="94" rx="49" ry="7" fill="${detail}" opacity=".12"/><circle cx="72" cy="53" r="46" fill="url(#material-${id})" opacity=".38"/>${goods[id][1]}`,'0 0 140 110');
-  };
-
   document.body.dataset.plate='predict';
   document.body.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
   const toolbar=document.createElement('div');toolbar.className='atlas-toolbar';
@@ -119,7 +113,6 @@
   const hold=right.querySelector('section:nth-child(2)');hold.classList.add('atlas-hold');hold.querySelector('.harbor-art').remove();
   hold.querySelector('h3').textContent='A collection in transit';
   const holdManifest=document.createElement('div');holdManifest.id='atlas-hold-manifest';holdManifest.className='atlas-hold-manifest';$('cargo-shelf-weight').after(holdManifest);
-  const cargoCaption=document.createElement('p');cargoCaption.className='atlas-specimen-caption';cargoCaption.textContent='Schematic material studies. Quantities and weights come from your cargo manifest.';hold.append(cargoCaption);
   const market=$('market-tbody').closest('table').parentElement.parentElement;market.classList.add('atlas-trade');right.prepend(market);
   const narrow=typeof matchMedia==='function'?matchMedia('(max-width: 1099px)'):null;
   const placeMarket=()=>{if(narrow?.matches)departure.after(market);else right.prepend(market);};
@@ -127,6 +120,15 @@
   market.querySelector('h3').textContent='Trade at the waterfront';market.querySelector('span').textContent='Trade / material ecology';
   const marketScroll=market.querySelector('.overflow-x-auto');marketScroll.tabIndex=0;marketScroll.setAttribute('role','region');marketScroll.setAttribute('aria-label','Commodity market');
   const tableHint=document.createElement('p');tableHint.className='atlas-table-hint';tableHint.textContent='Prices at this port this month, per game lot. Sell here: what you receive for each lot you sell. Buy here: what each lot costs, including the port’s tariff. ▲ high / ▼ low: the sell price is more than 2 D above / below this port’s usual price. Next month: which way this port’s prices move next month (↑ rising, ↓ falling, – steady), from the game’s fixed seasonal cycle. Select a good’s name for its prices through the year at every port.';marketScroll.before(tableHint);
+  // One trade panel. The lower "collection in transit" panel duplicated the market's hold line; its unique
+  // parts (drawn icons, tonnes aboard, the per-good weight bar and legend, tonnes available, the weight note)
+  // move here and the panel is hidden. It stays in the page because the engine still writes its cargo shelf.
+  hold.hidden=true;hold.setAttribute('aria-hidden','true');
+  const holdLine=$('hold-util-label').closest('div.mb-3');holdLine.classList.add('atlas-hold-line');
+  const engineBar=$('bar-bulk-tons').parentElement;engineBar.classList.add('atlas-engine-split');engineBar.nextElementSibling?.classList.add('atlas-engine-split');
+  holdLine.append(holdManifest);
+  const holdSplit=document.createElement('p');holdSplit.id='atlas-hold-split';holdSplit.className='atlas-hold-split';holdLine.append(holdSplit);
+  const holdNote=document.createElement('p');holdNote.className='atlas-hold-note';holdNote.textContent='Game weight, not hull volume. The drawings are schematic material studies.';holdLine.append(holdNote);
   const marketHead=market.querySelectorAll('thead th');if(marketHead.length===4){marketHead[1].textContent='Prices here';marketHead[2].textContent='In your hold';}
   // Prices straight from the engine: getLivePortPrice is a fixed seasonal wave (no random term, no market depth);
   // the buy price adds the port's effective tariff exactly as buyCargoQty does.
@@ -225,10 +227,10 @@
     $('ship-name').textContent=shipName;$('ship-credit').textContent='Schematic illustration; reference photograph: '+(state.vesselKey==='dhow'?'Jewel of Muscat reconstruction · Jacklee · CC BY-SA 3.0':'Zheng He treasure ship model · Mike Peel · CC BY-SA 4.0');
     $('ship-credit').href='https://commons.wikimedia.org/wiki/File:'+SHIP_PHOTOS[state.vesselKey][1];
     for(const [meter,value] of [['hull',state.hull],['crew',state.crewHealth]]){$(meter+'-meter').value=value;$(meter+'-meter-value').textContent=value+'%';}
-    $('cargo-shelf-weight').textContent=`${usedTonnage} / ${vessel.capacity} tons loaded · game weight, not hull volume`;
     $('atlas-hold-manifest').setAttribute('role','img');$('atlas-hold-manifest').setAttribute('aria-label',`${usedTonnage} of ${vessel.capacity} tons loaded; ${vessel.capacity-usedTonnage} tons available.`);
-    $('atlas-hold-manifest').innerHTML='<div class="atlas-weight-bar">'+COMMODITIES.filter(item=>state.cargo[item.id]>0).map(item=>`<span style="width:${state.cargo[item.id]*item.weight/vessel.capacity*100}%;background:${goods[item.id][0]}" title="${item.name}: ${state.cargo[item.id]*item.weight} tons"></span>`).join('')+`</div><ul class="atlas-manifest-legend">`+COMMODITIES.filter(item=>state.cargo[item.id]>0).map(item=>`<li><i style="background:${goods[item.id][0]}" aria-hidden="true"></i>${item.name} ${state.cargo[item.id]*item.weight} t</li>`).join('')+`</ul><div class="atlas-manifest-label"><span>${Math.round(usedTonnage/vessel.capacity*100)}% loaded</span><span>${vessel.capacity-usedTonnage} t available</span></div>`;
-    $('cargo-shelves').innerHTML=COMMODITIES.map(item=>`<li class="atlas-commodity" data-good="${item.id}" data-loaded="${state.cargo[item.id]>0}" style="--material:${goods[item.id][0]};--material-tint:${materialTints[item.id][0]}"><div class="atlas-specimen" style="color:${goods[item.id][0]}">${specimen(item.id)}</div><span class="atlas-commodity-category">${item.category}</span><strong class="block">${item.name}</strong><span class="atlas-commodity-stock">${state.cargo[item.id]} lots <span aria-hidden="true">/</span> ${state.cargo[item.id]*item.weight} t</span><span class="atlas-commodity-unit">${item.weight} t per lot</span></li>`).join('');
+    $('atlas-hold-manifest').innerHTML='<div class="atlas-weight-bar">'+COMMODITIES.filter(item=>state.cargo[item.id]>0).map(item=>`<span style="width:${state.cargo[item.id]*item.weight/vessel.capacity*100}%;background:${goods[item.id][0]}" title="${item.name}: ${state.cargo[item.id]*item.weight} tons"></span>`).join('')+`</div><ul class="atlas-manifest-legend">`+COMMODITIES.filter(item=>state.cargo[item.id]>0).map(item=>`<li><i style="background:${goods[item.id][0]}" aria-hidden="true"></i>${item.name} ${state.cargo[item.id]*item.weight} t</li>`).join('')+`</ul><div class="atlas-manifest-label"><span></span><span data-free="${vessel.capacity-usedTonnage}">${vessel.capacity-usedTonnage} t available</span></div>`;
+    const split=getBulkAndLuxuryTonnage();
+    $('atlas-hold-split').textContent=`The game's freight split: bulk ${split.bulk} t · spices & luxury ${split.luxury} t (it counts pepper as luxury).`;
   };
   const paintCalendar=()=>{
     const actual=state.monthIndex%12,forecast=getForecastMonthIndex();
@@ -335,9 +337,10 @@
       }
       row.children[1].innerHTML=`<div class="atlas-price-sell"><span class="atlas-price-label">Sell here</span> <b>${sell} D</b>${trend}</div><div class="atlas-price-buy"><span class="atlas-price-label">Buy here</span> <b>${buy} D</b></div>${next}`;
       const nameCell=row.children[0].firstElementChild;
-      if(nameCell)nameCell.innerHTML=`<button type="button" class="atlas-good-chart" data-good="${item.id}" aria-haspopup="dialog" title="Prices through the year at every port">${item.name}</button> <span class="font-mono text-[10px] text-slate-400">(${item.weight}T)</span>`;
+      row.dataset.loaded=String(state.cargo[item.id]>0);
+      if(nameCell)nameCell.innerHTML=`<span class="atlas-row-icon" style="color:${goods[item.id][0]}">${svg(goods[item.id][1],'0 0 140 110')}</span><button type="button" class="atlas-good-chart" data-good="${item.id}" aria-haspopup="dialog" title="Prices through the year at every port">${item.name}</button> <span class="font-mono text-[10px] text-slate-400">(${item.weight}T)</span>`;
       const held=state.cargo[item.id];
-      row.children[2].innerHTML=held>0?`<div class="atlas-held"><b>${held}</b> held</div><div class="atlas-basis">you paid ${state.costBasis[item.id]} D each (average)</div>`:'<div class="atlas-held"><b>0</b> held</div>';
+      row.children[2].innerHTML=held>0?`<div class="atlas-held"><b>${held}</b> held</div><div class="atlas-held-tons">${held*item.weight} t aboard</div><div class="atlas-basis">you paid ${state.costBasis[item.id]} D each (average)</div>`:'<div class="atlas-held"><b>0</b> held</div>';
     });
     document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');if(button.classList.contains('atlas-good-chart')){button.setAttribute('aria-label',`${button.textContent.trim()}: prices through the year`);return;}button.setAttribute('aria-label',`${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
     document.querySelectorAll('#market-tbody tr').forEach((row,index)=>{const item=COMMODITIES[index];row.dataset.good=item.id;row.style.setProperty('--material',goods[item.id][0]);});

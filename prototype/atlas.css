@@ -236,7 +236,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-key-line line{stroke:#ec9abe;stroke-width:3;stroke-linecap:round}
   .atlas-key-line line[data-wind=crosswind]{stroke-dasharray:9 6}.atlas-key-line line[data-wind=headwind]{stroke-dasharray:2 6}.atlas-key-line line[data-wind=transition]{stroke-dasharray:.1 5}
   .atlas-trade .atlas-price-sell,.atlas-trade .atlas-price-buy,.atlas-trade .atlas-held{white-space:nowrap}
-  .atlas-trade td:nth-child(3){padding-left:12px}
+  .atlas-trade td:nth-child(3),.atlas-trade th:nth-child(3){padding-left:12px}
   .atlas-trade .atlas-price-label{font-family:var(--f-body);font-size:.75rem;font-weight:400;color:var(--muted)}
   .atlas-trade .atlas-price-sell b{font-size:.9375rem;font-weight:700;color:var(--ink)}
   .atlas-trade .atlas-price-buy{margin-top:2px}.atlas-trade .atlas-price-buy b{font-size:.8125rem;font-weight:700;color:var(--ink)}
@@ -286,6 +286,17 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-chart-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:12px}
   .atlas-chart-table caption{text-align:left;font-weight:700;margin-bottom:4px}
   .atlas-chart-table th,.atlas-chart-table td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--atlas-chart-grid)}
+}
+/* One trade panel (2026-11-23): the hold summary and drawn icons live here. */
+@media screen{
+  .atlas-trade .atlas-engine-split{display:none!important}
+  .atlas-trade .atlas-hold-line .atlas-hold-manifest{margin:10px 0 6px}
+  .atlas-trade .atlas-hold-split,.atlas-trade .atlas-hold-note{margin:4px 0 0;font-size:.75rem;line-height:1.4;color:var(--muted)}
+  .atlas-trade .atlas-row-icon{display:block;width:38px;height:30px;margin:0 0 2px -2px}
+  .atlas-trade .atlas-held-tons{font-family:var(--f-body);font-size:.75rem;color:var(--ink);white-space:nowrap}
+  .atlas-trade .atlas-row-icon svg{width:100%;height:100%;display:block}
+  .atlas-trade tr[data-loaded=true]>td:first-child{box-shadow:inset 3px 0 0 var(--material,currentColor);padding-left:8px}
+  body[data-theme=dark] .atlas-trade .atlas-weight-bar{background:#0f1c20}
 }
 @media(prefers-reduced-motion:reduce){.atlas-wind-tracer{animation:none!important;stroke-dasharray:14 18}}
 @media print{body{--bg:#fff;--surface:#fff;--ink:#111;--muted:#333;--line:#777;--accent:#111;--good:#111;--bad:#111;--warn:#111;background:#fff!important;color:#111!important}header,.atlas-footer,.atlas-event,.atlas-source-dialog,.no-print{display:none!important}#phase-setup,#phase-sim{display:none!important}#phase-audit{display:block!important;padding:0!important;max-width:none}#pdf-export-target{background:white!important;color:#111!important;border:0;padding:0!important}#pdf-export-target *{color:#111!important;background:transparent!important;box-shadow:none!important}#pdf-export-target .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#pdf-export-target p,#pdf-export-target .grid>div{break-inside:avoid}#audit-log-table>div{break-inside:avoid}#audit-log-table{font-size:10pt}a{text-decoration:none}}

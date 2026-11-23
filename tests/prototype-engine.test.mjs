@@ -151,7 +151,9 @@ test('the hold display reconciles bought cargo weight with vessel capacity',()=>
   const game=load({atlas:true});game.run('startSimulation();buyCargoQty("pepper",1)');
   assert.equal(game.run('getUsedTonnage()'),2);
   assert.equal(game.elements.get('atlas-hold-manifest').getAttribute('aria-label'),'2 of 120 tons loaded; 118 tons available.');
-  assert.match(game.elements.get('cargo-shelves').innerHTML,/1 lots <span aria-hidden="true">\/<\/span> 2 t/);
+  // The hold summary now lives in the trade panel (the lower hold panel is hidden).
+  assert.match(game.elements.get('atlas-hold-manifest').innerHTML,/<span data-free="118">118 t available/);
+  assert.match(game.elements.get('atlas-hold-split').textContent,/bulk 0 t · spices & luxury 2 t/);
 });
 
 test('builder: breakpoint utilities come after every base utility, and the font import is removed whole',()=>{
