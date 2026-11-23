@@ -567,6 +567,8 @@
   const seasonWord=month=>{const w=getWindState(month);return w.isDeadZone?'the transition between monsoons':w.regime.startsWith('SW')?'the southwest monsoon':'the northeast monsoon';};
   const monthNumber=index=>`month ${Math.round((index+1)*10)/10}`;
   const monthsWord=n=>`${n} month${n===1?'':'s'}`;
+  // A chance shown to the nearest percent, except that a chance above zero never reads as 0%.
+  const pctFine=p=>p>0&&p<0.005?'<1%':pct(p);
   // Group month numbers 0–11 into ranges, wrapping across the year end: [10,11,0,1] → "Nov–Feb".
   const monthRanges=months=>{
     const set=new Set(months);if(!set.size)return '';if(set.size===12)return 'all year';
@@ -596,7 +598,11 @@
       `<ul>${lanes.map(lane=>{const cal=routeCalendar(lane);return `<li data-to="${lane.to}">${cal.text}</li>`;}).join('')}</ul>`+
       `<button type="button" class="atlas-route-calendar-open" data-port="${state.currentPort}">Month by month from ${PORTS[state.currentPort].name}</button>`;
   };
-  calendarSection.addEventListener('click',event=>{const id=event.target?.closest?.('.atlas-route-calendar-open')?.dataset?.port;if(id)openPortView(id);});
+  let calendarOpened=false;
+  calendarSection.addEventListener('click',event=>{const id=event.target?.closest?.('.atlas-route-calendar-open')?.dataset?.port;if(id){calendarOpened=true;openPortView(id);}});
+  // The port view's own close handler focuses the port on the map; when the calendar opened it, focus comes back here
+  // instead (the button is found again, since the calendar may have been repainted while the view was open).
+  portDialog.addEventListener('close',()=>{if(!calendarOpened)return;calendarOpened=false;calendarSection.querySelector('.atlas-route-calendar-open')?.focus?.();});
 
   // 2. Sail now, or wait: the selected route's expected arrival for each departure month this campaign allows.
   //    Expected months at sea count headwind turn-backs: months + 0.35 × the expected time from the month you
@@ -607,14 +613,18 @@
     for(let w=from;w<=last;w++){const c=computeTransit(lane,w);options.push({w,c,wait:w-from,arrival:w+expectedMonths(lane,w)});}
     const best=options.reduce((a,b)=>b.arrival<a.arrival-1e-9?b:a);
     const fastest=options.reduce((a,b)=>b.c.days<a.c.days?b:a);
-    return {lane,options,now:options[0],best,fastest};
+    // The year's fastest crossing (the wind depends only on the month), which may fall after the campaign ends.
+    const year=MONTHS.map((_,m)=>({m,c:computeTransit(lane,m)})).reduce((a,b)=>b.c.days<a.c.days?b:a);
+    return {lane,options,now:options[0],best,fastest,year,cut:fastest.c.days>year.c.days};
   };
   const decision=document.createElement('section');decision.id='atlas-decision';decision.className='atlas-decision';decision.setAttribute('aria-labelledby','atlas-decision-heading');
   // Under the departure list, above the collapsed "Compare another departure" panel (the engine's own comparison).
-  $('atlas-planner')?.before?.(decision,calendarSection);
+  // The card sits directly under the departure buttons (on phones it was far below them); the calendar sits
+  // above the collapsed "Compare another departure" panel (the engine's own comparison).
+  $('routes-container')?.after?.(decision);$('atlas-planner')?.before?.(calendarSection);
   const optionColumn=(o,title,lane)=>{
     const [kind,word]=windRelation(o.c),cost=getWaitingCosts(o.wait),risks=[];
-    if(o.c.isHeadwind)risks.push(`<dt>Turn-back chance</dt><dd>${pct(TURN_BACK)} (you pay the months and try again)</dd>`);
+    if(o.c.isHeadwind)risks.push(`<dt>Turn-back chance</dt><dd>${pct(TURN_BACK)} (you return to port)</dd>`);
     if(o.c.isDeadZone)risks.push(`<dt>${capital(stormName(lane.from,lane.to))} chance</dt><dd>${pct(o.c.stormProbability)}${state.specialists.navigator?' (lowered to 18% by your navigator)':' (a navigator lowers it to 18%)'}</dd>`);
     const late=o.arrival>CAMPAIGN_MONTHS?' <span class="atlas-decision-late">after the campaign ends</span>':'';
     return `<div class="atlas-decision-option" data-depart="${o.w}" data-wait="${o.wait}" data-days="${o.c.days}" data-months="${o.c.months}" data-wind="${kind}" data-wages="${cost.crewWages}" data-fees="${cost.portFees}" data-arrival="${o.arrival}">`+
@@ -623,25 +633,27 @@
       `<dt>Wind</dt><dd>${word}</dd><dt>At sea</dt><dd>~${o.c.days} d (${monthsWord(o.c.months)} charged)</dd>`+risks.join('')+
       `<dt>Expected arrival</dt><dd>${monthNumber(o.arrival)} of ${CAMPAIGN_MONTHS}${late}</dd></dl></div>`;
   };
-  // Pirate warning for the selected route this month, above the departure buttons: shown exactly when the engine's
-  // full piracy chance on arrival (pirateChance: port risk, cargo value, difficulty, guards, standing) is above zero.
-  // The engine has no "high risk" threshold, so the number is shown without a label. A warning, not a gate.
-  const encounterCost=()=>{
-    // sailTo's outcome table: a crate of cloves, else a lot of ivory, else a tribute of up to 75 D in cash.
+  // Pirate warning for the selected route this month, above the departure buttons. It shows when the engine's
+  // full piracy chance on arrival (pirateChance: port risk, cargo value, difficulty, guards, standing) is at least
+  // PIRATE_WARNING_AT. The 10% threshold is a display choice made by the game's owner, not an engine rule; below it
+  // the card shows the chance quietly. It follows the selected route (not hover), and it is a warning, not a gate.
+  const PIRATE_WARNING_AT=0.10;
+  const encounterCost=lane=>{
+    // sailTo's outcome table: a crate of cloves, else a lot of ivory, else a tribute of min(cash, 75) D, taken after the
+    // voyage's wages (upkeep × months charged) and, if the ship is becalmed in a transition month, 20 D more.
     if(state.cargo.cloves>0)return `you lose 1 crate of ${COMMODITIES.find(c=>c.id==='cloves').name}`;
     if(state.cargo.ivory>0)return `you lose 1 lot of ${COMMODITIES.find(c=>c.id==='ivory').name}`;
-    return `you pay ${Math.min(Math.max(0,state.cash),75)} D in tribute`;
+    return `you pay up to ${Math.min(Math.max(0,state.cash-VESSELS[state.vesselKey].upkeep*computeTransit(lane).months),75)} D in tribute`;
   };
   const pirateWarning=document.createElement('div');pirateWarning.id='atlas-pirate-warning';pirateWarning.className='atlas-pirate-warning';pirateWarning.setAttribute('role','status');pirateWarning.setAttribute('aria-live','polite');pirateWarning.hidden=true;
   $('routes-container')?.before?.(pirateWarning);
   const paintPirateWarning=()=>{
-    const to=state.hoveredLaneTo||state.windRouteTo,lane=SEA_LANES.find(l=>l.from===state.currentPort&&l.to===to);
+    const lane=SEA_LANES.find(l=>l.from===state.currentPort&&l.to===state.windRouteTo);
     const p=lane&&!state.ended?pirateChance(lane.to):0;
-    if(!(p>0)){if(!pirateWarning.hidden){pirateWarning.hidden=true;pirateWarning.textContent='';}delete pirateWarning.dataset.to;return;}
+    if(!(p>=PIRATE_WARNING_AT)){if(!pirateWarning.hidden){pirateWarning.hidden=true;pirateWarning.textContent='';delete pirateWarning.dataset.text;}delete pirateWarning.dataset.to;return;}
     const guarded=pirateChance(lane.to,{marines:true}),hired=state.specialists.marines;
-    const text=`Pirates on arrival at ${PORTS[lane.to].name}: ${pct(p)} chance ${hired?'with your armed marines':'with your current crew'}${hired?'':`, ${pct(guarded)} with armed marines (Care for ship and crew)`}. If they strike, ${encounterCost()}. Marines don't reduce the chance of being turned back.`;
+    const text=`Pirates on arrival at ${PORTS[lane.to].name}: ${pctFine(p)} chance ${hired?'with your armed marines':'with your current crew'}${hired?'':`, ${pctFine(guarded)} with armed marines (Care for ship and crew)`}. If they strike, ${encounterCost(lane)}. Marines don't reduce the chance of being turned back.`;
     Object.assign(pirateWarning.dataset,{to:lane.to,chance:String(p),guarded:String(hired?p:guarded)});
-    // One announcement per change: the text is only rewritten when it differs.
     // Unhide before writing, so screen readers announce it; rewrite only when the text changes.
     pirateWarning.hidden=false;
     if(pirateWarning.dataset.text!==text){pirateWarning.dataset.text=text;pirateWarning.innerHTML=`<span class="atlas-pirate-icon" aria-hidden="true">⚠</span> <span class="atlas-pirate-text"></span>`;pirateWarning.querySelector('.atlas-pirate-text').textContent=text;}
@@ -652,17 +664,20 @@
     const plan=departurePlan(lane),{now,best,fastest}=plan;
     // The other column: the best month when it is not now; otherwise the fastest crossing, to show why it isn't earlier.
     const other=best.w!==now.w?best:fastest.w!==now.w?fastest:null;
-    const otherTitle=other===best?`Wait until ${MONTHS[best.w%12]} (best month)`:`Wait for the fastest crossing (${other?MONTHS[other.w%12]:''})`;
+    const otherTitle=other===best?`Wait until ${MONTHS[best.w%12]} (best month)`:`Wait for the fastest crossing${plan.cut?' left this campaign':''} (${other?MONTHS[other.w%12]:''})`;
     const gap=other?Math.round(Math.abs(other.arrival-now.arrival)*10)/10:0;
     let verdict;
-    if(!other)verdict=`Sailing now is both the fastest crossing and the earliest expected arrival this campaign allows.`;
+    if(!other)verdict=plan.cut?`Sailing now is the earliest expected arrival and the fastest crossing left this campaign; the year’s fastest (${MONTHS[plan.year.m]}, ${plan.year.c.days} days) comes after it ends.`:`Sailing now is both the year’s fastest crossing and the earliest expected arrival this campaign allows.`;
     else if(other.arrival<now.arrival-1e-9)verdict=`In expectation, waiting until ${MONTHS[other.w%12]} arrives about ${gap} month${gap===1?'':'s'} earlier than sailing now.`;
     else verdict=`In expectation, sailing now arrives ${gap?`about ${gap} month${gap===1?'':'s'} earlier`:'no later'} than waiting for ${MONTHS[other.w%12]}${other.c.days<now.c.days?`, although that crossing is ${now.c.days-other.c.days} days faster: the faster wind isn’t always the earlier arrival`:''}.`;
     decision.hidden=false;decision.dataset.to=lane.to;decision.dataset.best=String(best.w);
     decision.innerHTML=`<h3 id="atlas-decision-heading">Sail now or wait: ${PORTS[lane.from].name} → ${PORTS[lane.to].name}</h3>`+
       `<div class="atlas-decision-grid">${optionColumn(now,`Sail now (${MONTHS[now.w%12]})`,lane)}${other?optionColumn(other,otherTitle,lane):''}</div>`+
       `<p class="atlas-decision-verdict" data-verdict>${verdict}</p>`+
-      (pirateChance(lane.to)>0?`<p class="atlas-decision-pirates" data-chance="${pirateChance(lane.to)}"><span aria-hidden="true">⚠</span> Pirates on arrival, either way: ${pct(pirateChance(lane.to))}${state.specialists.marines?' with your marines':` (${pct(pirateChance(lane.to,{marines:true}))} with armed marines)`}.</p>`:'')+
+      (()=>{const p=pirateChance(lane.to),guards=state.specialists.marines?' with your marines':` (${pctFine(pirateChance(lane.to,{marines:true}))} with armed marines)`;
+        if(!(p>0))return '';
+        // At or above the warning threshold the card repeats the warning; below it, a quiet line (no icon, no announcement).
+        return p>=PIRATE_WARNING_AT?`<p class="atlas-decision-pirates" data-chance="${p}" data-level="warning"><span aria-hidden="true">⚠</span> Pirates on arrival, either way: ${pctFine(p)}${guards}.</p>`:`<p class="atlas-decision-pirates-quiet" data-chance="${p}" data-level="quiet">Pirates on arrival, either way: ${pctFine(p)}${guards}.</p>`;})()+
       `<p class="atlas-chart-note">Best month: the departure month with the earliest expected arrival this campaign (next 12 months, to month ${CAMPAIGN_MONTHS}). Expected time counts headwind turn-backs: each crossing’s months plus a ${pct(TURN_BACK)} chance of paying them again and retrying. Storms damage the hull but don’t change arrival. Nothing here changes your game.</p>`;
   };
 
@@ -676,8 +691,10 @@
     s.push(v.turnedBack
       ?`You set out ${compassWord(lane.bearing)} from ${PORTS[v.from].name} in ${MONTHS[v.departed%12]}, in ${seasonWord(v.departed)}: a headwind, and a gale turned you back after ${monthsWord(v.calc.months)}.`
       :`You sailed ${compassWord(lane.bearing)} from ${PORTS[v.from].name} in ${MONTHS[v.departed%12]}, in ${seasonWord(v.departed)}: ${word.toLowerCase()}, ${v.calc.days} days at sea.`);
-    const f=plan.fastest,b=plan.best;
-    s.push(f.w===v.departed?`That was this route’s fastest crossing of the year.`:`The ${seasonWord(f.w).replace(/^the /,'')} crossing (${MONTHS[f.w%12]}) takes ${f.c.days} days, but waiting for it would have delayed departure by ${monthsWord(f.w-v.departed)}.`);
+    const f=plan.fastest,y=plan.year,b=plan.best;
+    if(v.calc.days===y.c.days)s.push(`That was this route’s fastest crossing of the year.`);
+    else if(f.w===v.departed)s.push(`That was the fastest crossing left this campaign; the year’s fastest (${MONTHS[y.m]}, ${y.c.days} days) comes after it ends.`);
+    else s.push(`The ${seasonWord(f.w).replace(/^the /,'')} crossing (${MONTHS[f.w%12]}) takes ${f.c.days} days${plan.cut?' (the fastest left this campaign)':''}, but waiting for it would have delayed departure by ${monthsWord(f.w-v.departed)}.`);
     s.push(b.w===v.departed?`Leaving when you did gave the earliest expected arrival.`:`In expectation, leaving in ${MONTHS[b.w%12]} would have arrived about ${Math.round((plan.now.arrival-b.arrival)*10)/10} months earlier.`);
     const predictable=[],luck=[];
     if(v.calc.isHeadwind){
@@ -714,6 +731,8 @@
   // 4. Home port on the setup screen: the real coastline, the five ports as buttons and the game's wind for a
   //    month. The month only previews the wind: every campaign starts in January (a later engine change may
   //    let you choose). Choosing a port sets the engine's own home-port control.
+  // Glossary: say that the pirate warning's threshold is a display choice, not a game rule.
+  document.querySelector('[data-atlas-entry="storm-names"]')?.insertAdjacentHTML?.('afterend','<div data-glossary-entry data-atlas-entry="pirate-warning"><dt class="font-semibold text-white">Pirate warning</dt><dd>Before you sail, the Atlas warns of pirates when the chance of meeting them on arrival is at least 10%, with the chance if you hire armed marines and what an encounter would cost. The 10% line is a display choice for this page, not a rule of the game: below it, the chance is still shown on the sail-or-wait card.</dd></div>');
   const setupSelect=$('input-start-port');
   if(setupSelect&&setupSelect.closest){
     const land=document.querySelector('#ocean-svg g[fill="#243950"]');
@@ -740,7 +759,5 @@
 
   const decisionsRenderOriginal=renderAll;renderAll=function(){decisionsRenderOriginal();paintCalendar();paintDecision();paintPirateWarning();paintWhy();};
   const decisionsCompareOriginal=renderWindComparison;renderWindComparison=function(){decisionsCompareOriginal();paintDecision();paintPirateWarning();};
-  // Hovering or focusing another departure changes the route the warning is about.
-  const decisionsHoverOriginal=setHoveredLane;setHoveredLane=function(id){decisionsHoverOriginal(id);paintPirateWarning();};
   }
 })();
