@@ -9,7 +9,7 @@
 // Projection: equirectangular, x = a·lon + b and y = c·lat + d, fitted by least squares to the
 // five ports' real coordinates and their fixed positions in the game's PORTS table (index.html).
 // The engine's port positions are not moved; the fit and its residuals are recorded.
-// Rings are clipped to the 800 × 450 viewBox plus a 12-unit margin, simplified with
+// Rings are clipped to the visible map (x 0–800, y -10–590) plus a 12-unit margin, simplified with
 // Douglas–Peucker at TOLERANCE map units, and rings smaller than MIN_AREA square units dropped.
 // Writes prototype/coastline.json.
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -19,7 +19,8 @@ import { dirname, resolve } from 'node:path';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_SHA256 = 'e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b';
-const TOLERANCE = 0.75, MIN_AREA = 6, MARGIN = 12, W = 800, H = 450;
+// The visible map: x 0–800, y -10–590 (the game's 800 × 450 frame, extended 10 north and 140 south).
+const TOLERANCE = 0.75, MIN_AREA = 6, MARGIN = 12, W = 800, TOP = -10, BOTTOM = 590;
 // Real positions (decimal degrees): Kilwa Kisiwani, Aden, Calicut (Kozhikode), Malacca, Quanzhou.
 const REAL = { kilwa: [39.51, -8.96], aden: [45.02, 12.79], calicut: [75.78, 11.25], malacca: [102.25, 2.19], quanzhou: [118.68, 24.87] };
 
@@ -43,7 +44,7 @@ const project = ([lon, lat]) => [a * lon + b, c * lat + d];
 const residuals = Object.fromEntries(ids.map(k => { const [x, y] = project(REAL[k]); return [k, [+(x - ports[k][0]).toFixed(1), +(y - ports[k][1]).toFixed(1)]]; }));
 
 // Sutherland–Hodgman against the four edges of the margin box.
-const box = [-MARGIN, -MARGIN, W + MARGIN, H + MARGIN];
+const box = [-MARGIN, TOP - MARGIN, W + MARGIN, BOTTOM + MARGIN];
 const clip = ring => {
   let out = ring;
   const edges = [[p => p[0] >= box[0], (p, q) => [box[0], p[1] + (q[1] - p[1]) * (box[0] - p[0]) / (q[0] - p[0])]],

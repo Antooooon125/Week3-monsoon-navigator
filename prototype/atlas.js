@@ -82,7 +82,15 @@
   const harbor=left.querySelector('figure');harbor.remove();
   const map=$('ocean-svg').parentElement.parentElement;map.classList.add('atlas-map-panel');
   left.classList.add('atlas-navigation');right.classList.add('atlas-cargo-column');
-  const stageHeading=document.createElement('div');stageHeading.className='atlas-stage-heading';stageHeading.innerHTML='<div class="atlas-eyebrow">Navigate / the seasonal ocean</div><h2>Follow the season.</h2><p>Choose when to sail, what to carry, and where to build your next connection.</p>';left.prepend(stageHeading);
+  const stageHeading=document.createElement('div');stageHeading.className='atlas-stage-heading';stageHeading.innerHTML='<div class="atlas-eyebrow">Navigate / the seasonal ocean</div><h2>Follow the season.</h2><p>Choose when to sail, what to carry, and where to build your next connection.</p>';
+  // Live-play layout (2026-11-23): the heading opens the voyage screen across both columns, and the status strip
+  // (month, treasury, hull, hold, and the page tools) sits directly above the map it describes.
+  $('phase-sim').prepend(stageHeading);
+  const status=document.createElement('div');status.className='atlas-status';status.setAttribute('role','region');status.setAttribute('aria-label','Voyage status');
+  status.append($('hud-bar'));left.prepend(status);
+  // The page tools also serve the setup and audit screens, so they join the strip only while the voyage screen shows.
+  const headerRow=document.querySelector('header>div');
+  const placeTools=()=>{const toolbar=document.querySelector('.atlas-toolbar');if(!toolbar)return;const target=$('phase-sim').classList.contains('hidden')?headerRow:status;if(toolbar.parentElement!==target)target.append(toolbar);};
   const mapKey=map.querySelector('p');mapKey.className='atlas-map-key';mapKey.innerHTML='<span><i class="atlas-key-wind" aria-hidden="true"></i>Game wind (one wind for the whole map)</span><span><i class="atlas-key-route" aria-hidden="true"></i>Selected route, drawn by this month’s wind:</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="tailwind"/></svg>tailwind</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="crosswind"/></svg>crosswind</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="headwind"/></svg>headwind</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="transition"/></svg>transition month</span><span><i class="atlas-key-port" aria-hidden="true"></i>Current port</span>';
   const calendar=document.createElement('section');calendar.className='atlas-calendar';calendar.setAttribute('aria-label','Departure month planner');
   calendar.innerHTML='<div class="atlas-calendar-head"><strong id="atlas-actual-date"></strong><span id="atlas-forecast-date"></span></div><div class="atlas-months" id="atlas-months"></div><p class="atlas-calendar-note">Outlined month = actual date. Pink month = comparison only. Sailing always uses the actual date.</p>';
@@ -205,6 +213,10 @@
   // Decorative atmospheric colour is confined to the scene. These strokes encode
   // the model's single departure wind direction; they are not measured flow data.
   const ocean=$('ocean-svg'),defs=ocean.querySelector('defs');
+  // Live-play layout: show more of the real map (10 units north, 140 south) so the sea fills the column beside the market.
+  // Ports, lanes and every engine drawing keep their coordinates; only the visible window grows.
+  const mapView={top:-10,height:600};ocean.setAttribute('viewBox',`0 ${mapView.top} 800 ${mapView.height}`);
+  const seaRect=ocean.querySelector(':scope > rect');if(seaRect){seaRect.setAttribute('y',mapView.top);seaRect.setAttribute('height',mapView.height);}
   const land=ocean.querySelector('g[fill="#243950"]');land.setAttribute('id','atlas-land');
   // Real coastlines (Natural Earth 1:50m, inlined by the builder) leave less open water than the hand-drawn map did.
   // These positions keep the sea labels and the wind clock off land; tests/sea-lanes.test.mjs checks them against the coastline.
@@ -216,8 +228,8 @@
   }
   $('svg-clock-months').parentElement.setAttribute('transform',`translate(${mapPlacements.clock[0]}, ${mapPlacements.clock[1]})`);
   const landMask=[...land.querySelectorAll('path')].map(path=>`<path d="${path.getAttribute('d')}" fill="black"/>`).join('');
-  defs.insertAdjacentHTML('beforeend',`<radialGradient id="atlas-sea-light" cx="43%" cy="42%" r="70%"><stop stop-color="var(--field)" stop-opacity=".16"/><stop offset="1" stop-color="var(--sea)" stop-opacity="0"/></radialGradient><linearGradient id="atlas-wind-spectrum" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--field)"/><stop offset=".72" stop-color="var(--spectral)"/><stop offset="1" stop-color="#ec9abe"/></linearGradient><mask id="atlas-ocean-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="450"><rect width="800" height="450" fill="white"/>${landMask}<rect x="${mapPlacements.clock[0]-78}" y="${mapPlacements.clock[1]-78}" width="156" height="156" fill="black"/></mask><marker id="atlas-wind-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 2L8 5L1 8" fill="none" stroke="var(--field)" stroke-width="1.4"/></marker>`);
-  const atmosphere=document.createElementNS('http://www.w3.org/2000/svg','g');atmosphere.id='atlas-atmosphere';atmosphere.setAttribute('pointer-events','none');atmosphere.setAttribute('aria-hidden','true');atmosphere.innerHTML='<rect width="800" height="450" fill="url(#atlas-sea-light)"/><text x="285" y="403" fill="var(--field)" opacity=".32" font-size="13" letter-spacing="7">INDIAN OCEAN</text>';land.before(atmosphere);
+  defs.insertAdjacentHTML('beforeend',`<radialGradient id="atlas-sea-light" cx="43%" cy="42%" r="70%"><stop stop-color="var(--field)" stop-opacity=".16"/><stop offset="1" stop-color="var(--sea)" stop-opacity="0"/></radialGradient><linearGradient id="atlas-wind-spectrum" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--field)"/><stop offset=".72" stop-color="var(--spectral)"/><stop offset="1" stop-color="#ec9abe"/></linearGradient><mask id="atlas-ocean-mask" maskUnits="userSpaceOnUse" x="0" y="${mapView.top}" width="800" height="${mapView.height}"><rect y="${mapView.top}" width="800" height="${mapView.height}" fill="white"/>${landMask}<rect x="${mapPlacements.clock[0]-78}" y="${mapPlacements.clock[1]-78}" width="156" height="156" fill="black"/></mask><marker id="atlas-wind-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 2L8 5L1 8" fill="none" stroke="var(--field)" stroke-width="1.4"/></marker>`);
+  const atmosphere=document.createElementNS('http://www.w3.org/2000/svg','g');atmosphere.id='atlas-atmosphere';atmosphere.setAttribute('pointer-events','none');atmosphere.setAttribute('aria-hidden','true');atmosphere.innerHTML=`<rect y="${mapView.top}" width="800" height="${mapView.height}" fill="url(#atlas-sea-light)"/><text x="285" y="470" fill="var(--field)" opacity=".32" font-size="13" letter-spacing="7">INDIAN OCEAN</text>`;land.before(atmosphere);
   $('svg-wind-field').setAttribute('mask','url(#atlas-ocean-mask)');$('svg-wind-field').setAttribute('aria-hidden','true');$('svg-wind-field').setAttribute('pointer-events','none');
 
   // Replace a purely presentational renderer with local, offline SVG illustrations.
@@ -266,8 +278,8 @@
     mapOriginal(wind);ocean.querySelector(':scope > rect').setAttribute('fill','var(--sea)');
     const angle=wind.bearing*Math.PI/180,dx=Math.sin(angle)*54,dy=-Math.cos(angle)*54;
     const tracers=[];
-    for(let row=0;row<8;row++)for(let column=0;column<13;column++){
-      const x=column*64+(row%2)*26-12,y=row*59+12,index=row*13+column;
+    for(let row=0;row<10;row++)for(let column=0;column<13;column++){
+      const x=column*64+(row%2)*26-12,y=row*59+2,index=row*13+column;
       tracers.push(`<line x1="${x}" y1="${y}" x2="${(x+dx).toFixed(2)}" y2="${(y+dy).toFixed(2)}" class="atlas-wind-tracer" style="animation-delay:-${index%9*.6}s" ${index%7===0?'marker-end="url(#atlas-wind-arrow)"':''}/>`);
     }
     $('svg-wind-field').innerHTML=tracers.join('');
@@ -288,7 +300,7 @@
       const text=`${word} · ${lane.bearing}° · ~${calc.days} d (${calc.months} mo)`,width=Math.round(text.length*5.6+16);
       let mid=[(PORTS[lane.from].x+PORTS[lane.to].x)/2,(PORTS[lane.from].y+PORTS[lane.to].y)/2];
       if(curve.getTotalLength){const half=curve.getPointAtLength(curve.getTotalLength()/2);mid=[half.x,half.y];}
-      const x=Math.min(800-width/2-4,Math.max(width/2+4,mid[0])),y=Math.min(440,Math.max(18,mid[1]-16));
+      const x=Math.min(800-width/2-4,Math.max(width/2+4,mid[0])),y=Math.min(mapView.top+mapView.height-10,Math.max(mapView.top+18,mid[1]-16));
       const rect=preview.querySelector('rect'),label=preview.querySelector('text');
       if(rect){rect.setAttribute('x',x-width/2);rect.setAttribute('y',y-12);rect.setAttribute('width',width);}
       if(label){label.setAttribute('x',x);label.setAttribute('y',y+1);label.textContent=text;}
@@ -345,8 +357,8 @@
     document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');if(button.classList.contains('atlas-good-chart')){button.setAttribute('aria-label',`${button.textContent.trim()}: prices through the year`);return;}button.setAttribute('aria-label',`${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
     document.querySelectorAll('#market-tbody tr').forEach((row,index)=>{const item=COMMODITIES[index];row.dataset.good=item.id;row.style.setProperty('--material',goods[item.id][0]);});
   };
-  const renderOriginal=renderAll;renderAll=function(){renderOriginal();paint();};
-  const finishOriginal=finishCampaign;finishCampaign=function(){finishOriginal();document.body.dataset.plate='audit';const profit=state.cash-state.startEquity;const result=`Your venture finished with ${state.cash.toLocaleString()} D in cash: a net ${profit<0?'loss':'gain'} of ${Math.abs(profit).toLocaleString()} D`;$('atlas-audit-summary').textContent=isStudent()?`${result} against your ${state.targetProfit.toLocaleString()} D profit target.`:`${result}.`;$('atlas-audit-eyebrow').textContent=isStudent()?'Audit / prediction and evidence':'Results / voyage evidence';$('atlas-audit-prompt').textContent=isStudent()?'Compare your prediction with the ledger. Choose two dated entries that explain the result.':'Choose two dated entries in the ledger that explain the result.';$('phase-audit').tabIndex=-1;
+  const renderOriginal=renderAll;renderAll=function(){renderOriginal();paint();placeTools();};
+  const finishOriginal=finishCampaign;finishCampaign=function(){finishOriginal();placeTools();document.body.dataset.plate='audit';const profit=state.cash-state.startEquity;const result=`Your venture finished with ${state.cash.toLocaleString()} D in cash: a net ${profit<0?'loss':'gain'} of ${Math.abs(profit).toLocaleString()} D`;$('atlas-audit-summary').textContent=isStudent()?`${result} against your ${state.targetProfit.toLocaleString()} D profit target.`:`${result}.`;$('atlas-audit-eyebrow').textContent=isStudent()?'Audit / prediction and evidence':'Results / voyage evidence';$('atlas-audit-prompt').textContent=isStudent()?'Compare your prediction with the ledger. Choose two dated entries that explain the result.':'Choose two dated entries in the ledger that explain the result.';$('phase-audit').tabIndex=-1;
     if(!isStudent()){
       // A7: Play Only has no target, so show no goal or target verdict.
       $('audit-roi').textContent=$('audit-roi').textContent.replace(/\s*\(Goal:[^)]*\)/,'');
