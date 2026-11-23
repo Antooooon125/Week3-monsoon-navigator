@@ -118,3 +118,11 @@ These are display-only changes; the engine script is still copied verbatim.
   - the phone header keeps its subtitle and fits in about 29 % of the screen;
   - a blocked second click moves focus to "Choose your next port";
   - the clock is hidden on phones through a class.
+
+### Fixes from live play (2026-11-23)
+
+Display only; the engine script is unchanged.
+
+- **Routes over water.** Every sea lane, dashed or selected, is drawn through fixed sea waypoints: around the Horn of Africa, south of India and Sri Lanka, and through the Strait of Malacca. Before, the quadratic arcs crossed land on the Kilwa–Aden and Calicut–Malacca lanes. The game's distances, bearings and sailing times are unchanged. Every lane was checked in both monsoons at 1440 and 375 px by sampling the drawn path against the map's land shapes: no point is on land.
+- **Wind relation on the selected route.** The line style shows the leg's relation to this month's wind, in the engine's own terms (`computeTransit`): solid for tailwind, long dashes for crosswind, short dashes for headwind, dots for a transition month. The map key explains the styles. The route label reads, for example, "Tailwind · 285° · ~16 d (1 mo)".
+- **Labelled prices.** The trade table says "Sell here" and "Buy here" for this port's prices, and "you paid … D each (average)" for the cost basis. The labels are computed from the same functions `sellCargoQty` and `buyCargoQty` use. A browser check at every port, in two months, bought and sold one lot of each good and found the cash moves equal to the labels in all 60 rows. The legend explains ▲ and ▼ against the port's usual price. On phones each good's name has its own line, and the prices and hold sit below it.
