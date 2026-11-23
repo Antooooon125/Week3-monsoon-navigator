@@ -612,6 +612,28 @@
       `<dt>Wind</dt><dd>${word}</dd><dt>At sea</dt><dd>~${o.c.days} d (${monthsWord(o.c.months)} charged)</dd>`+risks.join('')+
       `<dt>Expected arrival</dt><dd>${monthNumber(o.arrival)} of ${CAMPAIGN_MONTHS}${late}</dd></dl></div>`;
   };
+  // Pirate warning for the selected route this month, above the departure buttons: shown exactly when the engine's
+  // full piracy chance on arrival (pirateChance: port risk, cargo value, difficulty, guards, standing) is above zero.
+  // The engine has no "high risk" threshold, so the number is shown without a label. A warning, not a gate.
+  const encounterCost=()=>{
+    // sailTo's outcome table: a crate of cloves, else a lot of ivory, else a tribute of up to 75 D in cash.
+    if(state.cargo.cloves>0)return `you lose 1 crate of ${COMMODITIES.find(c=>c.id==='cloves').name}`;
+    if(state.cargo.ivory>0)return `you lose 1 lot of ${COMMODITIES.find(c=>c.id==='ivory').name}`;
+    return `you pay ${Math.min(Math.max(0,state.cash),75)} D in tribute`;
+  };
+  const pirateWarning=document.createElement('div');pirateWarning.id='atlas-pirate-warning';pirateWarning.className='atlas-pirate-warning';pirateWarning.setAttribute('role','status');pirateWarning.setAttribute('aria-live','polite');pirateWarning.hidden=true;
+  $('routes-container')?.before?.(pirateWarning);
+  const paintPirateWarning=()=>{
+    const to=state.hoveredLaneTo||state.windRouteTo,lane=SEA_LANES.find(l=>l.from===state.currentPort&&l.to===to);
+    const p=lane&&!state.ended?pirateChance(lane.to):0;
+    if(!(p>0)){if(!pirateWarning.hidden){pirateWarning.hidden=true;pirateWarning.textContent='';}delete pirateWarning.dataset.to;return;}
+    const guarded=pirateChance(lane.to,{marines:true}),hired=state.specialists.marines;
+    const text=`Pirates on arrival at ${PORTS[lane.to].name}: ${pct(p)} chance ${hired?'with your armed marines':'with your current crew'}${hired?'':`, ${pct(guarded)} with armed marines (Care for ship and crew)`}. If they strike, ${encounterCost()}. Marines don't reduce the chance of being turned back.`;
+    Object.assign(pirateWarning.dataset,{to:lane.to,chance:String(p),guarded:String(hired?p:guarded)});
+    // One announcement per change: the text is only rewritten when it differs.
+    if(pirateWarning.dataset.text!==text){pirateWarning.dataset.text=text;pirateWarning.innerHTML=`<span class="atlas-pirate-icon" aria-hidden="true">⚠</span> <span class="atlas-pirate-text"></span>`;pirateWarning.querySelector('.atlas-pirate-text').textContent=text;}
+    pirateWarning.hidden=false;
+  };
   const paintDecision=()=>{
     const lane=SEA_LANES.find(l=>l.from===state.currentPort&&l.to===state.windRouteTo);
     if(state.ended||!lane){decision.hidden=true;decision.innerHTML='';return;}
@@ -628,6 +650,7 @@
     decision.innerHTML=`<h3 id="atlas-decision-heading">Sail now or wait: ${PORTS[lane.from].name} → ${PORTS[lane.to].name}</h3>`+
       `<div class="atlas-decision-grid">${optionColumn(now,`Sail now (${MONTHS[now.w%12]})`,lane)}${other?optionColumn(other,otherTitle,lane):''}</div>`+
       `<p class="atlas-decision-verdict" data-verdict>${verdict}</p>`+
+      (pirateChance(lane.to)>0?`<p class="atlas-decision-pirates" data-chance="${pirateChance(lane.to)}"><span aria-hidden="true">⚠</span> Pirates on arrival, either way: ${pct(pirateChance(lane.to))}${state.specialists.marines?' with your marines':` (${pct(pirateChance(lane.to,{marines:true}))} with armed marines)`}.</p>`:'')+
       `<p class="atlas-chart-note">Best month: the departure month with the earliest expected arrival this campaign (next 12 months, to month ${CAMPAIGN_MONTHS}). Expected time counts headwind turn-backs: each crossing’s months plus a ${pct(TURN_BACK)} chance of paying them again and retrying. Storms damage the hull but don’t change arrival. Nothing here changes your game.</p>`;
   };
 
@@ -702,7 +725,9 @@
     paintHome();
   }
 
-  const decisionsRenderOriginal=renderAll;renderAll=function(){decisionsRenderOriginal();paintCalendar();paintDecision();paintWhy();};
-  const decisionsCompareOriginal=renderWindComparison;renderWindComparison=function(){decisionsCompareOriginal();paintDecision();};
+  const decisionsRenderOriginal=renderAll;renderAll=function(){decisionsRenderOriginal();paintCalendar();paintDecision();paintPirateWarning();paintWhy();};
+  const decisionsCompareOriginal=renderWindComparison;renderWindComparison=function(){decisionsCompareOriginal();paintDecision();paintPirateWarning();};
+  // Hovering or focusing another departure changes the route the warning is about.
+  const decisionsHoverOriginal=setHoveredLane;setHoveredLane=function(id){decisionsHoverOriginal(id);paintPirateWarning();};
   }
 })();
