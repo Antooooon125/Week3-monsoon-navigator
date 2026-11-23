@@ -869,8 +869,9 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-chart-here-label{font-weight:700}
   .atlas-chart-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:12px}
   .atlas-chart-table caption{text-align:left;font-weight:700;margin-bottom:4px}
-  .atlas-chart-all{margin-top:12px}.atlas-chart-all summary{cursor:pointer;font-weight:700;font-size:.8125rem}.atlas-chart-all table{font-variant-numeric:tabular-nums;table-layout:fixed}.atlas-chart-all th,.atlas-chart-all td{padding:3px 2px;overflow-wrap:anywhere}
-  @media (max-width:640px){.atlas-chart-all table{font-size:.6875rem}}
+  .atlas-chart-all{margin-top:12px}.atlas-chart-all summary{cursor:pointer;font-weight:700;font-size:.8125rem}.atlas-chart-all table{font-variant-numeric:tabular-nums;table-layout:fixed}.atlas-chart-all th,.atlas-chart-all td{padding:3px 2px}.atlas-chart-all td{overflow-wrap:anywhere}.atlas-chart-all thead th:first-child{width:4.2em}
+  .atlas-chart-all .atlas-name-short{display:none;text-decoration:none}
+  @media (max-width:640px){.atlas-chart-all table{font-size:.6875rem}.atlas-chart-all .atlas-name-full{display:none}.atlas-chart-all .atlas-name-short{display:inline}}
   .atlas-chart-table th,.atlas-chart-table td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--atlas-chart-grid)}
 }
 /* One trade panel (2026-11-23): the hold summary and drawn icons live here. */
@@ -3241,8 +3242,8 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
     host.innerHTML=`<p class="atlas-chart-key">Solid line: now (${MONTHS[now]}).${arrivalText} Thick line: your port.</p>`+svg;
     $('atlas-chart-table').innerHTML=`<caption>Highest and lowest buy price this year</caption><thead><tr><th scope="col">Port</th><th scope="col">Now</th><th scope="col">Highest</th><th scope="col">Lowest</th></tr></thead><tbody>`+series.map(line=>{
       const max=Math.max(...line.values),min=Math.min(...line.values);
-      return `<tr data-port="${line.port}"><th scope="row">${PORTS[line.port].name}</th><td>${line.values[now]} D</td><td>${max} D (${MONTHS[line.values.indexOf(max)]})</td><td>${min} D (${MONTHS[line.values.indexOf(min)]})</td></tr>`;}).join('')+'</tbody>';
-    $('atlas-chart-months').innerHTML=`<caption>${item.name}: buy price by month (D per lot)</caption><thead><tr><th scope="col">Month</th>${series.map(line=>`<th scope="col">${PORTS[line.port].name}</th>`).join('')}</tr></thead><tbody>`+MONTHS.map((name,m)=>`<tr data-month="${m}"><th scope="row">${name}${m===now?' (now)':''}</th>${series.map(line=>`<td data-port="${line.port}">${line.values[m]}</td>`).join('')}</tr>`).join('')+'</tbody>';
+      return `<tr data-port="${line.port}"><th scope="row">${PORTS[line.port].name}</th><td>${line.values[now]} D</td><td>${max} D (${MONTHS[line.values.indexOf(max)]})</td><td>${min} D (${MONTHS[line.values.indexOf(min)]})</td></tr>`;}).join('')+'</tbody>';
+    $('atlas-chart-months').innerHTML=`<caption>${item.name}: buy price by month (D per lot)</caption><thead><tr><th scope="col">Month</th>${series.map(line=>`<th scope="col" data-port="${line.port}"><span class="atlas-name-full">${PORTS[line.port].name}</span><abbr class="atlas-name-short" title="${PORTS[line.port].name}">${PORTS[line.port].name.slice(0,3)}</abbr></th>`).join('')}</tr></thead><tbody>`+MONTHS.map((name,m)=>`<tr data-month="${m}"><th scope="row">${name}${m===now?' <span class="atlas-port-tag">now</span>':''}</th>${series.map(line=>`<td data-port="${line.port}">${line.values[m]}</td>`).join('')}</tr>`).join('')+'</tbody>';
   };
   $('market-tbody').addEventListener('click',event=>{const button=event.target.closest?.('.atlas-good-chart');if(!button)return;chartOpener=button.dataset.good;chartDialog.showModal();drawChart(chartOpener);});
   const photo=$('ship-photo');const shipPlate=document.createElement('div');shipPlate.id='atlas-ship';shipPlate.className='atlas-ship';shipPlate.setAttribute('role','img');photo.replaceWith(shipPlate);

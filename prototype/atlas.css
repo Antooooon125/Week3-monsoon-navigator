@@ -289,8 +289,9 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-chart-here-label{font-weight:700}
   .atlas-chart-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:12px}
   .atlas-chart-table caption{text-align:left;font-weight:700;margin-bottom:4px}
-  .atlas-chart-all{margin-top:12px}.atlas-chart-all summary{cursor:pointer;font-weight:700;font-size:.8125rem}.atlas-chart-all table{font-variant-numeric:tabular-nums;table-layout:fixed}.atlas-chart-all th,.atlas-chart-all td{padding:3px 2px;overflow-wrap:anywhere}
-  @media (max-width:640px){.atlas-chart-all table{font-size:.6875rem}}
+  .atlas-chart-all{margin-top:12px}.atlas-chart-all summary{cursor:pointer;font-weight:700;font-size:.8125rem}.atlas-chart-all table{font-variant-numeric:tabular-nums;table-layout:fixed}.atlas-chart-all th,.atlas-chart-all td{padding:3px 2px}.atlas-chart-all td{overflow-wrap:anywhere}.atlas-chart-all thead th:first-child{width:4.2em}
+  .atlas-chart-all .atlas-name-short{display:none;text-decoration:none}
+  @media (max-width:640px){.atlas-chart-all table{font-size:.6875rem}.atlas-chart-all .atlas-name-full{display:none}.atlas-chart-all .atlas-name-short{display:inline}}
   .atlas-chart-table th,.atlas-chart-table td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--atlas-chart-grid)}
 }
 /* One trade panel (2026-11-23): the hold summary and drawn icons live here. */
