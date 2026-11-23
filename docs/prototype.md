@@ -144,3 +144,26 @@ Display only; the engine script is unchanged.
   - **Care for ship and crew under the map.** The repair and the navigator, marines and tarpaulins hires (and, on hard, the loan repayment) sit under the map as a row of cards, stacked on phones, so the left column lines up with the market. Each card is a flexible column (text, then its button), so longer per-passage contract text or a status line can be added later without a relayout. The hiring behaviour and wording are unchanged. (An earlier version of this change showed more map instead; the user chose this layout, and the map keeps the game's 800 × 450 frame.)
   - **Phones.** The three sea names collided with the enlarged port labels, so they are hidden there (the INDIAN OCEAN label stays). Quanzhou's labels are right-aligned so they are not clipped.
   - **Original game source.** The link to this repository moves from the toolbar to the footer, beside the credit line, as "Original game source". It has the same target, and appears once.
+
+### Risk and timing (2026-11-23)
+
+Display only; the engine script is unchanged, and nothing here draws randomness or changes state.
+
+- **Storms and pirates on the map.** After a voyage, a storm marker sits on the leg (30% of the way) if the engine's transition-month roll produced a cyclone, and a pirate flag near the destination if its piracy check fired.
+  - **How it's decided.** The adapter wraps `sailTo`, records the random draws the engine makes, and reads them in `sailTo`'s fixed draw order. A turn-back is read from state. The marker never depends on the log.
+  - **What it says.** A line under the map key (`role="status"`) names what happened, with the hull lost to the storm, and the pirates' outcome in the engine's own words from that voyage's log entry.
+  - **Lifetime.** Markers clear at the next action.
+  - **Accessibility.** Under `prefers-reduced-motion` they appear without animation. They carry an icon and text, not colour alone.
+- **Route label.** The selected route's label gains a second line: pirates on arrival (and with armed marines), and, when they apply, the turn-back chance (headwind) and the storm chance (transition month).
+- **Crew-health alert.** While `getMutinyRisk(health)` is above zero, the status strip shows ⚠ with:
+  - the current health;
+  - the mutiny chance at that health, and the least it can be after the next voyage from this port (8 health per month at sea, 12 more in a headwind, as in `sailTo`);
+  - what a mutiny costs, and that waiting restores up to 20 health.
+
+  It is announced politely when it changes and clears when health recovers or the campaign ends.
+- **Port timing view.** Selecting a port on the map (a keyboard-operable button) opens, for each destination, the 12 months of this campaign year.
+  - **Per month:** wind relation, sailing time (days and months charged), turn-back chance, storm chance (which depends on the navigator), and the expected months including turn-back retries.
+  - **Per destination:** pirates on arrival, with and without marines, and a note that marines don't change the turn-back or storm chance.
+  - **Marked:** the current month, and the best month or months (shortest expected time).
+  - **Phones:** each month is a stacked row.
+- **Tests.** KVIS `tests/03/atlas-hazards.test.mjs` takes ground truth from the engine's tagged draws and its source constants. It checks markers, the alert, every number in the port view, and that opening the view draws nothing and changes nothing. It fails on seven planted defects.

@@ -398,4 +398,134 @@
   document.addEventListener('keydown',event=>{const modal=[...document.querySelectorAll('#intel-modal,#physics-modal')].find(el=>!el.classList.contains('hidden'));if(!modal)return;if(event.key==='Escape'){event.preventDefault();toggleModal(modal.id);}else if(event.key==='Tab'){const controls=[...modal.querySelectorAll('button,a[href],input,select,textarea,[tabindex="0"]')];if(!controls.length)return;const first=controls[0],last=controls.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
   document.addEventListener('visibilitychange',()=>{document.body.dataset.paused=String(document.hidden);});
   if(typeof IntersectionObserver!=='undefined'){new IntersectionObserver(entries=>{document.body.dataset.paused=String(document.hidden||!entries[0].isIntersecting);}).observe($('ocean-svg'));}
+  // ---------------------------------------------------------------------------------------------
+  // Risk and timing (2026-11-23): storms and pirates on the map, a crew-health alert, a port timing view.
+  // Display only. The engine is unchanged; nothing here draws randomness or changes state.
+  // ---------------------------------------------------------------------------------------------
+  // Pirate chance on arrival, exactly as sailTo computes pirateProb (tests/03/atlas-hazards.test.mjs
+  // reads the engine's constants from its source and checks this against them).
+  const pirateChance=(dest,{marines=state.specialists.marines,cargo=state.cargo}={})=>{
+    const valuable=cargo.cloves>0||cargo.ivory>0;
+    let p=PORTS[dest].piracyRisk*(valuable?1.5:0.6)*(state.diffKey==='survival'?1.8:1.0);
+    if(marines)p*=0.2;
+    if((state.diaspora[dest]||0)>=50)p*=0.5;
+    return p;
+  };
+  const pct=p=>`${Math.round(p*100)}%`;
+  // The turn-back chance on a headwind leg, and the health lost at sea, as in sailTo.
+  const TURN_BACK=0.35,CREW_PER_MONTH=8,CREW_HAZARD=12;
+
+  // 1. Storms and pirates that actually happened, decoded from the engine's own draws in sailTo's fixed order:
+  //    headwind [damage, turn-back, (jettison if teak aboard and not turned back)]; transition month
+  //    [storm roll, (storm damage if storm)]; [mildew if textiles aboard, no tarpaulins, transition month];
+  //    [piracy, unless turned back]; [mutiny]. Turn-back is read from state (the ship stays in port).
+  const hazardLayer=document.createElementNS('http://www.w3.org/2000/svg','g');hazardLayer.id='atlas-hazards';hazardLayer.setAttribute('aria-hidden','true');ocean.append(hazardLayer);
+  const voyageNote=document.createElement('p');voyageNote.id='atlas-voyage-note';voyageNote.className='atlas-voyage-note';voyageNote.setAttribute('role','status');voyageNote.setAttribute('aria-live','polite');voyageNote.hidden=true;
+  map.querySelector('.atlas-map-key')?.after(voyageNote);
+  let lastVoyage=null;
+  const pointAlong=(points,t)=>{const seg=[];let total=0;for(let i=1;i<points.length;i++){const l=Math.hypot(points[i][0]-points[i-1][0],points[i][1]-points[i-1][1]);seg.push(l);total+=l;}
+    let d=t*total;for(let i=0;i<seg.length;i++){if(d<=seg[i]){const f=seg[i]?d/seg[i]:0;return [points[i][0]+(points[i+1][0]-points[i][0])*f,points[i][1]+(points[i+1][1]-points[i][1])*f];}d-=seg[i];}return points.at(-1);};
+  const glyph={
+    storm:'<circle r="11" class="atlas-hazard-disc"/><path d="M-5 -2a6 6 0 1 1 3 7M5 2a6 6 0 1 1-3-7" class="atlas-hazard-line"/><circle r="1.8" class="atlas-hazard-dot"/>',
+    pirates:'<circle r="11" class="atlas-hazard-disc"/><path d="M-5 7V-7M-5 -7L6 -3L-5 1" class="atlas-hazard-line"/><circle cx="0.5" cy="-3" r="1.3" class="atlas-hazard-dot"/>'
+  };
+  const paintHazards=()=>{
+    const v=lastVoyage&&lastVoyage.month===state.monthIndex&&lastVoyage.port===state.currentPort?lastVoyage:null;
+    if(!v){hazardLayer.innerHTML='';voyageNote.hidden=true;voyageNote.textContent='';return;}
+    const points=lanePoints(v.from,v.to),marks=[];
+    if(v.storm){const [x,y]=pointAlong(points,0.3);marks.push(`<g class="atlas-hazard" data-kind="storm" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">${glyph.storm}</g>`);}
+    if(v.pirates){const [x,y]=pointAlong(points,0.8);marks.push(`<g class="atlas-hazard" data-kind="pirates" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">${glyph.pirates}</g>`);}
+    hazardLayer.innerHTML=marks.join('');
+    const parts=[];
+    if(v.storm)parts.push(`Cyclone on the crossing (storm icon on the map)${v.hullLoss>0?`: hull −${v.hullLoss}%`:''}.`);
+    if(v.pirates)parts.push(`Pirates on arrival (flag icon on the map): ${(v.pirateOutcome||'an encounter').replace(/[!.\s]+$/,'')}.`);
+    voyageNote.hidden=!parts.length;voyageNote.textContent=parts.length?`Last voyage, ${PORTS[v.from].name} → ${PORTS[v.to].name}: ${parts.join(' ')}`:'';
+  };
+  {
+    const original=globalThis.sailTo;
+    globalThis.sailTo=function(dest,...rest){
+      const from=state.currentPort,lane=SEA_LANES.find(l=>l.from===from&&l.to===dest);
+      if(!lane||state.ended)return original.call(this,dest,...rest);
+      const calc=computeTransit(lane),pre={teak:state.cargo.teak,textiles:state.cargo.textiles,tarps:state.specialists.tarpaulins,hull:state.hull,cloves:state.cargo.cloves,ivory:state.cargo.ivory,pirate:pirateChance(dest),logs:state.logs.length};
+      const draws=[],random=Math.random;
+      Math.random=function(){const value=random.apply(this,arguments);draws.push(value);return value;};
+      try{original.call(this,dest,...rest);}finally{Math.random=random;}
+      if(state.monthIndex===undefined)return;
+      const turnedBack=state.currentPort===from;let i=0,storm=false,pirates=false;
+      if(calc.isHeadwind){i+=2;if(!turnedBack&&pre.teak>0)i++;}
+      if(calc.isDeadZone){storm=draws[i++]<calc.stormProbability;if(storm)i++;}
+      if(pre.textiles>0&&!pre.tarps&&calc.isDeadZone)i++;
+      if(!turnedBack)pirates=draws[i++]<pre.pirate;
+      // The outcome as the engine reports it (the voyage's own log entry); the marker itself never depends on the log.
+      const entry=state.logs.length>pre.logs?state.logs[0]:'';
+      const pirateOutcome=pirates?(entry.match(/Corsairs [^;|]*|Paid \d+ D pirate tribute[^;|]*/)?.[0]||''):'';
+      lastVoyage={from,to:dest,month:state.monthIndex,port:state.currentPort,storm,pirates,hullLoss:storm?pre.hull-state.hull:0,pirateOutcome};
+      paintHazards();
+    };
+  }
+
+  // 2. Crew-health alert: shown exactly while the engine's mutiny risk at the current health is above zero.
+  const crewAlert=document.createElement('p');crewAlert.id='atlas-crew-alert';crewAlert.className='atlas-crew-alert';crewAlert.setAttribute('role','status');crewAlert.setAttribute('aria-live','polite');crewAlert.hidden=true;
+  status.append(crewAlert);
+  const paintCrew=()=>{
+    const risk=getMutinyRisk(state.crewHealth);
+    if(!(risk>0)||state.ended){crewAlert.hidden=true;crewAlert.textContent='';delete crewAlert.dataset.risk;return;}
+    const lanes=SEA_LANES.filter(l=>l.from===state.currentPort).map(l=>{const c=computeTransit(l);return getMutinyRisk(Math.max(0,state.crewHealth-c.months*CREW_PER_MONTH-(c.isHeadwind?CREW_HAZARD:0)));});
+    const next=lanes.length?Math.min(...lanes):risk;
+    const text=`⚠ Crew health ${state.crewHealth}%: mutiny is possible. Chance at this health: ${pct(risk)}; after your next voyage from here, at least ${pct(next)}, because each month at sea costs ${CREW_PER_MONTH} health (${CREW_HAZARD} more in a headwind or storm). A mutiny costs two months' wages. Waiting a month in port restores up to 20 health.`;
+    crewAlert.dataset.risk=String(risk);
+    if(crewAlert.textContent!==text)crewAlert.textContent=text;
+    crewAlert.hidden=false;
+  };
+
+  // 3. Port timing view: select a port on the map for each month's departure conditions to every destination.
+  //    It only reads engine functions (computeTransit is pure), so it never draws randomness or moves the date.
+  const portDialog=document.createElement('dialog');portDialog.id='atlas-port-view';portDialog.className='atlas-chart-dialog atlas-port-dialog';portDialog.setAttribute('aria-labelledby','atlas-port-title');
+  portDialog.innerHTML='<div class="atlas-chart-head"><h2 id="atlas-port-title"></h2><button type="button" id="atlas-port-close">Close</button></div><div id="atlas-port-body"></div>';
+  document.body.append(portDialog);
+  let portOpener=null;
+  $('atlas-port-close').addEventListener('click',()=>portDialog.close());
+  portDialog.addEventListener('close',()=>{const id=portOpener;portOpener=null;$('svg-ports').querySelector?.(`[data-port="${id}"]`)?.focus?.();});
+  const expectedMonths=(lane,month,depth=0)=>{const c=computeTransit(lane,month);if(!c.isHeadwind||depth>12)return c.months;return c.months+TURN_BACK*expectedMonths(lane,month+c.months,depth+1);};
+  const renderPortView=id=>{
+    const yearStart=state.monthIndex-state.monthIndex%12,now=state.monthIndex%12,nav=state.specialists.navigator;
+    $('atlas-port-title').textContent=`Leaving ${PORTS[id].name}: month by month`;
+    const sections=SEA_LANES.filter(l=>l.from===id).map(lane=>{
+      const rows=MONTHS.map((name,m)=>{const c=computeTransit(lane,yearStart+m),[kind,word]=windRelation(c);return {m,name,c,kind,word,turn:c.isHeadwind?TURN_BACK:0,storm:c.isDeadZone?c.stormProbability:0,exp:expectedMonths(lane,yearStart+m)};});
+      const best=Math.min(...rows.map(r=>r.exp));
+      const p=pirateChance(lane.to,{marines:false}),pg=pirateChance(lane.to,{marines:true});
+      return `<section class="atlas-port-lane" data-to="${lane.to}" data-pirates="${p}" data-pirates-guarded="${pg}"><h3>To ${PORTS[lane.to].name} <span>(${lane.dist} nm, sailing toward ${lane.bearing}°)</span></h3>`+
+        `<p class="atlas-chart-note">Pirates on arrival: ${pct(p)} without armed marines, ${pct(pg)} with them, for your current cargo, difficulty and standing there. Marines do not change the turn-back or storm chance.</p>`+
+        `<table class="atlas-port-table"><caption class="atlas-sr">Departures from ${PORTS[id].name} to ${PORTS[lane.to].name}</caption><thead><tr><th scope="col">Month</th><th scope="col">Wind</th><th scope="col">Sailing time</th><th scope="col">Turn-back</th><th scope="col">Storm</th><th scope="col">Expected</th></tr></thead><tbody>`+
+        rows.map(r=>`<tr data-month="${r.m}" data-days="${r.c.days}" data-months="${r.c.months}" data-wind="${r.kind}" data-turnback="${r.turn}" data-storm="${r.storm}" data-expected="${r.exp}"${r.m===now?' data-now="true"':''}${Math.abs(r.exp-best)<1e-9?' data-best="true"':''}><th scope="row">${r.name}${r.m===now?' <span class="atlas-port-tag">now</span>':''}${Math.abs(r.exp-best)<1e-9?' <span class="atlas-port-tag">★ best</span>':''}</th><td data-label="Wind">${r.word}</td><td data-label="Time">${r.c.days} d (${r.c.months} mo)</td><td data-label="Turn-back">${r.turn?pct(r.turn):'–'}</td><td data-label="Storm">${r.storm?pct(r.storm):'–'}</td><td data-label="Expected">${(Math.round(r.exp*100)/100).toString()} mo</td></tr>`).join('')+
+        '</tbody></table></section>';
+    }).join('');
+    $('atlas-port-body').innerHTML=`<p class="atlas-chart-note">From the game's own sailing model, for this campaign year. Sailing time: days and months charged. Turn-back: the chance a headwind sends you back (you pay the months and try again). Storm: the cyclone chance in a transition month${nav?' (halved by your navigator)':' (a navigator lowers it)'}. Expected: months to arrive, counting turn-backs. ★ best = the shortest expected time; ties are all marked. Storms damage the hull but do not lengthen the voyage in the game, so they don't change “best”.</p>`+sections;
+  };
+  const openPortView=id=>{if(!PORTS[id])return;portOpener=id;renderPortView(id);if(!portDialog.open)portDialog.showModal?.();};
+  $('svg-ports').addEventListener('click',event=>{const id=event.target?.closest?.('[data-port]')?.dataset?.port;if(id)openPortView(id);});
+  $('svg-ports').addEventListener('keydown',event=>{if(event.key!=='Enter'&&event.key!==' ')return;const id=event.target?.closest?.('[data-port]')?.dataset?.port;if(id){event.preventDefault();openPortView(id);}});
+
+  // Ports become buttons; storms, pirates and the alert repaint with the page.
+  const riskMapOriginal=renderSVGMap;renderSVGMap=function(wind){
+    riskMapOriginal(wind);
+    ocean.querySelectorAll('#svg-ports>g').forEach((group,index)=>{const port=Object.values(PORTS)[index];group.setAttribute('data-port',port.id);group.setAttribute('role','button');group.setAttribute('tabindex','0');group.setAttribute('aria-label',`${port.name}: departure timing by month`);});
+    ocean.append(hazardLayer);
+    // Route label: pirates, storm and turn-back chances for the selected leg this month (engine values).
+    const preview=$('svg-route-preview'),to=state.hoveredLaneTo||state.windRouteTo,lane=SEA_LANES.find(route=>route.from===state.currentPort&&route.to===to),rect=preview.querySelector?.('rect'),label=preview.querySelector?.('text');
+    if(lane&&rect&&label&&rect.getAttribute){
+      const c=computeTransit(lane),risks=[`Pirates ${pct(pirateChance(lane.to))}${state.specialists.marines?'':` (${pct(pirateChance(lane.to,{marines:true}))} with marines)`}`];
+      if(c.isHeadwind)risks.push(`turn-back ${pct(TURN_BACK)}`);if(c.isDeadZone)risks.push(`storm ${pct(c.stormProbability)}`);
+      const line2=risks.join(' · '),w=Math.max(+rect.getAttribute('width'),Math.round(line2.length*5.6+16));
+      const cx=+label.getAttribute('x'),x=Math.min(800-w/2-4,Math.max(w/2+4,cx));
+      rect.setAttribute('x',x-w/2);rect.setAttribute('width',w);rect.setAttribute('height',32);label.setAttribute('x',x);
+      const extra=document.createElementNS('http://www.w3.org/2000/svg','text');extra.setAttribute('class','atlas-route-risk');
+      for(const attr of ['fill','font-size','font-family','font-weight'])if(label.getAttribute(attr))extra.setAttribute(attr,label.getAttribute(attr));
+      extra.setAttribute('x',x);extra.setAttribute('y',+label.getAttribute('y')+12);extra.setAttribute('text-anchor','middle');extra.textContent=line2;label.after(extra);
+      preview.setAttribute('aria-label',`${preview.getAttribute('aria-label')||''}. ${line2}`);
+    }
+  };
+  const riskRenderOriginal=renderAll;renderAll=function(){riskRenderOriginal();paintCrew();paintHazards();};
+  // The audit replaces the voyage screen without a repaint; clear the alert so it never carries over.
+  const riskFinishOriginal=finishCampaign;finishCampaign=function(){riskFinishOriginal();paintCrew();};
 })();
