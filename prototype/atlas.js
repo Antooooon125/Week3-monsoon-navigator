@@ -200,6 +200,13 @@
   const labels=[['#voyage-log','h3','Voyage log']];
   for(const [id,tag,text] of labels){if(!tag)continue;const node=document.querySelector(id);const heading=node.parentElement.querySelector(tag);if(heading)heading.textContent=text;}
   right.lastElementChild.querySelector('h3').textContent='Care for ship and crew';
+  // Live-play layout: the care panel sits under the map as a row of cards (stacked on phones), so the left column
+  // lines up with the market. Each card is a flexible column (text, then its button), so longer contract or status
+  // text can be added later without a relayout. Hiring behaviour and wording are unchanged.
+  const care=right.lastElementChild;care.classList.add('atlas-care');care.setAttribute('role','region');care.setAttribute('aria-label','Care for ship and crew');
+  const careCards=document.createElement('div');careCards.className='atlas-care-cards';
+  for(const card of [...care.children].slice(2))careCards.append(card);care.append(careCards);
+  map.after(care);
   document.querySelectorAll('button').forEach(button=>{if(button.getAttribute('onclick')==="toggleModal('intel-modal')")button.textContent='Port price guide';if(button.getAttribute('onclick')==="toggleModal('physics-modal')")button.textContent='How sailing works';});
   const auditReport=$('pdf-export-target');auditReport.querySelector('h2').textContent='Voyage ledger';
   const prediction=$('audit-hypothesis-text').parentElement.parentElement;prediction.classList.add('atlas-audit-prediction');auditReport.querySelector('.grid').before(prediction);
@@ -213,10 +220,7 @@
   // Decorative atmospheric colour is confined to the scene. These strokes encode
   // the model's single departure wind direction; they are not measured flow data.
   const ocean=$('ocean-svg'),defs=ocean.querySelector('defs');
-  // Live-play layout: show more of the real map (10 units north, 140 south) so the sea fills the column beside the market.
-  // Ports, lanes and every engine drawing keep their coordinates; only the visible window grows.
-  const mapView={top:-10,height:600};ocean.setAttribute('viewBox',`0 ${mapView.top} 800 ${mapView.height}`);
-  const seaRect=ocean.querySelector(':scope > rect');if(seaRect){seaRect.setAttribute('y',mapView.top);seaRect.setAttribute('height',mapView.height);}
+  const mapView={top:0,height:450};
   const land=ocean.querySelector('g[fill="#243950"]');land.setAttribute('id','atlas-land');
   // Real coastlines (Natural Earth 1:50m, inlined by the builder) leave less open water than the hand-drawn map did.
   // These positions keep the sea labels and the wind clock off land; tests/sea-lanes.test.mjs checks them against the coastline.
@@ -229,7 +233,7 @@
   $('svg-clock-months').parentElement.setAttribute('transform',`translate(${mapPlacements.clock[0]}, ${mapPlacements.clock[1]})`);
   const landMask=[...land.querySelectorAll('path')].map(path=>`<path d="${path.getAttribute('d')}" fill="black"/>`).join('');
   defs.insertAdjacentHTML('beforeend',`<radialGradient id="atlas-sea-light" cx="43%" cy="42%" r="70%"><stop stop-color="var(--field)" stop-opacity=".16"/><stop offset="1" stop-color="var(--sea)" stop-opacity="0"/></radialGradient><linearGradient id="atlas-wind-spectrum" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--field)"/><stop offset=".72" stop-color="var(--spectral)"/><stop offset="1" stop-color="#ec9abe"/></linearGradient><mask id="atlas-ocean-mask" maskUnits="userSpaceOnUse" x="0" y="${mapView.top}" width="800" height="${mapView.height}"><rect y="${mapView.top}" width="800" height="${mapView.height}" fill="white"/>${landMask}<rect x="${mapPlacements.clock[0]-78}" y="${mapPlacements.clock[1]-78}" width="156" height="156" fill="black"/></mask><marker id="atlas-wind-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 2L8 5L1 8" fill="none" stroke="var(--field)" stroke-width="1.4"/></marker>`);
-  const atmosphere=document.createElementNS('http://www.w3.org/2000/svg','g');atmosphere.id='atlas-atmosphere';atmosphere.setAttribute('pointer-events','none');atmosphere.setAttribute('aria-hidden','true');atmosphere.innerHTML=`<rect y="${mapView.top}" width="800" height="${mapView.height}" fill="url(#atlas-sea-light)"/><text x="285" y="470" fill="var(--field)" opacity=".32" font-size="13" letter-spacing="7">INDIAN OCEAN</text>`;land.before(atmosphere);
+  const atmosphere=document.createElementNS('http://www.w3.org/2000/svg','g');atmosphere.id='atlas-atmosphere';atmosphere.setAttribute('pointer-events','none');atmosphere.setAttribute('aria-hidden','true');atmosphere.innerHTML=`<rect y="${mapView.top}" width="800" height="${mapView.height}" fill="url(#atlas-sea-light)"/><text x="285" y="403" fill="var(--field)" opacity=".32" font-size="13" letter-spacing="7">INDIAN OCEAN</text>`;land.before(atmosphere);
   $('svg-wind-field').setAttribute('mask','url(#atlas-ocean-mask)');$('svg-wind-field').setAttribute('aria-hidden','true');$('svg-wind-field').setAttribute('pointer-events','none');
 
   // Replace a purely presentational renderer with local, offline SVG illustrations.
@@ -278,8 +282,8 @@
     mapOriginal(wind);ocean.querySelector(':scope > rect').setAttribute('fill','var(--sea)');
     const angle=wind.bearing*Math.PI/180,dx=Math.sin(angle)*54,dy=-Math.cos(angle)*54;
     const tracers=[];
-    for(let row=0;row<10;row++)for(let column=0;column<13;column++){
-      const x=column*64+(row%2)*26-12,y=row*59+2,index=row*13+column;
+    for(let row=0;row<8;row++)for(let column=0;column<13;column++){
+      const x=column*64+(row%2)*26-12,y=row*59+12,index=row*13+column;
       tracers.push(`<line x1="${x}" y1="${y}" x2="${(x+dx).toFixed(2)}" y2="${(y+dy).toFixed(2)}" class="atlas-wind-tracer" style="animation-delay:-${index%9*.6}s" ${index%7===0?'marker-end="url(#atlas-wind-arrow)"':''}/>`);
     }
     $('svg-wind-field').innerHTML=tracers.join('');

@@ -314,7 +314,16 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-status #hud-bar>button:first-of-type{margin-left:0!important;order:2}.atlas-status #hud-bar>button{order:2}
   .atlas-status #hud-bar::after{content:"";order:1;flex-basis:100%}
 }
-/* The map shows 800 × 600 units (see mapView in atlas.js). */
-@media screen{.atlas-map-panel>div.relative{aspect-ratio:4/3!important}}
+/* Care for ship and crew under the map (2026-11-23). */
+@media screen{
+  .atlas-navigation>.atlas-care{margin-top:16px}
+  .atlas-care .atlas-care-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:stretch}
+  .atlas-care .atlas-care-cards>div{display:flex!important;flex-direction:column;align-items:stretch!important;justify-content:flex-start!important;gap:10px;min-width:0}
+  .atlas-care .atlas-care-cards>div.hidden{display:none!important}
+  .atlas-care .atlas-care-cards>div,.atlas-care>div:nth-child(2){padding:10px 12px!important}
+  .atlas-care .atlas-care-cards>div>div{flex:1 1 auto}
+  .atlas-care .atlas-care-cards>div>button{align-self:flex-start;margin-top:auto}
+}
+@media screen and (max-width:640px){.atlas-care .atlas-care-cards{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.atlas-wind-tracer{animation:none!important;stroke-dasharray:14 18}}
 @media print{body{--bg:#fff;--surface:#fff;--ink:#111;--muted:#333;--line:#777;--accent:#111;--good:#111;--bad:#111;--warn:#111;background:#fff!important;color:#111!important}header,.atlas-footer,.atlas-event,.atlas-source-dialog,.no-print{display:none!important}#phase-setup,#phase-sim{display:none!important}#phase-audit{display:block!important;padding:0!important;max-width:none}#pdf-export-target{background:white!important;color:#111!important;border:0;padding:0!important}#pdf-export-target *{color:#111!important;background:transparent!important;box-shadow:none!important}#pdf-export-target .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#pdf-export-target p,#pdf-export-target .grid>div{break-inside:avoid}#audit-log-table>div{break-inside:avoid}#audit-log-table{font-size:10pt}a{text-decoration:none}}
