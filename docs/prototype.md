@@ -159,8 +159,9 @@ Display only; the engine script is unchanged, and nothing here draws randomness 
 
 - **Storms and pirates on the map.** After a voyage, a storm marker sits on the leg (30% of the way) if the engine's transition-month roll produced a cyclone, and a pirate flag near the destination if its piracy check fired.
   - **How it's decided.** The adapter wraps `sailTo`, records the random draws the engine makes, and reads them in `sailTo`'s fixed draw order. A turn-back is read from state. The marker never depends on the log.
-  - **What it says.** A line under the map key (`role="status"`) names what happened, with the hull lost to the storm, and the pirates' outcome in the engine's own words from that voyage's log entry.
-  - **Lifetime.** Markers clear at the next action.
+  - **What it says.** A line under the map key (`role="status"`) names what happened, with the hull actually lost to the storm (and "hull at its minimum (5%)" when the engine's 5% floor applied, since its log then overstates the loss), and the pirates' outcome in the engine's own words from that voyage's log entry. The entry is found among the entries the voyage added, because `advanceTime` can log after it (interest at months 6, 12 and 18).
+  - **Lifetime.** Markers stay through trading, hiring and repairs in port, and clear at the next wait or voyage.
+  - **Route label.** While the selected route's label is shown, a sea name it would cover is hidden.
   - **Accessibility.** Under `prefers-reduced-motion` they appear without animation. They carry an icon and text, not colour alone.
 - **Route label.** The selected route's label gains a second line: pirates on arrival (and with armed marines), and, when they apply, the turn-back chance (headwind) and the storm chance (transition month).
 - **Crew-health alert.** While `getMutinyRisk(health)` is above zero, the status strip shows ⚠ with:
