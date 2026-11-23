@@ -125,7 +125,7 @@ const coastline=JSON.parse(readFileSync(resolve(root,'prototype/coastline.json')
 const landGroup=/(<g fill="#243950"[^>]*>)[\s\S]*?(<\/g>)/;
 if(!landGroup.test(original))throw new Error('Land group not found in index.html');
 const landPaths=coastline.paths.map(d=>`<path d="${d}" />`).join('');
-const landNote=`<!-- Coastlines: ${coastline.source.dataset} ${coastline.source.version} (public domain), equirectangular fit to the five ports, Douglas-Peucker ${coastline.simplification.toleranceMapUnits} map units -->`;
+const landNote=`<!-- Coastlines: ${coastline.source.dataset} ${coastline.source.version} (public domain), axis-wise linear fit to the five ports, Douglas-Peucker ${coastline.simplification.toleranceMapUnits} map units -->`;
 let output=original
   .replace(landGroup,(_,open,close)=>`${open}${landNote}${landPaths}${close}`)
   .replace(/<script\b[^>]*\bsrc=[^>]*><\/script>\s*/g,'')

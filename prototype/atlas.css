@@ -270,7 +270,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-chart-dialog::backdrop{background:rgba(10,18,30,.55)}
   .atlas-chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .atlas-chart-head h2{font-family:var(--f-display);font-size:1.25rem;line-height:1.2;margin:0}
-  .atlas-chart-head button{min-width:44px;min-height:44px;padding:0 14px;border:1px solid var(--atlas-chart-muted);background:transparent;color:var(--atlas-chart-ink);font:inherit;cursor:pointer}
+  .atlas-chart-head button{flex:none;min-width:44px;min-height:44px;padding:0 14px;border:1px solid var(--atlas-chart-muted);background:transparent;color:var(--atlas-chart-ink);font:inherit;cursor:pointer}
   .atlas-chart-note,.atlas-chart-key{font-size:.8125rem;line-height:1.5;color:var(--atlas-chart-muted);margin:10px 0}
   .atlas-chart-legend{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;padding:0;margin:8px 0;font-size:.8125rem}
   .atlas-chart-legend li{display:inline-flex;align-items:center;gap:6px}.atlas-chart-legend i{display:inline-block;width:16px;height:3px;border-radius:2px}
@@ -289,6 +289,8 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-chart-here-label{font-weight:700}
   .atlas-chart-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:12px}
   .atlas-chart-table caption{text-align:left;font-weight:700;margin-bottom:4px}
+  .atlas-chart-all{margin-top:12px}.atlas-chart-all summary{cursor:pointer;font-weight:700;font-size:.8125rem}.atlas-chart-all table{font-variant-numeric:tabular-nums;table-layout:fixed}.atlas-chart-all th,.atlas-chart-all td{padding:3px 2px;overflow-wrap:anywhere}
+  @media (max-width:640px){.atlas-chart-all table{font-size:.6875rem}}
   .atlas-chart-table th,.atlas-chart-table td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--atlas-chart-grid)}
 }
 /* One trade panel (2026-11-23): the hold summary and drawn icons live here. */
@@ -335,7 +337,6 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-map-panel>.atlas-voyage-note{margin:0;padding:10px 24px;background:#111c35;color:#ffe3b0;font-size:.8125rem;line-height:1.5;border-top:1px solid #53677c}
   .atlas-crew-alert{flex:1 1 100%;margin:0;padding:10px 12px;border:2px solid var(--bad,#9b302d);background:var(--surface);color:var(--ink);font-size:.875rem;line-height:1.45}
   #svg-ports>g[role=button]{cursor:pointer}
-  #svg-ports>g[role=button]:focus-visible{outline:none}
   #svg-ports>g[role=button]:focus-visible circle:last-of-type{stroke:#fff;stroke-width:4}
   .atlas-port-dialog h3{font-family:var(--f-display);font-size:1.05rem;margin:18px 0 4px}.atlas-port-dialog h3 span{font-family:var(--f-body);font-weight:400;font-size:.8125rem;color:var(--atlas-chart-muted)}
   .atlas-port-table{width:100%;border-collapse:collapse;font-size:.8125rem;font-variant-numeric:tabular-nums}
