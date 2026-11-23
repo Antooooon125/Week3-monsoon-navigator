@@ -3768,7 +3768,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
     }
     if(v.calc.isDeadZone){
       predictable.push(`a transition month carries a ${pct(v.calc.stormProbability)} ${stormName(v.from,v.to)} chance`);
-      luck.push(v.storm?`the ${stormName(v.from,v.to)} came (hull −${v.damage}%${v.hullAfter<=5?', hull at its minimum':''})`:`no ${stormName(v.from,v.to)} came`);
+      luck.push(v.storm?`the ${stormName(v.from,v.to)} came (${v.damage>0?`hull −${v.damage}%`:'no further hull loss'}${v.hullAfter<=5?', hull at its minimum':''})`:`no ${stormName(v.from,v.to)} came`);
     }
     if(predictable.length)s.push(`Predictable: ${predictable.join('; ')}. Luck: ${luck.join(', and ')}.`);
     return s.join(' ');
