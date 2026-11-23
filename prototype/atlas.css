@@ -372,7 +372,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-home-port[aria-pressed=true] .atlas-home-dot{fill:var(--spectral);stroke:#fff;stroke-width:3;r:9}
   .atlas-home-port text{fill:#fff;font:700 15px var(--f-body);paint-order:stroke;stroke:#0b1320;stroke-width:4px}
   .atlas-home-port:focus-visible .atlas-home-dot{stroke:var(--spectral);stroke-width:4}
-  @media (max-width:640px){.atlas-home-port text{font-size:22px}}
+  @media (max-width:640px){.atlas-home-port text{font-size:34px;stroke-width:7px}.atlas-home-hit{r:60px}.atlas-home-dot{r:12px}.atlas-home-port[aria-pressed=true] .atlas-home-dot{r:15px}.atlas-home-port text{transform:translateY(-14px)}}
 @media screen and (max-width:640px){
   /* Phones: each month is a stacked row; the cells carry their own labels. */
   .atlas-port-table,.atlas-port-table tbody{display:block}.atlas-port-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}

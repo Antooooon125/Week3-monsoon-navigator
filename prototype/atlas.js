@@ -693,7 +693,7 @@
       $('atlas-home-wind').textContent=`${MONTHS[m]} (preview): ${w.isDeadZone?'transition between monsoons':w.regime.replace('SW','southwest').replace('NE','northeast').replace('Monsoon','monsoon')}, ${w.knots} kt, blowing toward ${w.bearing}°.`;
       const arrows=[];for(let y=70;y<450;y+=95)for(let x=60;x<800;x+=120)arrows.push(`<g transform="translate(${x} ${y}) rotate(${w.bearing})"><path d="M0 12V-12M-5 -6L0 -12L5 -6" class="atlas-home-arrow"/></g>`);
       $('atlas-home-wind-arrows').innerHTML=arrows.join('');
-      $('atlas-home-ports').innerHTML=Object.values(PORTS).map(p=>`<g class="atlas-home-port" role="button" tabindex="0" data-port="${p.id}" aria-pressed="${p.id===chosen}" aria-label="${p.name}${p.id===chosen?' (your home port)':''}" transform="translate(${p.x} ${p.y})"><circle r="16" class="atlas-home-hit"/><circle r="7" class="atlas-home-dot"/><text y="-13" text-anchor="middle">${p.name}</text></g>`).join('');
+      $('atlas-home-ports').innerHTML=Object.values(PORTS).map(p=>`<g class="atlas-home-port" role="button" tabindex="0" data-port="${p.id}" aria-pressed="${p.id===chosen}" aria-label="${p.name}${p.id===chosen?' (your home port)':''}" transform="translate(${p.x} ${p.y})"><circle r="16" class="atlas-home-hit"/><circle r="7" class="atlas-home-dot"/><text y="-13" x="${p.x>700?14:0}" text-anchor="${p.x>700?'end':'middle'}">${p.name}</text></g>`).join('');
     };
     const choose=id=>{if(!PORTS[id])return;setupSelect.value=id;setupSelect.dispatchEvent(new Event('change',{bubbles:true}));paintHome();$('atlas-home-ports').querySelector(`[data-port="${id}"]`)?.focus?.();};
     picker.addEventListener('click',event=>{const id=event.target?.closest?.('.atlas-home-port')?.dataset?.port;if(id)choose(id);});
