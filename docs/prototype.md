@@ -206,3 +206,14 @@ Display only; the engine script is unchanged, and nothing here draws randomness 
 ### Follow-up (2026-11-24)
 
 - **Price chart at 320 px.** With a classic scrollbar the chart dialog's content box is 228 px, and the summary table's narrowest layout was 235 px, so the dialog scrolled sideways. Below 640 px its cells now have 3 px side padding (was 6 px), which keeps the table under 212 px. KVIS's market check now checks every chart table's narrowest width against the dialog at 320 px, allowing 17 px for a classic scrollbar.
+
+### Campaign replay on the audit page (2026-11-24)
+
+Display only; the engine script is unchanged, and nothing here draws randomness or changes state.
+
+- **What is recorded.** During play the adapter records one step per voyage or month waited, from engine state read around each `sailTo` and `waitInPort` call: ports, month, months charged, days at sea and wind relation, whether the ship was turned back (it is still in port), hull and cash before and after, and the row of the dated log the action wrote (the log's length before it: `sailTo` and `waitInPort` each write their entry before `advanceTime` adds anything). Storms and pirates come from the draws decoded for the storm and pirate markers, never from the log text. Trades are recorded from the change in cargo and cash around `buyCargoQty` and `sellCargoQty`, and shown at the port where the next step begins. Months the recorder did not see (for example after a reload) are counted and reported as not recorded; nothing is guessed.
+- **What plays.** Above the dated log, on the same coastline map: the ship moves along each leg sailed (about 1.5 s a step at 1×), a turn-back goes halfway out and back, a wait holds the ship in port while the month label advances, the storm and pirate markers appear where #32 draws them (30% and 80% along the leg), and a counter runs month and cash. One polite live line narrates each step; the matching log row is outlined and marked `aria-current="step"`. Every step is also listed as text.
+- **Controls.** Restart, Back, Play/Pause, Forward and a speed choice (0.5×, 1×, 2×). It never plays on its own. All controls are keyboard-operable buttons with the shared focus ring and 44 px targets.
+- **Reduced motion.** Play and the speed choice are disabled; each step is a still frame at its end, moved through with Back and Forward.
+- **Print and PDF.** The replay is hidden in print (`@media print`) and carries `data-html2canvas-ignore`, so the printed and exported audit are unchanged.
+- **Tests.** KVIS `tests/03/atlas-replay.test.mjs` plays seeded campaigns to the end and checks the steps against the engine (one per voyage or wait, ports, months, turn-backs, storms and pirates from the engine's outcome), the highlighted log row for every step, purity while stepping and playing to the end, reduced motion, and the print opt-outs; it fails on seven planted defects. `engine/preview-purity.test.mjs` also covers the replay.
