@@ -3225,7 +3225,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   // text can be added later without a relayout. Hiring behaviour and wording are unchanged.
   const care=right.lastElementChild;care.classList.add('atlas-care');care.setAttribute('role','region');care.setAttribute('aria-label','Care for ship and crew');
   const careCards=document.createElement('div');careCards.className='atlas-care-cards';
-  for(const card of [...care.children].slice(2))careCards.append(card);care.append(careCards);
+  for(const card of [...(care.children||[])].slice(2))careCards.append(card);care.append(careCards);
   map.after(care);
   document.querySelectorAll('button').forEach(button=>{if(button.getAttribute('onclick')==="toggleModal('intel-modal')")button.textContent='Port price guide';if(button.getAttribute('onclick')==="toggleModal('physics-modal')")button.textContent='How sailing works';});
   const auditReport=$('pdf-export-target');auditReport.querySelector('h2').textContent='Voyage ledger';
