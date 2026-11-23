@@ -338,6 +338,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-map-panel>.atlas-voyage-note{margin:0;padding:10px 24px;background:#111c35;color:#ffe3b0;font-size:.8125rem;line-height:1.5;border-top:1px solid #53677c}
   .atlas-crew-alert{flex:1 1 100%;margin:0;padding:10px 12px;border:2px solid var(--bad,#9b302d);background:var(--surface);color:var(--ink);font-size:.875rem;line-height:1.45}
   #svg-ports>g[role=button]{cursor:pointer}
+  #ocean-svg text[data-covered=true]{visibility:hidden}
   #svg-ports>g[role=button]:focus-visible circle:last-of-type{stroke:#fff;stroke-width:4}
   .atlas-port-dialog h3{font-family:var(--f-display);font-size:1.05rem;margin:18px 0 4px}.atlas-port-dialog h3 span{font-family:var(--f-body);font-weight:400;font-size:.8125rem;color:var(--atlas-chart-muted)}
   .atlas-port-table{width:100%;border-collapse:collapse;font-size:.8125rem;font-variant-numeric:tabular-nums}
