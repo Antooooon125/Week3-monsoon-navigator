@@ -127,7 +127,7 @@
   narrow?.addEventListener?.('change',placeMarket);placeMarket();
   market.querySelector('h3').textContent='Trade at the waterfront';market.querySelector('span').textContent='Trade / material ecology';
   const marketScroll=market.querySelector('.overflow-x-auto');marketScroll.tabIndex=0;marketScroll.setAttribute('role','region');marketScroll.setAttribute('aria-label','Commodity market');
-  const tableHint=document.createElement('p');tableHint.className='atlas-table-hint';tableHint.textContent='Prices at this port this month, per game lot. Sell here: what you receive for each lot you sell. Buy here: what each lot costs, including the port’s tariff. ▲ high / ▼ low: the sell price is more than 2 D above / below this port’s usual price. Next month: which way this port’s prices move next month (↑ rising, ↓ falling, – steady), from the game’s fixed seasonal cycle. Select a good’s name for its prices through the year at every port.';marketScroll.before(tableHint);
+  const tableHint=document.createElement('p');tableHint.className='atlas-table-hint';tableHint.textContent='Prices at this port this month, per game lot. Sell here: what you receive for each lot you sell. Buy here: what each lot costs, including the port’s tariff. ▲ high / ▼ low: the sell price is more than 2 D above / below this port’s usual price. Next month: which way this port’s prices move next month (↑ rising, ↓ falling, – steady), from the game’s fixed seasonal cycle. Buy directions assume today’s tariff: if your standing here reaches 50, the tariff drops a point and the buy price with it. Select a good’s name for its prices through the year at every port.';marketScroll.before(tableHint);
   // One trade panel. The lower "collection in transit" panel duplicated the market's hold line; its unique
   // parts (drawn icons, tonnes aboard, the per-good weight bar and legend, tonnes available, the weight note)
   // move here and the panel is hidden. It stays in the page because the engine still writes its cargo shelf.
@@ -145,7 +145,7 @@
   const direction=(now,next)=>next>now?'up':next<now?'down':'steady';
   const directionWord={up:'↑ rising',down:'↓ falling',steady:'– steady'};
   const chartDialog=document.createElement('dialog');chartDialog.id='atlas-price-chart';chartDialog.className='atlas-chart-dialog';chartDialog.setAttribute('aria-labelledby','atlas-chart-title');
-  chartDialog.innerHTML='<div class="atlas-chart-head"><h2 id="atlas-chart-title"></h2><button type="button" id="atlas-chart-close">Close</button></div><p class="atlas-chart-note" id="atlas-chart-note"></p><ul class="atlas-chart-legend" id="atlas-chart-legend" aria-label="Ports"></ul><div id="atlas-chart-plot"></div><table class="atlas-chart-table" id="atlas-chart-table"></table>';
+  chartDialog.innerHTML='<div class="atlas-chart-head"><h2 id="atlas-chart-title"></h2><button type="button" id="atlas-chart-close">Close</button></div><p class="atlas-chart-note" id="atlas-chart-note"></p><ul class="atlas-chart-legend" id="atlas-chart-legend" aria-label="Ports"></ul><div id="atlas-chart-plot"></div><table class="atlas-chart-table" id="atlas-chart-table"></table><details class="atlas-chart-all"><summary>Every month at every port (table)</summary><table class="atlas-chart-table" id="atlas-chart-months"></table></details>';
   document.body.append(chartDialog);
   let chartOpener=null;
   $('atlas-chart-close').addEventListener('click',()=>chartDialog.close());
@@ -162,12 +162,12 @@
     $('atlas-chart-note').textContent=`Dirhams per lot (1 lot = ${item.weight} t), at every port, by month of the year. The game's prices follow a fixed seasonal cycle that repeats each year: nothing in them is random, and your own buying and selling never moves them. Buy prices include each port's tariff (${Math.min(...tariffs)}–${Math.max(...tariffs)}% for you now; it drops 1 point once your standing at a port reaches 50). Sell prices are the same curves without the tariff.`;
     $('atlas-chart-legend').innerHTML=series.map((line,i)=>`<li><i style="background:var(--atlas-series-${i+1})" aria-hidden="true"></i>${PORTS[line.port].name}${line.port===here?' (you are here)':''}</li>`).join('');
     const host=$('atlas-chart-plot'),W=Math.max(300,Math.min(640,Math.floor(host.clientWidth||600))),narrow=W<440,H=narrow?250:300;
-    const L=44,R=narrow?78:96,T=26,B=30,plotW=W-L-R,plotH=H-T-B,step=plotW/11;
+    const L=44,P=10,R=narrow?78:96,T=26,B=30,plotW=W-L-R,plotH=H-T-B,step=(plotW-P)/11;
     const all=series.flatMap(line=>line.values);let lo=Math.min(...all),hi=Math.max(...all);
     const raw=(hi-lo)/4||1,mag=10**Math.floor(Math.log10(raw)),tick=[1,2,5,10].map(f=>f*mag).find(t=>t>=raw);
     lo=Math.floor(lo/tick)*tick;hi=Math.ceil(hi/tick)*tick;if(hi===lo)hi=lo+tick;
-    const X=m=>L+m*step,Y=v=>T+(hi-v)/(hi-lo)*plotH,f=n=>+n.toFixed(2);
-    let svg=`<svg id="atlas-chart-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="atlas-chart-title" aria-describedby="atlas-chart-table" data-left="${L}" data-step="${f(step)}" data-top="${T}" data-bottom="${T+plotH}" data-y-min="${lo}" data-y-max="${hi}" data-year-start="${yearStart}">`;
+    const X=m=>L+P+m*step,Y=v=>T+(hi-v)/(hi-lo)*plotH,f=n=>+n.toFixed(2);
+    let svg=`<svg id="atlas-chart-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="atlas-chart-title" aria-describedby="atlas-chart-table" data-left="${L+P}" data-step="${f(step)}" data-top="${T}" data-bottom="${T+plotH}" data-y-min="${lo}" data-y-max="${hi}" data-year-start="${yearStart}">`;
     for(let v=lo;v<=hi+1e-9;v+=tick)svg+=`<line class="atlas-chart-grid" x1="${L}" x2="${L+plotW}" y1="${f(Y(v))}" y2="${f(Y(v))}"/><text class="atlas-chart-axis" x="${L-6}" y="${f(Y(v)+4)}" text-anchor="end">${v}</text>`;
     MONTHS.forEach((name,m)=>{if(!narrow||m%2===0)svg+=`<text class="atlas-chart-axis" x="${f(X(m))}" y="${H-10}" text-anchor="middle">${name}</text>`;});
     svg+=`<line class="atlas-chart-marker" data-mark="now" data-month="${now}" x1="${f(X(now))}" x2="${f(X(now))}" y1="${T-6}" y2="${T+plotH}"/><text class="atlas-chart-mark-label" x="${f(X(now))}" y="${T-10}" text-anchor="middle">Now</text>`;
@@ -184,11 +184,12 @@
     const overflow=ends.at(-1).y-(T+plotH);if(overflow>0)ends.forEach(e=>e.y-=overflow);
     for(const e of ends)svg+=`<line class="atlas-chart-leader" x1="${f(X(11)+4)}" x2="${f(X(11)+12)}" y1="${f(e.y)}" y2="${f(e.y)}" style="stroke:var(--atlas-series-${e.i+1})"/><text class="atlas-chart-end${e.port===here?' atlas-chart-here-label':''}" x="${f(X(11)+15)}" y="${f(e.y+4)}">${PORTS[e.port].name}</text>`;
     svg+='</svg>';
-    const arrivalText=arrival===null?'':` Dashed line: you would arrive at ${PORTS[lane.to].name} in ${MONTHS[arrival%12]}${arrival>=CAMPAIGN_MONTHS?', after the campaign ends':''} on the selected route (ringed).`;
+    const arrivalText=arrival===null?'':` Dashed line: you would arrive at ${PORTS[lane.to].name} in ${MONTHS[arrival%12]}${arrival>=CAMPAIGN_MONTHS?', after the campaign ends':''} on the selected route (ringed), when its buy price is ${series.find(line=>line.port===lane.to).values[arrival%12]} D.`;
     host.innerHTML=`<p class="atlas-chart-key">Solid line: now (${MONTHS[now]}).${arrivalText} Thick line: your port.</p>`+svg;
     $('atlas-chart-table').innerHTML=`<caption>Highest and lowest buy price this year</caption><thead><tr><th scope="col">Port</th><th scope="col">Now</th><th scope="col">Highest</th><th scope="col">Lowest</th></tr></thead><tbody>`+series.map(line=>{
       const max=Math.max(...line.values),min=Math.min(...line.values);
       return `<tr data-port="${line.port}"><th scope="row">${PORTS[line.port].name}</th><td>${line.values[now]} D</td><td>${max} D (${MONTHS[line.values.indexOf(max)]})</td><td>${min} D (${MONTHS[line.values.indexOf(min)]})</td></tr>`;}).join('')+'</tbody>';
+    $('atlas-chart-months').innerHTML=`<caption>${item.name}: buy price by month (D per lot)</caption><thead><tr><th scope="col">Month</th>${series.map(line=>`<th scope="col">${PORTS[line.port].name}</th>`).join('')}</tr></thead><tbody>`+MONTHS.map((name,m)=>`<tr data-month="${m}"><th scope="row">${name}${m===now?' (now)':''}</th>${series.map(line=>`<td data-port="${line.port}">${line.values[m]}</td>`).join('')}</tr>`).join('')+'</tbody>';
   };
   $('market-tbody').addEventListener('click',event=>{const button=event.target.closest?.('.atlas-good-chart');if(!button)return;chartOpener=button.dataset.good;chartDialog.showModal();drawChart(chartOpener);});
   const photo=$('ship-photo');const shipPlate=document.createElement('div');shipPlate.id='atlas-ship';shipPlate.className='atlas-ship';shipPlate.setAttribute('role','img');photo.replaceWith(shipPlate);

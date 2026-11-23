@@ -6,7 +6,7 @@
 // https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_50m_land.geojson
 // (SHA-256 e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b).
 //
-// Projection: equirectangular, x = a·lon + b and y = c·lat + d, fitted by least squares to the
+// Projection: axis-wise linear, x = a·lon + b and y = c·lat + d, each fitted by least squares to the
 // five ports' real coordinates and their fixed positions in the game's PORTS table (index.html).
 // The engine's port positions are not moved; the fit and its residuals are recorded.
 // Rings are clipped to the 800 × 450 viewBox plus a 12-unit margin, simplified with
@@ -99,7 +99,7 @@ for (const f of geo.features) {
 const out = {
   source: { dataset: 'Natural Earth 1:50m Land', version: 'v5.1.2', licence: 'Public domain (naturalearthdata.com/about/terms-of-use)',
     url: 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_50m_land.geojson', sha256: SOURCE_SHA256 },
-  projection: { kind: 'equirectangular, least-squares fit to the five ports', x: [+a.toFixed(6), +b.toFixed(4)], y: [+c.toFixed(6), +d.toFixed(4)],
+  projection: { kind: 'axis-wise linear (x from longitude, y from latitude), least-squares fit to the five ports', x: [+a.toFixed(6), +b.toFixed(4)], y: [+c.toFixed(6), +d.toFixed(4)],
     realPorts: REAL, residualsMapUnits: residuals },
   simplification: { method: 'Douglas–Peucker', toleranceMapUnits: TOLERANCE, minRingAreaSquareUnits: MIN_AREA, clipBox: box, ringsKept: kept, ringsDropped: dropped },
   paths
