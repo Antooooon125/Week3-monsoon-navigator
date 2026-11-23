@@ -32,3 +32,149 @@ Check setup and vessel keyboard selection; each seasonal palette; actual versus 
 The Node suite exercises both ships and all difficulties against the unchanged engine, including adverse events and random draw counts, actual versus preview wind direction, event dismissal and repeated events, loaded-weight reconciliation, last-month behavior and print fallback. It uses a minimal DOM double and does not establish browser layout, font rendering, contrast or PDF pagination compliance. Automated browser review remains pending because the available browser security policy blocks local-file navigation.
 
 Original game: Amnuayvit Thitibordin (KVIS), CC BY-NC-SA 4.0. The adapted prototype and its new visual material are distributed under the same terms. Referenced photographs remain at their sources and retain their credited Creative Commons licences.
+
+## Rebuilt on main for the KVIS deployment (2026-11-22)
+
+Branch `fix/atlas-on-main` merges game `main` (`ba2f279`: Play Only / Student Mode, reflection gate, licence header) into `ff74d45` and fixes what a browser review of the rebuilt page found:
+
+- Vessel drawings no longer cover the vessel card text (the SVGs now fill their fixed-height boxes).
+- At 375 px the market fits the screen: trade buttons sit on their own row under each good. The header no longer sticks, and the audit export button wraps.
+- The desktop market table no longer clips its last column.
+- Labels are only pointed at fields that have an `id`, so the game-mode radios keep their labels.
+- In Play Only, setup and audit text no longer mention a target or prediction.
+- The first event report takes keyboard focus. Amber and pink market text now reaches 4.5:1. The actual month in the planner is no longer dimmed.
+- The page says that export opens the browser's print dialog, because the offline page has no direct PDF download.
+- The builder writes every breakpoint rule after the base rules (`grid-cols-1 sm:grid-cols-2` had collapsed), and removes the Google Fonts `@import` whole.
+
+`tests/prototype-engine.test.mjs`: test 3 now selects Student Mode first; the ungated export test is replaced by one that pins the gate; there are new tests for the Play Only default, utility order and Play Only audit wording. 17/17 pass.
+
+### Resolutions recommended by the collaborator (2026-11-22)
+
+- **Links:** the header's "Original game" link becomes "Classic version". It points to `classic.html` where this page is deployed as `index.html`, and to `index.html` here. A separate "Original source" link goes to this repository.
+- **Credit:** the footer credits the original game (Amnuayvit Thitibordin, KVIS; CC BY-NC-SA 4.0 with the Commercial Derivative Exception) and the Atlas adaptation (art direction by Thanakrit Wongsatit, with AI assistance; CC BY-NC-SA 4.0, without the exception). The game's own credit line is kept.
+- **Drawings:** vessel cards read "Original schematic illustration; reference photograph: …". The photograph is linked separately; the drawings are not presented as adaptations of it.
+- **PDF:** one action, "Print / Save as PDF". The duplicate export button is hidden, because both open the same print dialog on this offline page. This is a deliberate change from the original game's direct PDF download.
+
+The licence and credit wording still awaits the copyright holder's confirmation.
+
+### Review follow-ups (2026-11-22)
+
+- The Sources dialog's "model description" link points to this repository's README at `ba2f279`. A relative `README.md` link missed on the KVIS site.
+- In Play Only, the intro steps read "Navigate & trade / Results" and the audit eyebrow "Results / voyage evidence". The engine's "(Goal: +1200 D)" on the return line is inherited and unchanged.
+- The market region's label no longer tells readers to scroll sideways. The page no longer calls itself a prototype.
+- The builder drops the unused `.harbor-art` CSS, so the page references no image file.
+- At 200 % text the toolbar, market header and audit rows wrap. Before this, the page widened to 541 px at 375 px (the original page's audit reaches 749 px at the same setting).
+
+### Second re-review follow-ups (2026-11-22)
+
+- The builder no longer pins `html{font-size:16px}`, so the reader's browser text-size setting is honoured, as in the original page. At 375 px with a 24 px or 32 px browser default, every page state still fits.
+- The "Classic version" link is a plain `href="classic.html"`. In this repository there is no `classic.html` beside `prototype.html`; the link is for the KVIS deployment.
+- The footer's Atlas credit is marked "(proposed, pending the copyright holder’s confirmation)".
+- The packaging test now extracts every `href`, `src` and `url()` (quoted or not, and quoted JS assignments). Each must be absolute, an anchor, a `${…}` template, or `classic.html` / `index.html`. It fails on each of eight planted relative references.
+- The event reports read only voyage log entries (those containing " | Events: "). Survival's charter line names "Cyclone & Piracy Crisis". It matched the cyclone pattern, opened the game with a false cyclone report, and suppressed the first real one. A seeded event-card check in the KVIS repository (`tests/03/atlas-events.test.mjs`) found this.
+
+### Collaborator decisions and third review (2026-11-22)
+
+- **Licence:** the collaborator chose CC BY-NC-SA 4.0 **with** the Commercial Derivative Exception for the Atlas material. The footer now says so, and also credits Guntitat Sawadwuthikul as collaborator. The credit wording is still marked pending the copyright holder's confirmation.
+- **Drawings:** vessel cards and the Sources dialog call the drawings "schematic illustrations", without "original", until the copyright holder confirms.
+- **Packaging test:** it also reads `setAttribute('href'|'src', …)`, template-literal assignments and CSS `@import`, and it fails on twelve plants. Values assembled at run time are not checked; the test title now says "static".
+
+- **Copyright holder's approval (2026-11-22):** the credit wording is approved, so the footer no longer carries the "pending" label.
+
+### More detailed vessel drawings (2026-11-22)
+
+The dhow and junk SVGs in `prototype/atlas.js` are redrawn with more detail, from scratch and without tracing or viewing the reference photographs. They are still schematic illustrations, not reconstructions, and the card and Sources wording is unchanged.
+
+- **Dhow:** stitched-plank hull with plank seams and a stitching line, raked stem head, raised stern deck with rail, side rudder; forward-raked main mast with a long lateen yard and a sail whose cloths run parallel to the leech, halyard, sheet and stays; a smaller mizzen lateen aft.
+- **Junk:** flat transom bow with an oculus, wales, a stern deckhouse with windows and a gallery rail, a fenestrated rudder; three battened lug sails with fanned sheets, the foremast raked forward.
+
+Both use only `currentColor` and `var(--surface)`, so the light, dark and print themes follow, and stay `aria-hidden` inside the same fixed-height boxes. The voyage ship card's label now reads "schematic illustration" instead of "schematic silhouette". No game state is touched; `tests/prototype-engine.test.mjs` 20/20.
+
+### Live-page review, presentation fixes (2026-11-22)
+
+These are display-only changes; the engine script is still copied verbatim.
+- **A1:** the hold bar draws its fill against a visible track.
+- **A2:** the map key reads "Game wind (one wind for the whole map)".
+- **A3:** the price dialog is labelled "Game prices (not historical)", priced in dirhams per game lot.
+- **A4:** the glossary's monsoon link points to National Geographic Education's "Monsoon" page, which covers the Indian Ocean monsoon; the sailing dialog gives full references for Chaudhuri (Cambridge University Press, 1985) and Abu-Lughod (Oxford University Press), with DOIs taken from Crossref.
+- **A5:** keyboard focus stays on the trade button after buying or selling. After a sail or wait with no event report, focus goes to "Choose your next port".
+- **A6:** on phones the map labels are about 14 px, the route label box and the in-map clock are hidden (the month planner shows the same information), and the header is shorter.
+- **A7:** the Play Only audit shows no goal or target verdict.
+- **A8:** a double click sails or waits only once.
+- **A9:** a new voyage opens at the top of the page, and the audit opens at its top.
+- **A10:** the selected route follows its curved sea lane, and the map is captioned "not to scale".
+- **A11:** land is at least 3:1 against the sea in every season, and port labels have a halo.
+- **A12:** the clock's season wedges are distinct and labelled NE and SW, and the comparison month is pink on the clock as in the month row.
+- **A13:** the commodity colours use an Okabe–Ito-based palette (CIEDE2000 minimum 16.6 in normal vision), and the hold lists loaded cargo in text.
+- **A14:** on narrow screens the market sits directly after "Sail or stay".
+- **A16:** the chosen game mode is outlined, keyboard focus previews a route, difficulty focus differs from selection, the plain headings replace the jargon, the wind badge reads "blowing toward SW, 225°", there is a ▲/▼ legend, and the dark theme reaches the trade panels.
+- **Engine text left as it is.** The adapter does not edit the engine's strings. The voyage log's "Struck by inter-monsoon cyclone (−N% hull)" stays "cyclone" on every leg; where the adapter shows that line (the event report), it adds the basin beside it, "(western Pacific: a typhoon)" or "(Indian Ocean cyclone)". The engine's own log panel, the wind badge's "(Cyclone/Doldrum Risk)" (one badge for the whole map, not a leg), the "Cyclone/Doldrum Dead Zone" hint, the "Cyclone & Piracy Crisis" difficulty and the ship cards keep "cyclone"; the glossary entry explains the two names.
+- **A17:** "a composite period" in the header; "Investor loan … (a game rule)"; "Chinese ocean-going junk" on the ship card and in the audit vessel line; the navigator card drops the kamal claim; the sailing dialog drops "flex over coral reefs"; the Sources dialog says port stories are fictional scenes.
+- The "Classic version" link is removed, because the KVIS site no longer has classic.html.
+- **Review of KVIS #21:**
+  - the selected route (now a path) is pink again;
+  - the dark theme's hold legend and bar fills reach ≥ 3:1 (measured: legend 7.8 and 8.8, bulk bar 7.4, cargo fills ≥ 4.7);
+  - the Play Only badge has one neutral style;
+  - phone map labels are about 14 px;
+  - the phone header keeps its subtitle and fits in about 29 % of the screen;
+  - a blocked second click moves focus to "Choose your next port";
+  - the clock is hidden on phones through a class.
+
+### Fixes from live play (2026-11-23)
+
+Display only; the engine script is unchanged.
+
+- **Routes over water.** Every sea lane, dashed or selected, is drawn through fixed sea waypoints: around the Horn of Africa, south of India and Sri Lanka, and through the Strait of Malacca. Before, the quadratic arcs crossed land on the Kilwa–Aden and Calicut–Malacca lanes. The game's distances, bearings and sailing times are unchanged. Every lane was checked in both monsoons at 1440 and 375 px by sampling the drawn path against the map's land shapes: no point is on land.
+- **Wind relation on the selected route.** The line style shows the leg's relation to this month's wind, in the engine's own terms (`computeTransit`): solid for tailwind, long dashes for crosswind, short dashes for headwind, dots for a transition month. The map key explains the styles. The route label reads, for example, "Tailwind · 285° · ~16 d (1 mo)".
+- **Labelled prices.** The trade table says "Sell here" and "Buy here" for this port's prices, and "you paid … D each (average)" for the cost basis. The labels are computed from the same functions `sellCargoQty` and `buyCargoQty` use. A browser check at every port, in two months, bought and sold one lot of each good and found the cash moves equal to the labels in all 60 rows. The legend explains ▲ and ▼ against the port's usual price. On phones each good's name has its own line, and the prices and hold sit below it.
+- **Next month's price direction.** Each good shows which way this port's buy and sell prices move next month (↑ rising, ↓ falling, – steady), computed from the engine's own `getLivePortPrice` for the next month and the tariff as `buyCargoQty` applies it. The game's prices are a fixed seasonal wave with no random term, and trades never move them, so the direction is exact. The ▲/▼ markers now carry the words "high" and "low", meaning more than 2 D from the port's usual price.
+- **Price chart.** A good's name is a button that opens a dialog with its buy price for the 12 months of the current campaign year at all five ports. Each point is the engine's price for that port and month. Lines are labelled at their ends, the player's port is drawn thick, and there are markers for now and, if a route is selected, the arrival month at the destination. A table gives each port's current, highest and lowest price. The note says the cycle repeats yearly, is not random, and ignores the player's trades, and that the tariff depends on standing. Sell prices are the same curves without the tariff, so they are stated rather than drawn. The palette is the dataviz reference categorical palette, validated against both dialog surfaces; in light mode three slots are below 3:1, so the end labels and the table carry identity too. Escape or Close returns focus to the good's name.
+- **Real coastlines.** The hand-drawn land shapes are replaced at build time with real coastlines:
+  - **Source.** Natural Earth 1:50m Land, v5.1.2, public domain ([terms](https://www.naturalearthdata.com/about/terms-of-use/)), from `https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_50m_land.geojson`, SHA-256 `e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b`. The raw file is not committed.
+  - **Conversion.** `scripts/coastline.mjs` makes the pinned `prototype/coastline.json` and refuses any other input file. It projects with an axis-wise linear least-squares fit to the five ports (x from longitude, y from latitude). The game's port positions are not moved: each real port position lands within 6.2 map units of the game's (Calicut 6.2, Quanzhou 4.8, Malacca 2.7, Kilwa 2.2, Aden 1.8). It then clips to the map plus a 12-unit margin, simplifies with Douglas–Peucker at 0.75 map units, and drops rings under 6 square units: 58 rings kept, 16.4 KB of path data.
+  - **Effects on the map.** The sea-lane waypoints are re-placed for the real coast. The Bay of Bengal label moves down 8 units, the South China Sea label becomes three lines, and the wind clock moves into the open Indian Ocean.
+  - **Checks.** `tests/sea-lanes.test.mjs` checks that every lane runs over water (at least 1.5 units from land outside 9 units of each port) and that the labels and the clock sit on water. It fails on a waypoint moved into Sri Lanka or onto the Horn of Africa, on the clock at its old position, and on a label placed on Vietnam.
+- **One trade panel.** "A collection in transit" duplicated the market's hold line, so its unique parts move into "Trade at the waterfront" and the panel is hidden. The engine still writes into it each repaint, so it stays in the page.
+  - **Moved into each row:** the drawn commodity icon (decorative, hidden from screen readers, above the name), the tonnes aboard ("4 t aboard"), and a coloured edge on rows with cargo.
+  - **Moved under the hold line:** the per-good weight bar with its legend (tonnes per good), the tonnes available, and the note that this is game weight, not hull volume, and that the drawings are schematic.
+  - **Replaced by text:** the engine's bulk/luxury bar becomes a line, "The game's freight split: bulk … t · spices & luxury … t (it counts pepper as luxury)", from `getBulkAndLuxuryTonnage`.
+  - **Dropped as duplicates:** names, categories, weight per lot, lots held and the percentage loaded, all already in the trade panel.
+  - **Phones:** each good stacks icon and name, then prices and hold, then the trade buttons.
+- **Layout from live play.**
+  - The "Follow the season." heading now opens the voyage screen across both columns. The status strip (month, treasury, hull, hold, the two guides) sits directly above the map it describes. The page tools (theme, sources, original source) join the strip during a voyage and return to the header on the setup and audit screens.
+  - **Care for ship and crew under the map.** The repair and the navigator, marines and tarpaulins hires (and, on hard, the loan repayment) sit under the map as a row of cards, stacked on phones, so the left column lines up with the market. Each card is a flexible column (text, then its button), so longer per-passage contract text or a status line can be added later without a relayout. The hiring behaviour and wording are unchanged. (An earlier version of this change showed more map instead; the user chose this layout, and the map keeps the game's 800 × 450 frame.)
+  - **Phones.** The three sea names collided with the enlarged port labels, so they are hidden there (the INDIAN OCEAN label stays). Quanzhou's labels are right-aligned so they are not clipped.
+  - **Original game source.** The link to this repository moves from the toolbar to the footer, beside the credit line, as "Original game source". It has the same target, and appears once.
+- **Review fixes (KVIS #30, 2026-11-23).**
+  - **Price chart.** It has a full month-by-month table under the summary ("Every month at every port"), and the key gives the destination's buy price in the arrival month.
+  - **Layout fixes.** The Close button no longer shrinks at 320–375 px. The plot is inset 10 units so January's "Now" marker clears the axis labels.
+  - **Wording.** The coastline fit is described as axis-wise linear, which is what it is, rather than equirectangular.
+  - **Price legend.** It notes that buy directions assume today's tariff, which drops a point if standing here reaches 50.
+
+  This branch (`fix/atlas-display`) is cut from `381dbe9` so KVIS #30's build does not include the later risk-and-timing commits on `fix/atlas-on-main`.
+
+### Risk and timing (2026-11-23)
+
+Display only; the engine script is unchanged, and nothing here draws randomness or changes state.
+
+- **Storms and pirates on the map.** After a voyage, a storm marker sits on the leg (30% of the way) if the engine's transition-month roll produced a cyclone, and a pirate flag near the destination if its piracy check fired.
+  - **How it's decided.** The adapter wraps `sailTo`, records the random draws the engine makes, and reads them in `sailTo`'s fixed draw order. A turn-back is read from state. The marker never depends on the log.
+  - **What it says.** A line under the map key (`role="status"`) names what happened, with the hull actually lost to the storm (and "hull at its minimum (5%)" when the engine's 5% floor applied, since its log then overstates the loss), and the pirates' outcome in the engine's own words from that voyage's log entry. The entry is found among the entries the voyage added, because `advanceTime` can log after it (interest at months 6, 12 and 18).
+  - **Lifetime.** Markers stay through trading, hiring and repairs in port, and clear at the next wait or voyage.
+  - **Route label.** While the selected route's label is shown, a sea name it would cover is hidden.
+  - **Accessibility.** Under `prefers-reduced-motion` they appear without animation. They carry an icon and text, not colour alone.
+- **Route label.** The selected route's label gains a second line: pirates on arrival (and with armed marines), and, when they apply, the turn-back chance (headwind) and the storm chance (transition month).
+- **Crew-health alert.** While `getMutinyRisk(health)` is above zero, the status strip shows ⚠ with:
+  - the current health;
+  - the mutiny chance at that health, and the least it can be after the next voyage from this port (8 health per month at sea, 12 more in a headwind, as in `sailTo`);
+  - what a mutiny costs, and that waiting restores up to 20 health.
+
+  It is announced politely when it changes and clears when health recovers or the campaign ends.
+- **Port timing view.** Selecting a port on the map (a keyboard-operable button) opens, for each destination, the 12 months of this campaign year.
+  - **Per month:** wind relation, sailing time (days and months charged), turn-back chance, storm chance (which depends on the navigator), and the expected months including turn-back retries.
+  - **Per destination:** pirates on arrival, with and without marines, and a note that marines don't change the turn-back or storm chance.
+  - **Marked:** the current month, and the best month or months (shortest expected time).
+  - **Phones:** each month is a stacked row.
+  - **Focus:** a focused port keeps the page's shared focus ring, with a white ring on the port as well (the ring is no longer switched off, which the KVIS packaging test now refuses).
+- **Cyclone or typhoon.** A storm is called a typhoon on a leg in the western Pacific and a cyclone in the Indian Ocean. The rule is one line in the adapter: a leg is Pacific if any point of its drawn route (ports or sea waypoints) lies east of Malacca, the port on the Strait of Malacca. Only Malacca–Quanzhou qualifies; Calicut–Malacca ends at the strait from the west. The name follows the basin on the map marker (`data-basin` and a tooltip), the line under the map key, the event report's title, the route label and the port timing view's column. The glossary gains a "Cyclone and typhoon" entry. Storm behaviour is unchanged.
+- **Tests.** KVIS `tests/03/atlas-hazards.test.mjs` takes ground truth from the engine's tagged draws and its source constants. It checks markers, the alert, every number in the port view, and that opening the view draws nothing and changes nothing. It fails on seven planted defects.

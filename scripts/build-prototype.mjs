@@ -1,11 +1,60 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createHash } from 'node:crypto';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const original = readFileSync(resolve(root, 'index.html'), 'utf8');
 const adapter = readFileSync(resolve(root, 'prototype/atlas.js'), 'utf8');
-const styles = readFileSync(resolve(root, 'prototype/atlas.css'), 'utf8');
+let styles = readFileSync(resolve(root, 'prototype/atlas.css'), 'utf8');
+// KVIS deployments may inline the reviewed foundation block from a separate
+// checkout. No runtime dependency on that checkout or on the shared sheet remains.
+const args = process.argv.slice(2);
+const options = new Map();
+for (let i = 0; i < args.length; i += 2) {
+  if (!['--shared-theme', '--shared-theme-revision'].includes(args[i]) ||
+      !args[i + 1] || args[i + 1].startsWith('--') || options.has(args[i])) {
+    throw new Error('Use --shared-theme <file> --shared-theme-revision <40-character commit>');
+  }
+  options.set(args[i], args[i + 1]);
+}
+let sharedStyle = '';
+if (options.size) {
+  const filename = options.get('--shared-theme');
+  const revision = options.get('--shared-theme-revision');
+  if (!filename || !/^[a-f0-9]{40}$/.test(revision || '')) {
+    throw new Error('Both shared-theme arguments are required, including an immutable source commit');
+  }
+  const theme = readFileSync(resolve(filename), 'utf8');
+  const blocks = [...theme.matchAll(/\/\* KVIS foundations:begin \*\/\n([\s\S]*?)\/\* KVIS foundations:end \*\//g)];
+  if (blocks.length !== 1 || !blocks[0][1].trim() || /<\/style/i.test(blocks[0][1])) {
+    throw new Error('Expected exactly one nonempty KVIS foundations block');
+  }
+  const foundation = blocks[0][1];
+  for (const name of ['f-display', 'f-body', 'f-mono', 'kvis-space-2', 'kvis-space-4',
+    'kvis-space-6', 'kvis-control-min-size', 'kvis-focus-width', 'kvis-focus-offset']) {
+    if (!foundation.includes(`--${name}:`)) throw new Error(`Missing foundation token --${name}`);
+  }
+  // Atlas keeps its embedded font-family aliases, its focus offset, and every
+  // colour/layout rule. Shared declarations supply the roles and behaviour.
+  let fontRoles = 0;
+  styles = styles.replace(/--f-(display|body|mono):([^;]+);/g, (_, role, family) => {
+    fontRoles++;
+    return `--kvis-font-${role}:${family};`;
+  });
+  if (fontRoles !== 3) throw new Error('Expected three Atlas font-role declarations');
+  styles = styles.replace(':root{', ':root{--kvis-focus-offset:3px;');
+  const focus = 'button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}';
+  if (styles.split(focus).length !== 2) throw new Error('Atlas focus rule changed; review the shared mapping');
+  styles = styles.replace(focus, '');
+  styles = styles.replace(/min-(height|width):44px/g, 'min-$1:var(--kvis-control-min-size)')
+    .replace(/gap:8px(?=[;}])/g, 'gap:var(--kvis-space-2)')
+    .replace(/gap:24px(?=[;}])/g, 'gap:var(--kvis-space-6)')
+    .replace(/padding:24px!important/g, 'padding:var(--kvis-space-6)!important')
+    .replace(/padding:16px!important/g, 'padding:var(--kvis-space-4)!important');
+  const checksum = createHash('sha256').update(foundation).digest('hex');
+  sharedStyle = `<style id="atlas-foundations" data-source-revision="${revision}" data-foundations-sha256="${checksum}">${foundation}</style>\n`;
+}
 const typefaces = [
   ['Archivo Atlas','Archivo-Variable.ttf','100 900','62% 125%'],
   ['Atkinson Atlas','AtkinsonHyperlegible-Regular.ttf','400','normal'],
@@ -46,7 +95,8 @@ for (let n=1;n<=12;n++) {rules.set('grid-cols-'+n,`grid-template-columns:repeat(
 for(const name of ['rounded','rounded-md','rounded-lg','rounded-xl']) rules.set(name,'border-radius:5px');
 // Include tokens from both static markup and dynamic templates, including conditional classes.
 const tokens = new Set((original+adapter).match(/[a-zA-Z0-9_-]+(?::[a-zA-Z0-9_-]+)*-?\[[^\]\s]+\](?:\/\d+)?|[a-zA-Z0-9_-]+(?::[a-zA-Z0-9_./-]+)*/g));
-let utility = '*{box-sizing:border-box}html{font-size:16px}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed}h1,h2,h3,h4,p,figure{margin:0}ul{padding:0;list-style:none}a{color:inherit}img,svg{max-width:100%}table{border-spacing:0}th,td{vertical-align:top} [class*="space-y-"]>*+*{margin-top:var(--stack)}[class*="space-x-"]>*+*{margin-left:var(--inline-gap)}\n';
+let utility = '*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed}h1,h2,h3,h4,p,figure{margin:0}ul{padding:0;list-style:none}a{color:inherit}img,svg{max-width:100%}table{border-spacing:0}th,td{vertical-align:top} [class*="space-y-"]>*+*{margin-top:var(--stack)}[class*="space-x-"]>*+*{margin-left:var(--inline-gap)}\n';
+const media={};
 const escape = s => s.replace(/[^a-zA-Z0-9_-]/g,c=>'\\'+c);
 for(const token of tokens){
   const parts=token.split(':');const name=parts.pop();let value=rules.get(name);
@@ -63,14 +113,28 @@ for(const token of tokens){
     if({sm:640,md:768,lg:1100}[variant])min={sm:640,md:768,lg:1100}[variant];
     else if(['hover','disabled','focus','focus-visible'].includes(variant))selector+=':'+variant;
   }
-  const rule=selector+'{'+value+'}';utility+=min?`@media(min-width:${min}px){${rule}}\n`:rule+'\n';
+  const rule=selector+'{'+value+'}';if(min)(media[min]??=[]).push(rule);else utility+=rule+'\n';
 }
+// Breakpoint rules come after every base rule, smallest breakpoint first, so that
+// "grid-cols-1 sm:grid-cols-2" works whatever order the tokens appear in the source.
+for(const min of Object.keys(media).map(Number).sort((a,b)=>a-b))utility+=media[min].map(rule=>`@media(min-width:${min}px){${rule}}\n`).join('');
+// Real coastlines: Natural Earth 1:50m Land (public domain), projected and simplified by
+// scripts/coastline.mjs into prototype/coastline.json. They replace the hand-drawn land shapes
+// in the page body; the engine script is untouched.
+const coastline=JSON.parse(readFileSync(resolve(root,'prototype/coastline.json'),'utf8'));
+const landGroup=/(<g fill="#243950"[^>]*>)[\s\S]*?(<\/g>)/;
+if(!landGroup.test(original))throw new Error('Land group not found in index.html');
+const landPaths=coastline.paths.map(d=>`<path d="${d}" />`).join('');
+const landNote=`<!-- Coastlines: ${coastline.source.dataset} ${coastline.source.version} (public domain), axis-wise linear fit to the five ports, Douglas-Peucker ${coastline.simplification.toleranceMapUnits} map units -->`;
 let output=original
+  .replace(landGroup,(_,open,close)=>`${open}${landNote}${landPaths}${close}`)
   .replace(/<script\b[^>]*\bsrc=[^>]*><\/script>\s*/g,'')
-  .replace(/@import url\([^;]+;/g,'')
+  .replace(/@import url\((['"]).*?\1\);?/g,'')
+  // The adapter removes the harbour illustration; drop its CSS so the page references no image file.
+  .replace(/\s*\.harbor-art \{[^}]*\}/,'')
   .replace('<html lang="en" class="dark">','<html lang="en">')
   .replace(/<title>.*?<\/title>/,'<title>Monsoon Navigator — An Atlas of Moving Worlds</title>')
-  .replace('</head>',`<meta name="description" content="Plan a merchant voyage through the seasonal Indian Ocean. An Atlas of Moving Worlds: a playable visual prototype.">\n<style id="atlas-fonts">${fontLicences}\n${fontCSS}</style>\n<style id="atlas-utilities">${utility}</style>\n<style id="atlas-style">${styles}</style>\n</head>`)
+  .replace('</head>',`<meta name="description" content="Plan a merchant voyage through the seasonal Indian Ocean. Monsoon Navigator, presented as An Atlas of Moving Worlds.">\n<style id="atlas-fonts">${fontLicences}\n${fontCSS}</style>\n${sharedStyle}<style id="atlas-utilities">${utility}</style>\n<style id="atlas-style">${styles}</style>\n</head>`)
   .replace('</body>',`<script id="atlas-adapter">${adapter}</script>\n</body>`);
 writeFileSync(resolve(root,'prototype.html'),output);
 console.log('Built prototype.html; original simulation script preserved verbatim.');

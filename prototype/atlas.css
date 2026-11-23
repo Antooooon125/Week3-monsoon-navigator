@@ -12,7 +12,7 @@ input,select,textarea{border:1px solid var(--line);color:var(--ink);background:v
 label{line-height:1.5}h1,h2,h3,h4{font-family:var(--f-display);font-stretch:105%;font-weight:700;line-height:1.15}h2{letter-spacing:-.03em}h3{font-size:1.15rem!important}small{font-size:.875rem}
 body>header{position:relative;background:var(--bg);border-bottom:1px solid var(--line);padding:16px 28px;z-index:5;backdrop-filter:none}
 body>header>div{max-width:1400px;margin:auto}body>header h1{font-weight:850;font-stretch:110%;letter-spacing:-.04em;font-size:1.25rem}body>header .w-9{background:var(--accent);color:var(--bg);border:0;border-radius:0;font-size:1rem}
-.atlas-toolbar{display:flex;gap:8px;align-items:center;margin-left:auto}.atlas-toolbar button{padding:6px 12px;font-size:.875rem}.atlas-toolbar a{font-size:.875rem;text-underline-offset:3px}
+.atlas-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-left:auto;min-width:0}.atlas-toolbar button{padding:6px 12px;font-size:.875rem}.atlas-toolbar a{font-size:.875rem;text-underline-offset:3px}
 #hud-bar{width:100%;padding-top:14px;border-top:1px solid var(--line);margin-top:8px;gap:8px}#hud-bar>div{padding:10px 14px;background:var(--surface);border:1px solid var(--line);flex:1;min-width:125px}#hud-bar>div span:last-child{display:block;font-size:1.4rem;margin:2px 0 0}#hud-bar>button{padding:8px 12px}
 main{width:100%;margin:auto;padding:24px!important}#phase-setup{max-width:1220px}#phase-setup>div{background:none;border:none;padding:0;box-shadow:none}
 .atlas-intro{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;align-items:center;margin:20px 0 40px;padding-bottom:32px;border-bottom:1px solid var(--line)}
@@ -23,15 +23,15 @@ main{width:100%;margin:auto;padding:24px!important}#phase-setup{max-width:1220px
 .atlas-steps{display:flex;gap:24px;padding:14px 0;color:var(--muted);font-family:var(--f-mono);font-weight:500;font-size:.875rem}.atlas-steps b{color:var(--accent);font-weight:500}
 #phase-setup>div>div:first-child{margin-bottom:28px}#phase-setup [id^=card-]{background:var(--surface);padding:24px;border:1px solid var(--line);cursor:pointer;position:relative}
 #phase-setup [id^=card-][aria-checked=true]{border:2px solid var(--accent);padding:23px;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
-.atlas-vessel-plate{height:112px;display:block;width:100%;margin:10px 0 18px;color:var(--accent)}.diff-btn[aria-pressed=true]{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.atlas-vessel-plate{height:112px;display:block;width:100%;margin:10px 0 18px;color:var(--accent)}.atlas-vessel-plate svg,.atlas-ship svg{display:block;width:100%;height:100%}.diff-btn[aria-pressed=true]{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
 #phase-setup button[onclick='startSimulation()']{background:var(--action);color:var(--on-action);padding:16px 24px;border:0;font-size:1rem}
 #phase-sim{max-width:1440px;gap:24px}#phase-sim>div{min-width:0}.atlas-map-panel{padding:0!important;overflow:hidden;background:var(--sea)!important;--ink:#e9edf4;--muted:#c4cedd;--line:#53677c;--accent:#ec9abe;--good:#91d6ac;--warn:#ffd18a;--bad:#ffaa9d;color:var(--ink);border:1px solid #53677c}
 .atlas-map-panel>div:first-child{padding:20px 24px 0}.atlas-map-panel>div.relative{border:0;border-radius:0;background:var(--sea)}.atlas-map-panel #ocean-svg{display:block;background:var(--sea)}
 .atlas-map-panel>p{padding:10px 24px;font-size:.875rem}.atlas-map-panel>div:last-child{margin:0;border:0;border-top:1px solid #53677c;border-radius:0;background:#111c35;padding:16px 24px}
 .atlas-map-panel #wind-regime-badge{border-color:#8296ad;background:#111c35;color:#e9edf4;font-size:.8125rem;border-radius:0;padding:8px}
-#ocean-svg #svg-sea-lanes path{stroke:var(--field)}#ocean-svg #svg-route-preview>line{stroke:#ec9abe}#ocean-svg #svg-route-preview>rect{stroke:#ec9abe;fill:#111c35}#ocean-svg #svg-route-preview>text{fill:#f3d2e5}#routePreviewArrow path{fill:#ec9abe}
+#ocean-svg #svg-sea-lanes path{stroke:var(--field)}#ocean-svg #svg-route-preview>line,#ocean-svg #svg-route-preview>path{stroke:#ec9abe}#ocean-svg #svg-route-preview>rect{stroke:#ec9abe;fill:#111c35}#ocean-svg #svg-route-preview>text{fill:#f3d2e5}#routePreviewArrow path{fill:#ec9abe}
 .atlas-calendar{padding:18px 24px;background:#111c35;border-top:1px solid #53677c}.atlas-calendar-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:.8125rem}
-.atlas-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px}.atlas-months button{border:1px solid #53677c;color:#cbd5e8;background:#192633;padding:6px 0;min-width:0;font-family:var(--f-mono);font-weight:500;font-size:.8125rem}.atlas-months button[aria-current=date]{border:2px solid #e9edf4;color:#fff;background:#34536b}.atlas-months button[aria-pressed=true]{border:2px solid #ec9abe;color:#ffd4e9;background:#392d48}.atlas-months button:focus-visible{outline-color:#f3ba68}.atlas-months button:disabled{opacity:.5}.atlas-calendar-note{margin-top:10px;font-size:.8125rem;color:#c4cedd}
+.atlas-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px}.atlas-months button{border:1px solid #53677c;color:#cbd5e8;background:#192633;padding:6px 0;min-width:0;font-family:var(--f-mono);font-weight:500;font-size:.8125rem}.atlas-months button[aria-current=date]{border:2px solid #e9edf4;color:#fff;background:#34536b}.atlas-months button[aria-pressed=true]{border:2px solid #ec9abe;color:#ffd4e9;background:#392d48}.atlas-months button:focus-visible{outline-color:#f3ba68}.atlas-months button:disabled{opacity:.5}.atlas-months button[aria-current=date]:disabled{opacity:1}.atlas-calendar-note{margin-top:10px;font-size:.8125rem;color:#c4cedd}
 #ocean-svg text,.atlas-cover text{font-family:var(--f-mono);font-weight:500}#ocean-svg #svg-ports text{font-family:var(--f-body);font-weight:700}
 #routes-container button{background:var(--surface);border:1px solid var(--line);padding:18px;min-height:110px}#routes-container button:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface));color:var(--ink)}
 #wind-now,#wind-future{padding:18px}#wind-future{border-color:var(--action)}#wind-comparison-heading{font-size:1.35rem!important}
@@ -67,12 +67,12 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-map-panel>div:first-child span:first-child{letter-spacing:.08em;font-size:.75rem}
   .atlas-map-panel #map-port-title{font-size:1.4rem;font-stretch:105%;margin-top:4px}
   .atlas-map-panel>div.relative{margin-top:8px;aspect-ratio:16/9}
-  #atlas-land{fill:#293d4b;stroke:#73969c;stroke-opacity:.65;stroke-width:.9}
-  body[data-season=ne] #atlas-land{fill:#2d3c55;stroke:#91a4c3}
-  body[data-season=transition] #atlas-land{fill:#4c4358;stroke:#b89eae}
+  #atlas-land{fill:#6d9488;stroke:#c8dcd6;stroke-opacity:.7;stroke-width:.9}
+  body[data-season=ne] #atlas-land{fill:#6a7d9c;stroke:#c9d3e6}
+  body[data-season=transition] #atlas-land{fill:#a08a9a;stroke:#e6d6df}
   #svg-sea-lanes path{opacity:.45;stroke-width:1.4}
   .atlas-wind-tracer{stroke:url(#atlas-wind-spectrum);stroke-width:1.15;stroke-opacity:.53;stroke-linecap:round;stroke-dasharray:14 42;animation:atlas-drift 8s linear infinite}
-  #svg-route-preview>line{stroke-width:3.5;stroke-linecap:round}
+  #svg-route-preview>line,#svg-route-preview>path{stroke-width:3.5;stroke-linecap:round}
   #svg-ports>g[data-selected=true] circle:last-of-type{stroke:#ec9abe;stroke-width:3;fill:#392d48}
   #svg-ports>g[data-current=true] circle:last-of-type{fill:#f3ba68;stroke:#fff0cf;stroke-width:2.5}
   #svg-ports>g[data-selected=true] text{fill:#ffd4e9}
@@ -104,13 +104,18 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-cargo-column{padding-top:8px}
   .atlas-trade{border:0;border-radius:3px;padding:24px!important;--accent:#963b70;--line:#93ac9e}
   .atlas-trade h3{font-size:1.55rem!important;font-stretch:110%;font-weight:800;margin-top:6px;letter-spacing:-.04em}
-  .atlas-trade table{min-width:480px;font-size:.8125rem}
+  .atlas-trade table{min-width:0;width:100%;font-size:.8125rem}
   .atlas-trade td:last-child{white-space:normal;width:150px}
   .atlas-trade td:last-child button{margin:2px!important;padding:4px;min-width:40px;min-height:40px;font-size:.75rem}
   .atlas-trade td:last-child button:nth-child(-n+3){background:#345d6d;color:#fff;border-color:#345d6d}
   .atlas-trade td:last-child button:nth-child(n+4){background:transparent;color:#19363c;border-color:#7d9a90}
   .atlas-trade td:last-child button:hover:not(:disabled){background:#963b70;border-color:#963b70;color:#fff}
   .atlas-trade #market-tariff-rate{color:#19363c}
+  .atlas-trade .justify-between{flex-wrap:wrap;gap:4px 12px}
+  #pdf-export-target .justify-between{flex-wrap:wrap;gap:4px 12px}#audit-timestamp,#audit-diaspora-score{white-space:normal;overflow-wrap:anywhere}
+  #phase-audit h2,#phase-audit h3,#phase-audit .grid>div,#phase-audit .justify-between>*{overflow-wrap:anywhere;min-width:0}#phase-audit .justify-between{flex-wrap:wrap;gap:4px 12px}
+  .atlas-trade{--warn:#674210;--accent:#83305f}
+  .atlas-export-note{flex-basis:100%;font-size:.8125rem;color:var(--muted);margin:4px 0 0}
   #market-tbody tr td:first-child::before{content:"";display:block;width:16px;height:3px;background:var(--material);margin-bottom:6px}
   .atlas-table-hint{font-size:.8125rem;color:#3d5d5c;line-height:1.5;margin:12px 0 8px}
   .atlas-hold{border:0;border-radius:3px;background:#d8e3d5!important}
@@ -158,6 +163,199 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   #cargo-shelves .atlas-commodity:nth-child(3n+2){border-inline:0}#cargo-shelves .atlas-commodity:nth-child(2n){border-left:1px solid #93ac9e}
   .atlas-planner>summary{justify-content:flex-start}.atlas-planner>summary span{display:block}
   .atlas-event{padding:20px}.atlas-event h3{font-size:1.4rem!important}
+  body>header.sticky{position:relative}
+  .atlas-trade table,.atlas-trade thead,.atlas-trade tbody{display:block}
+  .atlas-trade tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:12px;align-items:start}
+  .atlas-trade th:last-child{display:none}
+  .atlas-trade td:last-child{grid-column:1/-1;width:auto;padding-top:4px;text-align:left}
+  .atlas-trade td:last-child>*{justify-content:flex-start}
+  #btn-export-pdf{flex-wrap:wrap;max-width:100%}#btn-export-pdf span{white-space:normal;overflow-wrap:anywhere;min-width:0}
 }
+/* Live-page review fixes (2026-11-22). */
+@media screen{
+  /* A1: the hold bar had fill, track and panel in one colour. */
+  #bar-bulk-tons{background:#345d6d!important}#bar-luxury-tons{background:#8a5a00!important}
+  #bar-bulk-tons{border-right:1px solid #faf9f3}
+  #bar-bulk-tons:only-child,#bar-bulk-tons.flex-1{border:0}
+  #hold-util-label{color:inherit}
+  .atlas-trade #bar-bulk-tons~#bar-luxury-tons{border-left:1px solid #faf9f3}
+  .atlas-trade .rounded-full.overflow-hidden{background:#faf9f3!important;border:1px solid #7d9a90;height:12px}
+  .atlas-trade .rounded-full.overflow-hidden+div span:first-child{color:#345d6d}.atlas-trade .rounded-full.overflow-hidden+div span:last-child{color:#8a5a00}
+  /* A11: port labels stay legible over land or sea. */
+  #ocean-svg #svg-ports text{paint-order:stroke;stroke:#111c35;stroke-width:3px;stroke-linejoin:round}
+  /* A12: distinguishable, labelled season wedges. */
+  #ocean-svg path[fill="#10b981"]{fill:#48b8a0;fill-opacity:.42}#ocean-svg path[fill="#06b6d4"]{fill:#8298d0;fill-opacity:.42}
+  .atlas-clock-label{fill:#e9edf4;font-family:var(--f-mono);font-size:9px;font-weight:500;letter-spacing:.05em}
+  /* A13: loaded cargo named in text, not only by colour. */
+  .atlas-manifest-legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 0;font-size:.75rem;color:#19363c}
+  .atlas-manifest-legend li{display:inline-flex;align-items:center;gap:6px}.atlas-manifest-legend i{width:10px;height:10px;display:inline-block;border:1px solid #faf9f3;outline:1px solid #93ac9e}
+  /* A16: the chosen game mode is visible beyond the radio dot. */
+  #phase-setup label:has(> input[name=game-mode]:checked){border:2px solid var(--accent)!important;background:color-mix(in srgb,var(--accent) 8%,var(--surface))!important}
+  #phase-setup label:has(> input[name=game-mode]){border:1px solid var(--line)}
+  /* A16: focus and selection look different on difficulty cards. */
+  .diff-btn:focus-visible{outline:3px dashed var(--accent);outline-offset:4px}
+  .diff-btn[aria-pressed=true]{position:relative}.diff-btn[aria-pressed=true]::after{content:"✓ Selected";position:absolute;top:8px;right:10px;font-family:var(--f-mono);font-size:.75rem;color:var(--accent)}
+  .atlas-refs{font-size:.875rem;margin-top:8px}.atlas-refs a{text-decoration:underline}
+  /* A16: the dark reading theme reaches the trade panels. */
+  body[data-theme=dark] .atlas-trade,body[data-theme=dark] .atlas-hold{--surface:#1d3036;--ink:#e3efe9;--muted:#b6cbc4;--line:#4d6b64;--warn:#ffd18a;--accent:#f0a6cf;background:#1a2a2f!important;color:var(--ink)}
+  body[data-theme=dark] .atlas-trade .atlas-table-hint,body[data-theme=dark] .atlas-specimen-caption,body[data-theme=dark] #cargo-shelves .atlas-commodity-category,body[data-theme=dark] #cargo-shelves .atlas-commodity-unit,body[data-theme=dark] .atlas-manifest-label{color:#b6cbc4}
+  body[data-theme=dark] #cargo-shelves .atlas-commodity-stock,body[data-theme=dark] .atlas-manifest-legend,body[data-theme=dark] .atlas-trade #market-tariff-rate{color:#e3efe9}
+  body[data-theme=dark] .atlas-trade td:last-child button:nth-child(n+4){color:#e3efe9;border-color:#4d6b64}
+  body[data-theme=dark] .atlas-weight-bar,body[data-theme=dark] .atlas-trade .rounded-full.overflow-hidden{background:#0f1c20!important}
+  body[data-theme=dark] .atlas-weight-bar span{filter:brightness(1.4)}
+  body[data-theme=dark] #bar-bulk-tons{background:#6fb3c8!important}body[data-theme=dark] #bar-luxury-tons{background:#e0a030!important}
+  body[data-theme=dark] .atlas-trade .rounded-full.overflow-hidden+div span:first-child{color:#8cc5d6}body[data-theme=dark] .atlas-trade .rounded-full.overflow-hidden+div span:last-child{color:#f0c060}
+  body[data-theme=dark] .atlas-manifest-legend i{filter:brightness(1.4);border-color:#0f1c20;outline-color:#4d6b64}
+  /* A7: the Play Only verdict carries no target colour. */
+  .atlas-play-badge{border:1px solid var(--line);color:var(--ink);background:transparent}
+}
+@media screen and (max-width:767px){
+  /* A6: map text was 3-4 px; the in-map clock duplicates the month planner below it. */
+  #ocean-svg #svg-ports text{font-size:33px}
+  #ocean-svg text{font-size:20px}
+  /* At phone size the sea names collide with the port labels; the ports and the INDIAN OCEAN label stay. */
+  #ocean-svg>text{display:none}
+  /* Quanzhou sits near the right edge; anchor its labels at their end so they are not clipped. */
+  #ocean-svg #svg-ports>g:nth-child(5) text{text-anchor:end}
+  #ocean-svg #svg-route-preview rect,#ocean-svg #svg-route-preview text{display:none}
+  #ocean-svg .atlas-clock{display:none}
+  /* A14: a shorter header on phones. */
+  body>header{padding:8px 12px!important}
+  body>header h1+p{font-size:.75rem;line-height:1.3}
+  .atlas-toolbar{gap:6px}.atlas-toolbar button{padding:4px 8px;min-height:36px;font-size:.8125rem}
+  #hud-bar{padding-top:8px!important;margin-top:4px}#hud-bar>div span:first-child{font-size:.6875rem}#hud-bar>div span:last-child{font-size:1.05rem}
+  #hud-bar>button{min-height:36px;padding:4px 8px}
+  body>header>div{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px}
+  body>header>div>#hud-bar,body>header>div>.atlas-toolbar{grid-column:1/-1}
+  #hud-bar>div{min-width:0!important;flex:1 1 22%!important;padding:0 6px!important;border-right:1px solid var(--line)!important}
+  #hud-bar>div:nth-child(4){border-right:0!important}
+  #hud-bar>div span:last-child{font-size:.875rem!important;white-space:nowrap}
+}
+/* Live-play fixes (2026-11-23): wind relation on the selected route; labelled port prices. */
+@media screen{
+  #ocean-svg #svg-route-preview>path[data-wind=crosswind]{stroke-dasharray:16 9}
+  #ocean-svg #svg-route-preview>path[data-wind=headwind]{stroke-dasharray:4 9}
+  #ocean-svg #svg-route-preview>path[data-wind=transition]{stroke-dasharray:.1 7}
+  .atlas-map-key svg.atlas-key-line{width:28px;height:6px;flex:none;overflow:visible}
+  .atlas-key-line line{stroke:#ec9abe;stroke-width:3;stroke-linecap:round}
+  .atlas-key-line line[data-wind=crosswind]{stroke-dasharray:9 6}.atlas-key-line line[data-wind=headwind]{stroke-dasharray:2 6}.atlas-key-line line[data-wind=transition]{stroke-dasharray:.1 5}
+  .atlas-trade .atlas-price-sell,.atlas-trade .atlas-price-buy,.atlas-trade .atlas-held{white-space:nowrap}
+  .atlas-trade td:nth-child(3),.atlas-trade th:nth-child(3){padding-left:12px}
+  .atlas-trade .atlas-price-label{font-family:var(--f-body);font-size:.75rem;font-weight:400;color:var(--muted)}
+  .atlas-trade .atlas-price-sell b{font-size:.9375rem;font-weight:700;color:var(--ink)}
+  .atlas-trade .atlas-price-buy{margin-top:2px}.atlas-trade .atlas-price-buy b{font-size:.8125rem;font-weight:700;color:var(--ink)}
+  .atlas-trade .atlas-trend{margin-left:4px;font-size:.6875rem;color:var(--ink)}
+  .atlas-trade .atlas-held{color:var(--ink)}.atlas-trade .atlas-held b{font-size:.9375rem}
+  .atlas-trade .atlas-basis{font-family:var(--f-body);font-size:.75rem;line-height:1.3;color:var(--muted);max-width:6.5rem;margin-inline:auto;margin-top:2px}
+}
+@media screen and (max-width:767px){
+  /* Name on its own line; prices and hold side by side under it, so neither squeezes the name. */
+  .atlas-trade tr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .atlas-trade tr>:first-child{grid-column:1/-1}
+  .atlas-trade td:nth-child(2),.atlas-trade th:nth-child(2){text-align:left}
+  .atlas-trade td:nth-child(3),.atlas-trade th:nth-child(3){text-align:right}
+  .atlas-trade .atlas-basis{max-width:9rem;margin-inline:auto 0}
+}
+/* Next-month direction and the price chart (2026-11-23). */
+@media screen{
+  .atlas-trade .atlas-next{font-family:var(--f-body);font-size:.75rem;line-height:1.3;color:var(--ink);margin-top:3px;white-space:normal}
+  .atlas-trade .atlas-good-chart{all:unset;cursor:pointer;font:inherit;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;min-width:0!important;min-height:0!important;padding:0!important;border:0!important;background:none!important}
+  .atlas-trade .atlas-good-chart:hover{text-decoration-style:solid}
+  .atlas-trade .atlas-good-chart:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .atlas-chart-dialog{--atlas-chart-bg:#faf9f3;--atlas-chart-ink:#19363c;--atlas-chart-muted:#3d5d5c;--atlas-chart-grid:#d6dcd2;
+    --atlas-series-1:#2a78d6;--atlas-series-2:#eb6834;--atlas-series-3:#1baf7a;--atlas-series-4:#eda100;--atlas-series-5:#e87ba4;
+    width:min(92vw,700px);max-height:92vh;overflow:auto;padding:20px;border:1px solid var(--atlas-chart-grid);border-radius:4px;background:var(--atlas-chart-bg);color:var(--atlas-chart-ink)}
+  body[data-theme=dark] .atlas-chart-dialog{--atlas-chart-bg:#14232a;--atlas-chart-ink:#e3efe9;--atlas-chart-muted:#b6cbc4;--atlas-chart-grid:#33484f;
+    --atlas-series-1:#3987e5;--atlas-series-2:#d95926;--atlas-series-3:#199e70;--atlas-series-4:#c98500;--atlas-series-5:#d55181}
+  .atlas-chart-dialog::backdrop{background:rgba(10,18,30,.55)}
+  .atlas-chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .atlas-chart-head h2{font-family:var(--f-display);font-size:1.25rem;line-height:1.2;margin:0}
+  .atlas-chart-head button{flex:none;min-width:44px;min-height:44px;padding:0 14px;border:1px solid var(--atlas-chart-muted);background:transparent;color:var(--atlas-chart-ink);font:inherit;cursor:pointer}
+  .atlas-chart-note,.atlas-chart-key{font-size:.8125rem;line-height:1.5;color:var(--atlas-chart-muted);margin:10px 0}
+  .atlas-chart-legend{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;padding:0;margin:8px 0;font-size:.8125rem}
+  .atlas-chart-legend li{display:inline-flex;align-items:center;gap:6px}.atlas-chart-legend i{display:inline-block;width:16px;height:3px;border-radius:2px}
+  #atlas-chart-plot svg{display:block;max-width:100%;height:auto;overflow:visible}
+  .atlas-chart-grid{stroke:var(--atlas-chart-grid);stroke-width:1}
+  .atlas-chart-axis{fill:var(--atlas-chart-muted);font-family:var(--f-mono);font-size:11px}
+  .atlas-chart-line{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+  .atlas-chart-line.atlas-chart-here{stroke-width:4}
+  .atlas-chart-point{stroke:var(--atlas-chart-bg);stroke-width:1.5}
+  .atlas-chart-marker{stroke:var(--atlas-chart-ink);stroke-width:1.5}
+  .atlas-chart-marker.atlas-chart-arrival{stroke-dasharray:4 4}
+  .atlas-chart-mark-label{fill:var(--atlas-chart-ink);font-family:var(--f-mono);font-size:11px;font-weight:700}
+  .atlas-chart-arrive-dot{fill:none;stroke:var(--atlas-chart-ink);stroke-width:2}
+  .atlas-chart-leader{stroke-width:3;stroke-linecap:round}
+  .atlas-chart-end{fill:var(--atlas-chart-ink);font-family:var(--f-body);font-size:12px}
+  .atlas-chart-here-label{font-weight:700}
+  .atlas-chart-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:12px}
+  .atlas-chart-table caption{text-align:left;font-weight:700;margin-bottom:4px}
+  .atlas-chart-all{margin-top:12px}.atlas-chart-all summary{cursor:pointer;font-weight:700;font-size:.8125rem}.atlas-chart-all table{font-variant-numeric:tabular-nums;table-layout:fixed}.atlas-chart-all th,.atlas-chart-all td{padding:3px 2px}.atlas-chart-all td{overflow-wrap:anywhere}.atlas-chart-all thead th:first-child{width:4.2em}
+  .atlas-chart-all .atlas-name-short{display:none;text-decoration:none}
+  @media (max-width:640px){.atlas-chart-all table{font-size:.6875rem}.atlas-chart-all .atlas-name-full{display:none}.atlas-chart-all .atlas-name-short{display:inline}}
+  .atlas-chart-table th,.atlas-chart-table td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--atlas-chart-grid)}
+}
+/* One trade panel (2026-11-23): the hold summary and drawn icons live here. */
+@media screen{
+  .atlas-trade .atlas-engine-split{display:none!important}
+  .atlas-trade .atlas-hold-line .atlas-hold-manifest{margin:10px 0 6px}
+  .atlas-trade .atlas-hold-split,.atlas-trade .atlas-hold-note{margin:4px 0 0;font-size:.75rem;line-height:1.4;color:var(--muted)}
+  .atlas-trade .atlas-row-icon{display:block;width:38px;height:30px;margin:0 0 2px -2px}
+  .atlas-trade .atlas-held-tons{font-family:var(--f-body);font-size:.75rem;color:var(--ink);white-space:nowrap}
+  .atlas-trade .atlas-row-icon svg{width:100%;height:100%;display:block}
+  .atlas-trade tr[data-loaded=true]>td:first-child{box-shadow:inset 3px 0 0 var(--material,currentColor);padding-left:8px}
+  body[data-theme=dark] .atlas-trade .atlas-weight-bar{background:#0f1c20}
+}
+/* Live-play layout (2026-11-23): heading across the voyage screen; status strip above the map. */
+@media screen{
+  #phase-sim>.atlas-stage-heading{grid-column:1/-1;padding:0 0 4px}
+  .atlas-status{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:0 0 12px}
+  .atlas-status #hud-bar{border-top:0!important;margin-top:0!important;padding-top:0!important;flex:1 1 100%}
+  .atlas-status .atlas-toolbar{margin-left:auto}
+  .atlas-status #hud-bar{display:flex!important;flex-wrap:wrap;row-gap:10px}
+  .atlas-status #hud-bar>div{flex:1 1 0!important;min-width:0!important;white-space:nowrap}
+  .atlas-status #hud-bar>button{flex:0 0 auto}
+  .atlas-status #hud-bar>button:first-of-type{margin-left:0!important;order:2}.atlas-status #hud-bar>button{order:2}
+  .atlas-status #hud-bar::after{content:"";order:1;flex-basis:100%}
+}
+/* Care for ship and crew under the map (2026-11-23). */
+@media screen{
+  .atlas-navigation>.atlas-care{margin-top:16px}
+  .atlas-care .atlas-care-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:stretch}
+  .atlas-care .atlas-care-cards>div{display:flex!important;flex-direction:column;align-items:stretch!important;justify-content:flex-start!important;gap:10px;min-width:0}
+  .atlas-care .atlas-care-cards>div.hidden{display:none!important}
+  .atlas-care .atlas-care-cards>div,.atlas-care>div:nth-child(2){padding:10px 12px!important}
+  .atlas-care .atlas-care-cards>div>div{flex:1 1 auto}
+  .atlas-care .atlas-care-cards>div>button{align-self:flex-start;margin-top:auto}
+}
+@media screen and (max-width:640px){.atlas-care .atlas-care-cards{grid-template-columns:1fr}}
+/* Risk and timing (2026-11-23): storm and pirate markers, crew alert, port timing view. */
+@media screen{
+  #atlas-hazards .atlas-hazard-disc{fill:#111c35;stroke:#ffd18a;stroke-width:2}
+  #atlas-hazards .atlas-hazard-line{fill:none;stroke:#ffd18a;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  #atlas-hazards .atlas-hazard-dot{fill:#ffd18a}
+  #atlas-hazards .atlas-hazard{animation:atlas-hazard-in .6s ease-out both}
+  @keyframes atlas-hazard-in{from{opacity:0;transform-box:fill-box;transform-origin:center;scale:.4}to{opacity:1;scale:1}}
+  .atlas-map-panel>.atlas-voyage-note{margin:0;padding:10px 24px;background:#111c35;color:#ffe3b0;font-size:.8125rem;line-height:1.5;border-top:1px solid #53677c}
+  .atlas-crew-alert{flex:1 1 100%;margin:0;padding:10px 12px;border:2px solid var(--bad,#9b302d);background:var(--surface);color:var(--ink);font-size:.875rem;line-height:1.45}
+  #svg-ports>g[role=button]{cursor:pointer}
+  #ocean-svg text[data-covered=true]{visibility:hidden}
+  #svg-ports>g[role=button]:focus-visible circle:last-of-type{stroke:#fff;stroke-width:4}
+  .atlas-port-dialog h3{font-family:var(--f-display);font-size:1.05rem;margin:18px 0 4px}.atlas-port-dialog h3 span{font-family:var(--f-body);font-weight:400;font-size:.8125rem;color:var(--atlas-chart-muted)}
+  .atlas-port-table{width:100%;border-collapse:collapse;font-size:.8125rem;font-variant-numeric:tabular-nums}
+  .atlas-port-table th,.atlas-port-table td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--atlas-chart-grid);white-space:nowrap}
+  .atlas-port-table tr[data-now] th,.atlas-port-table tr[data-now] td{background:color-mix(in srgb,var(--atlas-chart-ink) 8%,transparent)}
+  .atlas-port-table tr[data-best] th{font-weight:700}
+  .atlas-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .atlas-port-tag{display:inline-block;margin-left:4px;padding:0 4px;border:1px solid var(--atlas-chart-muted);border-radius:3px;font-size:.6875rem;font-weight:700}
+}
+@media screen and (max-width:640px){
+  /* Phones: each month is a stacked row; the cells carry their own labels. */
+  .atlas-port-table,.atlas-port-table tbody{display:block}.atlas-port-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .atlas-port-table tr{display:flex;flex-wrap:wrap;gap:2px 12px;padding:6px 0;border-bottom:1px solid var(--atlas-chart-grid)}
+  .atlas-port-table th,.atlas-port-table td{border:0;padding:0;white-space:nowrap}
+  .atlas-port-table tbody th{flex:1 1 100%}
+  .atlas-port-table td::before{content:attr(data-label) " ";color:var(--atlas-chart-muted);font-size:.75rem}
+}
+@media(prefers-reduced-motion:reduce){#atlas-hazards .atlas-hazard{animation:none!important}}
 @media(prefers-reduced-motion:reduce){.atlas-wind-tracer{animation:none!important;stroke-dasharray:14 18}}
 @media print{body{--bg:#fff;--surface:#fff;--ink:#111;--muted:#333;--line:#777;--accent:#111;--good:#111;--bad:#111;--warn:#111;background:#fff!important;color:#111!important}header,.atlas-footer,.atlas-event,.atlas-source-dialog,.no-print{display:none!important}#phase-setup,#phase-sim{display:none!important}#phase-audit{display:block!important;padding:0!important;max-width:none}#pdf-export-target{background:white!important;color:#111!important;border:0;padding:0!important}#pdf-export-target *{color:#111!important;background:transparent!important;box-shadow:none!important}#pdf-export-target .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#pdf-export-target p,#pdf-export-target .grid>div{break-inside:avoid}#audit-log-table>div{break-inside:avoid}#audit-log-table{font-size:10pt}a{text-decoration:none}}

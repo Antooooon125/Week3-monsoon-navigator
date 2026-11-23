@@ -2,7 +2,8 @@
 
 **Course** · Global History at Kamnoetvidya Science Academy (KVIS)  
 **Setting** · Indian Ocean maritime networks, c. 1000–1450 CE  
-**Original credit** · Amnuayvit Thitibordin (KVIS), CC BY-NC-SA 4.0  
+**Original creator** · Amnuayvit Thitibordin (KVIS)  
+**Collaborator** · Thanakrit  
 **Status** · Classroom prototype
 
 ## The historical concept
@@ -50,7 +51,7 @@ The game uses one HTML page with inline SVG, vanilla JavaScript and Tailwind’s
 
 ## Attribution and license
 
-The original game in index.html is credited to Amnuayvit Thitibordin (KVIS) and carries [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). The existing repository MIT license does not relicense the game. Third-party libraries retain their respective licenses.
+Copyright © 2026 Amnuayvit Thitibordin. Collaborator · Thanakrit. The original game is licensed under CC BY-NC-SA 4.0 with a Commercial Derivative Exception for substantially modified versions. Third-party materials retain their respective licenses. [Full project license](LICENSE.md)
 
 
 
@@ -124,3 +125,22 @@ The weights are tons per purchase unit in the game. Use the readings to compare 
 Open [prototype.html](prototype.html) for **An Atlas of Moving Worlds**, the offline visual prototype. It preserves the original game engine and adds the editorial opening, seasonal map/calendar, commodity plates, event reports and print ledger. The default index.html remains the original game.
 
 See [prototype notes](docs/prototype.md) for development, font licences, validation and known limitations.
+
+For a KVIS deployment, the builder can inline the marked foundation block from a
+pinned checkout of `Azuromalachite/kvis-econ-games-2026`:
+
+```
+node scripts/build-prototype.mjs --shared-theme ../kvis-econ-games-2026/assets/theme.css --shared-theme-revision <full-KVIS-commit>
+```
+
+Use the exact commit containing that stylesheet. This opt-in imports font roles,
+spacing/control tokens and focus/hidden/screen-reader utilities, not the shared
+palette or layout components. Atlas keeps its embedded font aliases, focus offset,
+colours, layouts and engine; the export still loads no external CSS or fonts. The
+output records the source revision and foundation SHA-256. A missing/duplicate
+foundation block or an unrecognised Atlas mapping makes the build fail. The ordinary
+build without these arguments retains the independent Atlas stylesheet. Both builds
+omit the removed `classic.html` toolbar link.
+
+The imported foundation block is KVIS repository material under CC BY-NC-SA 4.0;
+the Monsoon Navigator Commercial Derivative Exception does not extend to it.

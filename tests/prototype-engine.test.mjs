@@ -49,10 +49,12 @@ test('the repository transit baseline reports MATCH for the original and the pro
 });
 
 test('upstream clock, whole-word hypothesis and profit-target fixes remain in the prototype',()=>{
+  // Updated for main ba2f279: Play Only is the default mode and skips the student form,
+  // so the profit-target validation is exercised in Student Mode.
   const game=load({atlas:true});
   game.run('document.getElementById("input-hypothesis").value="junk money pepper";checkHypothesisConcepts()');
   assert.match(game.elements.get('hyp-concept-badge').textContent,/2\/3/);
-  game.run('document.getElementById("input-target-profit").value="99";startSimulation()');
+  game.run('selectGameMode("student");document.getElementById("input-target-profit").value="99";startSimulation()');
   assert.equal(game.snapshot().logs.length,0);assert.match(game.elements.get('setup-error').textContent,/at least 100 D/);
   game.run('document.getElementById("input-target-profit").value="100";startSimulation();previewClockMonth(6)');
   assert.equal(game.elements.get('svg-clock-needle').getAttribute('transform'),'rotate(0)');
@@ -100,8 +102,30 @@ test('last-month forecast and campaign audit remain available',()=>{
   const game=load({atlas:true});game.run('startSimulation();state.monthIndex=23;renderAll()');assert.equal(game.run('getForecastMonthIndex()'),null);game.run('waitInPort()');assert.equal(game.snapshot().ended,true);assert.equal(game.context.document.body.dataset.plate,'audit');
 });
 
-test('offline PDF export invokes the browser print fallback',async()=>{
-  const game=load({atlas:true});let prints=0;game.context.window.print=()=>prints++;game.run('startSimulation();finishCampaign()');await game.run('exportAuditPDF()');assert.equal(prints,1);assert.equal(game.elements.get('btn-export-pdf').disabled,false);
+test('Play Only is the default: it starts without the student form and ignores a typed target',()=>{
+  // Added for main ba2f279 (Play Only / Student Mode).
+  const game=load({atlas:true});
+  assert.equal(game.snapshot().mode,'play');
+  game.run('document.getElementById("input-target-profit").value="99";startSimulation()');
+  const s=game.snapshot();assert.ok(s.logs.length>0,'Play Only starts even with a target below 100 D');
+  assert.equal(s.studentName,'');assert.equal(s.targetProfit,1200);
+});
+
+test('offline PDF export: gated to Student Mode with a reflection, then the browser print fallback',async()=>{
+  // Replaces the ungated b607af9 test: on main ba2f279 export needs Student Mode, an ended
+  // campaign and a reflection of at least 15 characters (canExportStudentAudit).
+  const play=load({atlas:true});let playPrints=0;play.context.window.print=()=>playPrints++;
+  play.run('startSimulation();finishCampaign()');await play.run('exportAuditPDF()');
+  assert.equal(playPrints,0,'Play Only never prints the audit');
+  // The DOM double does not read the static disabled attribute, so the Play Only button state is checked in the browser review, not here.
+  const game=load({atlas:true});let prints=0;game.context.window.print=()=>prints++;
+  game.run('selectGameMode("student");startSimulation();finishCampaign()');
+  game.run('document.getElementById("input-reflection").value="short";syncReflection()');
+  await game.run('exportAuditPDF()');assert.equal(prints,0,'a reflection under 15 characters keeps export locked');
+  assert.equal(game.elements.get('btn-export-pdf').disabled,true);
+  game.run('document.getElementById("input-reflection").value="Headwinds cost two extra months at sea.";syncReflection()');
+  assert.equal(game.elements.get('btn-export-pdf').disabled,false);
+  await game.run('exportAuditPDF()');assert.equal(prints,1);assert.equal(game.elements.get('btn-export-pdf').disabled,false);
 });
 
 test('spectral tracers follow the actual wind when a different departure is previewed',()=>{
@@ -127,5 +151,82 @@ test('the hold display reconciles bought cargo weight with vessel capacity',()=>
   const game=load({atlas:true});game.run('startSimulation();buyCargoQty("pepper",1)');
   assert.equal(game.run('getUsedTonnage()'),2);
   assert.equal(game.elements.get('atlas-hold-manifest').getAttribute('aria-label'),'2 of 120 tons loaded; 118 tons available.');
-  assert.match(game.elements.get('cargo-shelves').innerHTML,/1 lots <span aria-hidden="true">\/<\/span> 2 t/);
+  // The hold summary now lives in the trade panel (the lower hold panel is hidden).
+  assert.match(game.elements.get('atlas-hold-manifest').innerHTML,/<span data-free="118">118 t available/);
+  assert.match(game.elements.get('atlas-hold-split').textContent,/bulk 0 t · spices & luxury 2 t/);
 });
+
+test('builder: breakpoint utilities come after every base utility, and the font import is removed whole',()=>{
+  // F13: "grid-cols-1 sm:grid-cols-2" collapsed when a breakpoint rule preceded its base rule.
+  const css=prototype.match(/<style id="atlas-utilities">([\s\S]*?)<\/style>/)[1];
+  const firstMedia=css.indexOf('@media');assert.ok(firstMedia>0);
+  assert.doesNotMatch(css.slice(firstMedia).replace(/@media\([^)]*\)\{[^{}]*\{[^{}]*\}\}/g,''),/\.[a-z0-9\:-]+\{/i,'a base rule follows a breakpoint rule');
+  assert.ok(css.indexOf('.grid-cols-1{')>=0&&css.indexOf('.grid-cols-1{')<css.indexOf(String.raw`.sm\:grid-cols-2{`));
+  assert.doesNotMatch(prototype,/display=swap'\);/,'remnant of the Google Fonts @import');
+});
+
+test('Play Only audit text names no target or prediction; Student Mode keeps them',()=>{
+  // F14: the Atlas audit lead was written before game modes existed.
+  const play=load({atlas:true});play.run('startSimulation();finishCampaign()');
+  assert.doesNotMatch(play.elements.get('atlas-audit-summary').textContent,/target/);
+  assert.doesNotMatch(play.elements.get('atlas-audit-prompt').textContent,/prediction/);
+  assert.equal(play.elements.get('atlas-audit-eyebrow').textContent,'Results / voyage evidence');
+  assert.doesNotMatch(play.elements.get('atlas-steps').innerHTML,/Predict|Audit/);
+  const student=load({atlas:true});student.run('selectGameMode("student");startSimulation();finishCampaign()');
+  assert.match(student.elements.get('atlas-audit-summary').textContent,/against your 1,200 D profit target/);
+  assert.match(student.elements.get('atlas-audit-prompt').textContent,/prediction/);
+  assert.equal(student.elements.get('atlas-audit-eyebrow').textContent,'Audit / prediction and evidence');
+});
+
+test('one print action, credits and drawing provenance as resolved for the KVIS deployment',()=>{
+  const game=load({atlas:true});
+  assert.equal(game.elements.get('btn-print-audit').textContent,'Print / Save as PDF');
+  assert.ok(game.elements.get('btn-export-pdf').classList.contains('hidden'),'duplicate export button hidden');
+  assert.match(game.elements.get('atlas-export-note').textContent,/print dialog/);
+  game.run('startSimulation()');
+  assert.match(game.elements.get('ship-credit').textContent,/^Schematic illustration; reference photograph: /);
+  // classic.html was removed from the KVIS site on 2026-11-22, so the page no longer links it.
+  assert.doesNotMatch(prototype,/atlas-classic-link|classic\.html/);
+  // The original game's source link sits in the footer (moved from the toolbar on 2026-11-23), once.
+  assert.match(prototype,/footer\.innerHTML='<span>Original game: [^']*<a href="https:\/\/github\.com\/Antooooon125\/Week3-monsoon-navigator"[^>]*>Original game source<\/a>/);
+  assert.doesNotMatch(prototype,/toolbar\.innerHTML='[^']*Week3-monsoon-navigator/);
+  assert.equal(prototype.split('>Original game source</a>').length,2);
+  assert.doesNotMatch(prototype,/pending the copyright holder/);
+  assert.match(prototype,/Collaborator: Guntitat Sawadwuthikul/);
+});
+
+// References a page makes: HTML attributes (quoted or not), quoted JS property
+// assignments (el.href='x', including template literals), setAttribute('href'|'src', '...'),
+// CSS url() and @import. Not checked: values assembled at run time (${...} templates,
+// variables, string concatenation) and references built any other way.
+export function pageReferences(html){
+  const refs=[];
+  for(const m of html.matchAll(/(?<=[\s<"'])(?:xlink:)?(href|src|srcset|action|poster)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"'`]+))/gi))refs.push(m[2]??m[3]??m[4]);
+  for(const m of html.matchAll(/\.(href|src)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)/g))refs.push(m[2]??m[3]??m[4]);
+  for(const m of html.matchAll(/(?<![\w.])url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s]*))\s*\)/gi))refs.push(m[1]??m[2]??m[3]);
+  for(const m of html.matchAll(/setAttribute\(\s*['"`](?:xlink:)?(?:href|src|srcset|action|poster)['"`]\s*,\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)/g))refs.push(m[1]??m[2]??m[3]);
+  for(const m of html.matchAll(/@import\s+(?:"([^"]*)"|'([^']*)')/gi))refs.push(m[1]??m[2]??m[3]);
+  return refs;
+}
+export const ALLOWED_LOCAL=['classic.html','index.html'];
+export function unresolvedReferences(html){
+  return pageReferences(html).filter(ref=>!(/^(?:https?:|data:|mailto:|#)/i.test(ref)||ref.startsWith('${')||ALLOWED_LOCAL.includes(ref)));
+}
+
+test('packaging: every static reference is absolute, an anchor, or classic.html / index.html',()=>{
+  // B2: href="README.md" resolved to projects/03/README.md on the KVIS site (404).
+  assert.deepEqual(unresolvedReferences(prototype),[]);
+  assert.doesNotMatch(prototype,/playable visual prototype/);
+  // The check must catch each way a relative reference can be written.
+  for(const plant of [`<a href="README.md">`,`<a href='README.md'>`,`<a href=./README.md>`,`<a href="docs/prototype.md">`,`<img src="harbour.jpg">`,`<style>i{background:url(./Harbor-Atlas.jpg)}</style>`,`<script>x.href='notes.html'</script>`,`<link rel=icon href=favicon.ico>`,"<script>x.href=`notes.html`</script>",`<script>a.setAttribute('href','notes.html')</script>`,`<style>@import url("extra.css");</style>`,`<style>@import 'extra.css';</style>`])
+    assert.ok(unresolvedReferences(prototype.replace('</body>',plant+'</body>')).length===1,plant);
+});
+
+test('the Survival charter line, which names "Cyclone & Piracy Crisis", shows no event card',()=>{
+  // Found by the KVIS seeded event-card check: the charter entry matched /cyclone/ and
+  // suppressed the game's first real cyclone report.
+  const game=load({atlas:true,random:.99});game.run('selectDifficulty("survival");startSimulation()');
+  assert.equal(game.elements.get('atlas-event').hidden,true);
+  assert.match(game.snapshot().logs[0],/Cyclone & Piracy Crisis/);
+});
+
