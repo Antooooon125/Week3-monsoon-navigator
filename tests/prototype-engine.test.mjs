@@ -187,7 +187,10 @@ test('one print action, credits and drawing provenance as resolved for the KVIS 
   assert.match(game.elements.get('ship-credit').textContent,/^Schematic illustration; reference photograph: /);
   // classic.html was removed from the KVIS site on 2026-11-22, so the page no longer links it.
   assert.doesNotMatch(prototype,/atlas-classic-link|classic\.html/);
-  assert.match(prototype,/>Original source<\/a>/);
+  // The original game's source link sits in the footer (moved from the toolbar on 2026-11-23), once.
+  assert.match(prototype,/footer\.innerHTML='<span>Original game: [^']*<a href="https:\/\/github\.com\/Antooooon125\/Week3-monsoon-navigator"[^>]*>Original game source<\/a>/);
+  assert.doesNotMatch(prototype,/toolbar\.innerHTML='[^']*Week3-monsoon-navigator/);
+  assert.equal(prototype.split('>Original game source</a>').length,2);
   assert.doesNotMatch(prototype,/pending the copyright holder/);
   assert.match(prototype,/Collaborator: Guntitat Sawadwuthikul/);
 });
