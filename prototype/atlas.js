@@ -204,8 +204,17 @@
   // the model's single departure wind direction; they are not measured flow data.
   const ocean=$('ocean-svg'),defs=ocean.querySelector('defs');
   const land=ocean.querySelector('g[fill="#243950"]');land.setAttribute('id','atlas-land');
+  // Real coastlines (Natural Earth 1:50m, inlined by the builder) leave less open water than the hand-drawn map did.
+  // These positions keep the sea labels and the wind clock off land; tests/sea-lanes.test.mjs checks them against the coastline.
+  const mapPlacements={bayOfBengal:[454,199],southChinaSea:[678,180],clock:[574,376]};
+  for(const label of ocean.querySelectorAll(':scope > text')){
+    const name=label.textContent.trim();
+    if(name==='BAY OF BENGAL')label.setAttribute('y',mapPlacements.bayOfBengal[1]);
+    if(name==='SOUTH CHINA SEA'){const [x,y]=mapPlacements.southChinaSea;label.setAttribute('text-anchor','middle');label.setAttribute('x',x);label.setAttribute('y',y);label.innerHTML=`<tspan x="${x}" y="${y}">SOUTH</tspan><tspan x="${x}" dy="12.5">CHINA</tspan><tspan x="${x}" dy="12.5">SEA</tspan>`;}
+  }
+  $('svg-clock-months').parentElement.setAttribute('transform',`translate(${mapPlacements.clock[0]}, ${mapPlacements.clock[1]})`);
   const landMask=[...land.querySelectorAll('path')].map(path=>`<path d="${path.getAttribute('d')}" fill="black"/>`).join('');
-  defs.insertAdjacentHTML('beforeend',`<radialGradient id="atlas-sea-light" cx="43%" cy="42%" r="70%"><stop stop-color="var(--field)" stop-opacity=".16"/><stop offset="1" stop-color="var(--sea)" stop-opacity="0"/></radialGradient><linearGradient id="atlas-wind-spectrum" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--field)"/><stop offset=".72" stop-color="var(--spectral)"/><stop offset="1" stop-color="#ec9abe"/></linearGradient><mask id="atlas-ocean-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="450"><rect width="800" height="450" fill="white"/>${landMask}<rect x="632" y="286" width="168" height="164" fill="black"/></mask><marker id="atlas-wind-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 2L8 5L1 8" fill="none" stroke="var(--field)" stroke-width="1.4"/></marker>`);
+  defs.insertAdjacentHTML('beforeend',`<radialGradient id="atlas-sea-light" cx="43%" cy="42%" r="70%"><stop stop-color="var(--field)" stop-opacity=".16"/><stop offset="1" stop-color="var(--sea)" stop-opacity="0"/></radialGradient><linearGradient id="atlas-wind-spectrum" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--field)"/><stop offset=".72" stop-color="var(--spectral)"/><stop offset="1" stop-color="#ec9abe"/></linearGradient><mask id="atlas-ocean-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="450"><rect width="800" height="450" fill="white"/>${landMask}<rect x="${mapPlacements.clock[0]-78}" y="${mapPlacements.clock[1]-78}" width="156" height="156" fill="black"/></mask><marker id="atlas-wind-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 2L8 5L1 8" fill="none" stroke="var(--field)" stroke-width="1.4"/></marker>`);
   const atmosphere=document.createElementNS('http://www.w3.org/2000/svg','g');atmosphere.id='atlas-atmosphere';atmosphere.setAttribute('pointer-events','none');atmosphere.setAttribute('aria-hidden','true');atmosphere.innerHTML='<rect width="800" height="450" fill="url(#atlas-sea-light)"/><text x="285" y="403" fill="var(--field)" opacity=".32" font-size="13" letter-spacing="7">INDIAN OCEAN</text>';land.before(atmosphere);
   $('svg-wind-field').setAttribute('mask','url(#atlas-ocean-mask)');$('svg-wind-field').setAttribute('aria-hidden','true');$('svg-wind-field').setAttribute('pointer-events','none');
 
@@ -233,13 +242,13 @@
   const comparisonOriginal=renderWindComparison;renderWindComparison=function(){comparisonOriginal();paintCalendar();};
   // Sea lanes through fixed sea waypoints (map units), so no lane crosses the map's land shapes.
   // Display only: the engine's distances, bearings and sailing times are unchanged.
-  // Checked by sampling against the land paths (no point on land; at least 2.5 units of water outside 9 units of each port).
+  // Checked against the inlined Natural Earth coastline by tests/sea-lanes.test.mjs (no point on land; at least 1.5 units of water outside 9 units of each port).
   const seaWaypoints={
-    'kilwa-aden':[[118,318],[135,285],[172,240],[206,198],[192,179],[160,178]],
+    'kilwa-aden':[[118,318],[135,285],[172,240],[200,200],[194,174],[172,172],[150,177]],
     'kilwa-calicut':[[125,320],[200,285],[290,240],[345,205]],
-    'aden-calicut':[[156,179],[194,179],[260,172],[330,176]],
+    'aden-calicut':[[150,177],[170,172],[190,166],[225,163],[280,168],[340,178]],
     'calicut-malacca':[[370,200],[384,224],[404,235],[430,237],[500,236],[545,217],[566,225],[574,234],[582,246]],
-    'malacca-quanzhou':[[600,267],[616,273],[632,256],[640,225],[660,190],[680,150],[704,120],[718,104]]
+    'malacca-quanzhou':[[598,258],[606,262.3],[616,263],[632,252],[640,225],[660,190],[680,150],[704,120],[718,104]]
   };
   const lanePoints=(from,to)=>{const mids=seaWaypoints[`${from}-${to}`]||[...(seaWaypoints[`${to}-${from}`]||[])].reverse();return [[PORTS[from].x,PORTS[from].y],...mids,[PORTS[to].x,PORTS[to].y]];};
   // Straight to the first midpoint, a quadratic through each waypoint, straight to the port: the curve stays inside each corner.

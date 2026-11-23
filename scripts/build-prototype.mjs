@@ -118,7 +118,16 @@ for(const token of tokens){
 // Breakpoint rules come after every base rule, smallest breakpoint first, so that
 // "grid-cols-1 sm:grid-cols-2" works whatever order the tokens appear in the source.
 for(const min of Object.keys(media).map(Number).sort((a,b)=>a-b))utility+=media[min].map(rule=>`@media(min-width:${min}px){${rule}}\n`).join('');
+// Real coastlines: Natural Earth 1:50m Land (public domain), projected and simplified by
+// scripts/coastline.mjs into prototype/coastline.json. They replace the hand-drawn land shapes
+// in the page body; the engine script is untouched.
+const coastline=JSON.parse(readFileSync(resolve(root,'prototype/coastline.json'),'utf8'));
+const landGroup=/(<g fill="#243950"[^>]*>)[\s\S]*?(<\/g>)/;
+if(!landGroup.test(original))throw new Error('Land group not found in index.html');
+const landPaths=coastline.paths.map(d=>`<path d="${d}" />`).join('');
+const landNote=`<!-- Coastlines: ${coastline.source.dataset} ${coastline.source.version} (public domain), equirectangular fit to the five ports, Douglas-Peucker ${coastline.simplification.toleranceMapUnits} map units -->`;
 let output=original
+  .replace(landGroup,(_,open,close)=>`${open}${landNote}${landPaths}${close}`)
   .replace(/<script\b[^>]*\bsrc=[^>]*><\/script>\s*/g,'')
   .replace(/@import url\((['"]).*?\1\);?/g,'')
   // The adapter removes the harbour illustration; drop its CSS so the page references no image file.
