@@ -103,7 +103,7 @@
   const departure=$('routes-container').parentElement;departure.classList.add('atlas-departure');map.after(departure);
   departure.querySelector('h3').textContent='Choose your next port';
   departure.querySelector('span').textContent='Sail or stay';
-  departure.querySelector('button[onclick="waitInPort()"] span').textContent='Wait one month';
+  departure.querySelector('button[onclick="waitInPort()"] span').textContent='Wait one month ';
   // A16: keyboard focus previews a route, as hover does. setHoveredLane only redraws the map.
   $('routes-container').addEventListener('focusin',event=>{const button=event.target.closest?.('button[onclick^="sailTo"]');const id=button?.getAttribute('onclick').match(/'(\w+)'/)?.[1];if(id)setHoveredLane(id);});
   $('routes-container').addEventListener('focusout',()=>setHoveredLane(null));
@@ -126,7 +126,7 @@
   const holdManifest=document.createElement('div');holdManifest.id='atlas-hold-manifest';holdManifest.className='atlas-hold-manifest';$('cargo-shelf-weight').after(holdManifest);
   const market=$('market-tbody').closest('table').parentElement.parentElement;market.classList.add('atlas-trade');right.prepend(market);
   const narrow=typeof matchMedia==='function'?matchMedia('(max-width: 1099px)'):null;
-  const placeMarket=()=>{if(narrow?.matches)departure.after(market);else right.prepend(market);};
+  const placeMarket=()=>{if(narrow?.matches)map.after(market);else right.prepend(market);};
   narrow?.addEventListener?.('change',placeMarket);placeMarket();
   market.querySelector('h3').textContent='Trade at the waterfront';market.querySelector('span').textContent='Trade / material ecology';
   const marketScroll=market.querySelector('.overflow-x-auto');marketScroll.tabIndex=0;marketScroll.setAttribute('role','region');marketScroll.setAttribute('aria-label','Commodity market');
@@ -388,8 +388,41 @@
     $('audit-vessel-meta').textContent=$('audit-vessel-meta').textContent.replace('Chinese Treasure Junk','Chinese ocean-going junk');
     // A9: open the audit at its top.
     $('phase-audit').scrollIntoView?.({block:'start'});$('phase-audit').focus({preventScroll:true});};
+  // Student Mode validation accessibility: alert role, aria-invalid, focus-first-error, and form attributes.
+  $('setup-error')?.setAttribute?.('role','alert');
+  $('setup-error')?.setAttribute?.('aria-live','polite');
+  $('input-name')?.setAttribute?.('name','studentName');
+  $('input-name')?.setAttribute?.('autocomplete','name');
+  $('input-id')?.setAttribute?.('name','studentId');
+  $('input-id')?.setAttribute?.('autocomplete','off');
+  [$('input-hypothesis'),$('input-reflection')].forEach(el=>{if(el?.placeholder)el.placeholder=el.placeholder.replace(/\.\.\./g,'…');});
+  [$('input-name'),$('input-id'),$('input-target-profit'),$('input-hypothesis')].forEach(el=>el?.addEventListener?.('input',()=>el.removeAttribute?.('aria-invalid')));
   // A9: start the voyage at the top of the page.
-  const startOriginal=startSimulation;startSimulation=function(...args){startOriginal(...args);if(state.logs.length&&typeof scrollTo==='function'){scrollTo(0,0);stageHeading.querySelector('h2').tabIndex=-1;stageHeading.querySelector('h2').focus?.({preventScroll:true});}};
+  const startOriginal=startSimulation;startSimulation=function(...args){
+    startOriginal(...args);
+    const err=$('setup-error');
+    if(err&&!err.classList.contains('hidden')){
+      const checks=[
+        [$('input-name'),!$('input-name')?.value.trim()],
+        [$('input-id'),!$('input-id')?.value.trim()],
+        [$('input-target-profit'),!(Number($('input-target-profit')?.value)>=100)],
+        [$('input-hypothesis'),!$('input-hypothesis')?.value.trim()]
+      ];
+      let firstInvalid=null;
+      checks.forEach(([el,bad])=>{if(!el)return;if(bad){el.setAttribute?.('aria-invalid','true');if(!firstInvalid)firstInvalid=el;}else el.removeAttribute?.('aria-invalid');});
+      firstInvalid?.focus?.();
+      return;
+    }
+    if(state.logs.length&&typeof scrollTo==='function'){scrollTo(0,0);stageHeading.querySelector('h2').tabIndex=-1;stageHeading.querySelector('h2').focus?.({preventScroll:true});}
+  };
+  // Prevent accidental refresh/tab close mid-voyage.
+  if(typeof window!=='undefined'&&window.addEventListener){
+    window.addEventListener('beforeunload',event=>{if(!state.ended&&state.monthIndex>0){event.preventDefault();event.returnValue='';}});
+  }
+  // Keep browser theme-color meta synced with Atlas light/dark theme.
+  const syncThemeMeta=()=>{let m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.append(m);}m.content=document.body.dataset.theme==='dark'?'#101821':'#f1f0e8';};
+  syncThemeMeta();
+  $('atlas-theme')?.addEventListener('click',syncThemeMeta);
   // A5: keep keyboard focus on the trade button after the market re-renders.
   for(const name of ['buyCargoQty','sellCargoQty']){
     const original=globalThis[name];
