@@ -585,4 +585,19 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   #glossary-dialog{padding:0}
 }
 
+/* UX audit fixes (2026-11-24): mobile sticky HUD, 1/24 divider fit, chart trigger target, touch & modal scroll. */
+@media screen{
+  .atlas-trade .atlas-good-chart{display:inline-flex;align-items:center;min-height:36px!important;padding:6px 4px!important;margin:-4px -4px!important}
+  .atlas-trade button,.atlas-months button,.atlas-departure button,#hud-bar button{touch-action:manipulation}
+  dialog,.atlas-chart-dialog,.atlas-source-dialog{overscroll-behavior:contain}
+  body[data-theme=dark] .atlas-trade td:last-child button:disabled{opacity:.55;color:#aebed0;border-color:#3a524d}
+}
+@media screen and (max-width:1099px){
+  .atlas-status{position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid var(--line);padding-block:8px}
+}
+@media screen and (max-width:767px){
+  .atlas-status #hud-bar>div:first-child{flex:1.35 1 0!important}
+  .atlas-status #hud-bar>div span:last-child{font-size:.8125rem!important}
+  #hud-bar>button{min-height:44px}
+}
 @media print{body{--bg:#fff;--surface:#fff;--ink:#111;--muted:#333;--line:#777;--accent:#111;--good:#111;--bad:#111;--warn:#111;background:#fff!important;color:#111!important}header,.atlas-footer,.atlas-event,.atlas-source-dialog,.no-print{display:none!important}#phase-setup,#phase-sim{display:none!important}#phase-audit{display:block!important;padding:0!important;max-width:none}#pdf-export-target{background:white!important;color:#111!important;border:0;padding:0!important}#pdf-export-target *{color:#111!important;background:transparent!important;box-shadow:none!important}#pdf-export-target .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#pdf-export-target p,#pdf-export-target .grid>div{break-inside:avoid}#audit-log-table>div{break-inside:avoid}#audit-log-table{font-size:10pt}a{text-decoration:none}}
