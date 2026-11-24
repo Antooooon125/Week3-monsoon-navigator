@@ -260,3 +260,16 @@ After review of the KVIS rebuild (#49), four more changes:
   Exactly the failing fields get `aria-invalid="true"` and `aria-describedby="setup-error"`, and the first takes focus. `#setup-error` keeps `role="alert"` without a second `aria-live`.
 - **`beforeunload`** also guards a voyage where something was traded in month 0, since the log holds more than its opening entry. It stays off on the setup screen and after the campaign ends.
 - **"Wait one month"** gets its spacing from `gap: .35em` on the button. A trailing space in a flex item has no effect.
+
+### Pilot's notebook (2026-11-24)
+
+KVIS #53 (upstream #19). A fixed block of text after the "Sail now or wait" card and before the sailing calendar, so it sits beside the voyage decision. It is display only: written once when the adapter loads, never repainted, no random numbers, and hidden after the campaign ends, like the calendar.
+
+- **History**, in four short parts: keeping a heading and checking position (Zhu Yu, early 1100s, on pilots at Guangzhou), choosing a safe window (two Geniza letters, 1103 and the 1130s: a wish and an instruction, neither a voyage), and later comparisons (Ibn Mājid, c. 1490; the Mao Kun chart, with its year marked unresolved). Landmarks appear only under Ibn Mājid; Zhu Yu's pilots are given no nationality.
+- **Game rule**, in its own `<aside>` with no dates, places or sources: 180 D once, for the whole campaign; every leg 15% faster, with some legs saving no month after rounding; the storm chance 35% → 18% in transition months; headwinds and the 35% turn-back chance unchanged; stars, needles and soundings not modelled. A per-passage pilot is not mentioned: that change has not shipped.
+- **Sources (5)** in a closed native `<details>`, each with a date and a locator.
+- `h3` with `h4` sub-heads; the Chinese phrase in `lang="zh-Hant"`; reading order is DOM order at every width; theme tokens only, no season colours.
+- **Fonts.** The embedded Atkinson, Archivo and Plex Mono files have ā and ū but not ḍ, ʾ or Ḥ (checked from their `cmap` tables), so Maḍmūn b. Ḥasan, Ḥeshvan and *al-Fawāʾid* are spelled Madmun b. Hasan, Heshvan and *al-Fawa'id*. Ibn Mājid keeps his ā.
+- **Print.** The spec asked for the notebook to print with Sources open. The page's print stylesheet hides the whole voyage screen and prints only the audit, so the notebook never prints; changing that would change the audit print, which is left as it is.
+
+KVIS `tests/03/atlas-notebook.test.mjs` checks the copy's rules and ties every number in the game-rule box to the engine; `engine/preview-purity.test.mjs` paints the notebook in every state and requires the same HTML each time.

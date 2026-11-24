@@ -725,6 +725,28 @@
   // The card sits directly under the departure buttons (on phones it was far below them); the calendar sits
   // above the collapsed "Compare another departure" panel (the engine's own comparison).
   $('routes-container')?.after?.(decision);$('atlas-planner')?.before?.(calendarSection);
+
+  // 2a. Pilot's notebook (2026-11-24; KVIS #53, upstream #19). Fixed text beside the voyage decision: how pilots kept a
+  //     heading, checked position and chose a window, then a separate box with the navigator's game rules, then dated
+  //     sources. It is written once and never repainted, so it reads no game state; it is hidden after the campaign
+  //     ends, like the calendar. tests/03/atlas-notebook.test.mjs ties each number in the game-rule box to the engine.
+  //     The embedded fonts lack ḍ, ʾ and Ḥ, so names that need them are spelled plainly.
+  const notebook=document.createElement('section');notebook.id='atlas-pilot-notebook';notebook.className='atlas-pilot-notebook';notebook.setAttribute('aria-labelledby','atlas-pilot-notebook-heading');
+  notebook.innerHTML=`<h3 id="atlas-pilot-notebook-heading">Pilot’s notebook</h3>`+
+    `<h4>Keeping a heading</h4><p>Zhu Yu (early 1100s) wrote that ships’ pilots at Guangzhou watched the stars at night, the sun by day and, in overcast weather, the south-pointing needle (<span lang="zh-Hant">陰晦觀指南針</span>).</p>`+
+    `<h4>Checking position</h4><p>They also hooked up seabed mud on a rope and smelled it to tell where they were.</p>`+
+    `<h4>Choosing a safe window</h4><p>In 1103 a traveller in a Red Sea port, bound for India, wished he could stop the ship until the sea calmed. In the 1130s a merchant in Aden asked for a ship from Mangalore to set out “at the beginning of the season”. A wish and an instruction: neither records a voyage.</p>`+
+    `<h4>Later comparisons</h4><p>Ibn Mājid’s manual (c. 1490) has chapters on star altitudes, landmarks and monsoons. The printed Mao Kun chart (seventeenth century, year unresolved) marks routes with compass bearings.</p>`+
+    `<aside class="atlas-pilot-rule" aria-labelledby="atlas-pilot-rule-heading"><h4 id="atlas-pilot-rule-heading">Game rule</h4><p>A navigator costs 180 D once and stays all campaign. Every leg is 15% faster; with rounding, some legs save no month. In transition months the storm chance falls from 35% to 18%. Headwinds and the 35% turn-back chance are unchanged. Stars, needles and soundings are not modelled.</p></aside>`+
+    `<details class="atlas-notebook-sources"><summary>Sources (5)</summary><ol>`+
+      `<li>Zhu Yu <span lang="zh-Hant">朱彧</span>, <cite>Pingzhou ketan <span lang="zh-Hant">萍洲可談</span></cite>, juan 2. Northern Song; usually dated c. 1119. The setting is Guangzhou’s maritime trade. The passage begins <span lang="zh-Hant">甲令：海舶大者數百人</span> and contains <span lang="zh-Hant">舟師識地理，夜則觀星，晝則觀日，陰晦觀指南針，或以十丈繩鈎，取海底泥嗅之，便知所至</span>. Text: Chinese Wikisource, <span lang="zh-Hant">萍洲可談/卷二</span>, <a href="https://zh.wikisource.org/w/index.php?title=%E8%90%8D%E6%B4%B2%E5%8F%AF%E8%AB%87/%E5%8D%B7%E4%BA%8C&amp;oldid=353955">revision 353955</a> (19 June 2012), from the Yongle dadian reconstruction. English rendering ours. Read 2026-11-24.</li>`+
+      `<li>Letter, Red Sea port, dated 24 Heshvan 4864 AM = 28 October 1103. Cambridge University Library T-S 12.392; Princeton Geniza Project <a href="https://geniza.princeton.edu/en/documents/9690/">PGPID 9690</a>. Verso, lines 5–6 of the English translation by Alan Elbaum and Marina Rustow. Read 2026-11-24.</li>`+
+      `<li>Letter, Madmun b. Hasan (Aden) to Avraham Ben Yijū (Mangalore), 1130s (date inferred). JRL Gaster heb. ms 1863/13 + T-S 12.416; <a href="https://geniza.princeton.edu/en/documents/5417/">PGPID 5417</a> (second copy PGPID 5438). T-S 12.416 verso, lines 10–14, translation by Marina Rustow. Read 2026-11-24.</li>`+
+      `<li>Ibn Mājid (b. c. 1420, d. c. 1500), <cite>Kitab al-Fawa’id</cite>, c. 1490. Chapter list (VII stellar altitudes, VIII landmarks, XI monsoons) and life dates from J. Acevedo, I. Bénard and J. Müller, <cite>Indian Ocean Arab Navigation Studies Towards a Global Perspective</cite>, RUTTER Technical Note 2, v5.1 (2024), pp. 19–20. The 1490 date is from the bibliography entry for Kunitzsch 1993 on p. 43. <a href="https://doi.org/10.5281/zenodo.10462161">doi:10.5281/zenodo.10462161</a>, CC BY 4.0. A later comparison; the Fawa’id itself was not read for this note.</li>`+
+      `<li>Mao Kun chart, in Mao Yuanyi, <cite>Wubei zhi <span lang="zh-Hant">武備志</span></cite>, juan 240. Date unresolved: usually given as 1621, with 1628 also reported for its publication; neither date has been confirmed from a primary or scholarly source. Associated with the early fifteenth-century voyages of Zheng He. A later comparison. Juan 240: Ricci Institute record of Xiang Da (ed.), <cite>Zheng He hanghai tu</cite> (Zhonghua shuju, 1961). Compass-bearing routes: IEEE REACH, “Zhenghe sailing chart” (secondary).</li>`+
+    `</ol><p class="atlas-chart-note">Game rules: the game’s own code (<code>computeTransit</code>, <code>hireSpecialist</code>). They are learning tools, not historical estimates.</p></details>`;
+  decision.after?.(notebook);
+  const paintNotebook=()=>{notebook.hidden=!!state.ended;};
   const optionColumn=(o,title,lane)=>{
     const [kind,word]=windRelation(o.c),cost=getWaitingCosts(o.wait),risks=[];
     if(o.c.isHeadwind)risks.push(`<dt>Turn-back chance</dt><dd>${pct(TURN_BACK)} (you return to port)</dd>`);
@@ -860,7 +882,7 @@
     paintHome();
   }
 
-  const decisionsRenderOriginal=renderAll;renderAll=function(){decisionsRenderOriginal();paintCalendar();paintDecision();paintPirateWarning();paintWhy();};
+  const decisionsRenderOriginal=renderAll;renderAll=function(){decisionsRenderOriginal();paintCalendar();paintDecision();paintPirateWarning();paintWhy();paintNotebook();};
   const decisionsCompareOriginal=renderWindComparison;renderWindComparison=function(){decisionsCompareOriginal();paintDecision();paintPirateWarning();};
   }
   {

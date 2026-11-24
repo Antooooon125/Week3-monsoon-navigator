@@ -357,6 +357,22 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-route-calendar h3,.atlas-decision h3{font-family:var(--f-display);font-size:1rem;margin:0 0 4px}
   .atlas-route-calendar .atlas-chart-note,.atlas-decision .atlas-chart-note{color:var(--muted);font-size:.8125rem;margin:4px 0 8px}
   .atlas-route-calendar ul{margin:0 0 10px;padding-left:1.1em;font-size:.875rem;line-height:1.5}.atlas-route-calendar li+li{margin-top:4px}
+  /* Pilot's notebook (2026-11-24): history beside the decision, the game rule boxed apart. Theme tokens only, no
+     season colours, no reordering. */
+  .atlas-pilot-notebook{margin:16px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:var(--atlas-radius,6px);background:var(--surface);color:var(--ink);font-family:var(--f-body)}
+  .atlas-pilot-notebook h3{font-family:var(--f-display);font-size:1rem;margin:0 0 8px}
+  .atlas-pilot-notebook h4{font-family:var(--f-display);font-size:.9375rem;font-weight:700;margin:12px 0 2px}
+  .atlas-pilot-notebook p,.atlas-pilot-notebook li{max-width:60ch;font-size:1rem;line-height:1.5;margin:0}
+  .atlas-pilot-notebook a{color:var(--ink);text-decoration:underline;overflow-wrap:anywhere}
+  .atlas-pilot-notebook cite{font-style:italic}
+  .atlas-pilot-rule{max-width:60ch;margin:14px 0 0;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px}
+  .atlas-pilot-rule h4{margin:0 0 4px;font-family:var(--f-mono);font-weight:500;font-size:.8125rem;letter-spacing:.02em}
+  .atlas-notebook-sources{margin:12px 0 0}
+  .atlas-notebook-sources>summary{min-height:var(--atlas-control-size,44px);padding-block:10px;box-sizing:border-box;cursor:pointer;font-weight:700;width:max-content;max-width:100%}
+  .atlas-notebook-sources ol{margin:4px 0 0;padding-left:1.4em;font-size:.875rem}
+  .atlas-notebook-sources li{font-size:.875rem;overflow-wrap:anywhere}.atlas-notebook-sources li+li{margin-top:6px}
+  .atlas-notebook-sources .atlas-chart-note{color:var(--muted);font-size:.8125rem;margin:8px 0 0}
+  .atlas-notebook-sources code{font-family:var(--f-mono);font-size:.8125rem}
   .atlas-decision-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin-top:8px}
   .atlas-decision-option{border:1px solid var(--line);border-radius:4px;padding:10px 12px}
   .atlas-decision-option h4{font-weight:700;font-size:.9375rem;margin:0 0 6px}
