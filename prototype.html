@@ -1167,10 +1167,13 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
 
 /* UX audit fixes (2026-11-24): mobile sticky HUD, 1/24 divider fit, chart trigger target, touch & modal scroll. */
 @media screen{
-  .atlas-trade .atlas-good-chart{display:inline-flex;align-items:center;min-height:36px!important;padding:6px 4px!important;margin:-4px -4px!important}
+  /* A 48 px tall target (36 px minimum) whose negative vertical margins keep it out of the row height (#50's rows). */
+  .atlas-trade .atlas-good-chart{display:inline-flex;align-items:center;min-height:36px!important;padding:6px 4px!important;margin:-14px -4px!important}
   .atlas-trade button,.atlas-months button,.atlas-departure button,#hud-bar button{touch-action:manipulation}
   dialog,.atlas-chart-dialog,.atlas-source-dialog{overscroll-behavior:contain}
-  body[data-theme=dark] .atlas-trade td:last-child button:disabled{opacity:.55;color:#aebed0;border-color:#3a524d}
+  /* Dark mode: disabled trade controls (#50's +1 +5 Max and −1 −5 Max) stay legible and look disabled: no fill, a dashed
+     border and muted text at full opacity (5.35:1 on the panel; was 3.34:1 at 42% opacity, and 3.28:1 with the first fix). */
+  body[data-theme=dark] .atlas-trade td:last-child .atlas-trade-group>button:disabled{opacity:1;color:#8aa09a;background:transparent;border:1px dashed #5b7a73}
 }
 @media screen and (max-width:1099px){
   .atlas-status{position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid var(--line);padding-block:8px}
