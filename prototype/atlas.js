@@ -198,6 +198,10 @@
   const photo=$('ship-photo');const shipPlate=document.createElement('div');shipPlate.id='atlas-ship';shipPlate.className='atlas-ship';shipPlate.setAttribute('role','img');photo.replaceWith(shipPlate);
   const sourceDialog=document.createElement('dialog');sourceDialog.id='atlas-source-dialog';sourceDialog.className='atlas-source-dialog';sourceDialog.setAttribute('aria-labelledby','atlas-source-title');
   sourceDialog.innerHTML='<h2 id="atlas-source-title">How we know</h2><p>This presentation keeps the original game model. Its numbers are learning tools, not calibrated historical estimates.</p><h3>Historical references</h3><ul>'+Object.values(sources).map(([label,url])=>`<li><a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a></li>`).join('')+'</ul><h3>Game assumptions</h3><p>One simplified seasonal wind applies across the map. Ship speeds, cargo weights, prices, tariffs, hazards and standing effects are game parameters. Quanzhou’s Song–Yuan setting and Malacca’s fifteenth-century rise are compressed into one circuit.</p><p>Port stories in the voyage log are fictional scenes written for the game, not sourced events.</p><p>Vessel and commodity drawings are schematic illustrations, not archaeological reconstructions. References above are starting points from the repository reading list; this page does not certify every existing historical claim.</p><p><a href="https://github.com/Antooooon125/Week3-monsoon-navigator/blob/ba2f279/README.md" target="_blank" rel="noopener noreferrer">Read the model description and known limitations</a></p><form method="dialog"><button>Close sources</button></form>';
+  // Every reading dialog opens with its title and close action in the same row.
+  const sourceHead=document.createElement('div');sourceHead.className='atlas-chart-head';
+  sourceHead.append(sourceDialog.querySelector('h2'),sourceDialog.querySelector('form'));sourceDialog.prepend(sourceHead);
+  sourceHead.querySelector('button').textContent='Close';sourceHead.querySelector('button').setAttribute('aria-label','Close sources and assumptions');
   document.body.append(sourceDialog);$('atlas-sources-open').addEventListener('click',()=>sourceDialog.showModal());
   const footer=document.createElement('footer');footer.className='atlas-footer';footer.innerHTML='<span>Original game: Amnuayvit Thitibordin (KVIS) · CC BY-NC-SA 4.0 with a Commercial Derivative Exception · <a href="https://github.com/Antooooon125/Week3-monsoon-navigator" target="_blank" rel="noopener noreferrer">Original game source</a></span><span>An Atlas of Moving Worlds: art direction and adaptation by Thanakrit Wongsatit, with AI assistance · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a> with a Commercial Derivative Exception · Collaborator: Guntitat Sawadwuthikul</span>';document.body.append(footer);
   // Simplify inherited headings while keeping numerical definitions and model controls.
@@ -212,6 +216,9 @@
   for(const card of [...(care.children||[])].slice(2))careCards.append(card);care.append(careCards);
   map.after(care);
   document.querySelectorAll('button').forEach(button=>{if(button.getAttribute('onclick')==="toggleModal('intel-modal')")button.textContent='Port price guide';if(button.getAttribute('onclick')==="toggleModal('physics-modal')")button.textContent='How sailing works';});
+  for(const id of ['intel-modal','physics-modal']){
+    const close=$(id).querySelector('button[onclick]');close.textContent='Close';close.setAttribute('aria-label',id==='intel-modal'?'Close port price guide':'Close sailing explanation');
+  }
   const auditReport=$('pdf-export-target');auditReport.querySelector('h2').textContent='Voyage ledger';
   const prediction=$('audit-hypothesis-text').parentElement.parentElement;prediction.classList.add('atlas-audit-prediction');auditReport.querySelector('.grid').before(prediction);
   const auditLead=document.createElement('section');auditLead.className='atlas-audit-lead';auditLead.innerHTML='<div class="atlas-eyebrow" id="atlas-audit-eyebrow">Audit / prediction and evidence</div><h2>Your venture, reviewed.</h2><p id="atlas-audit-summary"></p><p id="atlas-audit-prompt"></p>';auditReport.prepend(auditLead);
@@ -373,8 +380,21 @@
       if(nameCell)nameCell.innerHTML=`<span class="atlas-row-icon" style="color:${goods[item.id][0]}">${svg(goods[item.id][1],'0 0 140 110')}</span><button type="button" class="atlas-good-chart" data-good="${item.id}" aria-haspopup="dialog" title="Prices through the year at every port">${item.name}</button> <span class="font-mono text-[10px] text-slate-400">(${item.weight}T)</span>`;
       const held=state.cargo[item.id];
       row.children[2].innerHTML=held>0?`<div class="atlas-held"><b>${held}</b> held</div><div class="atlas-held-tons">${held*item.weight} t aboard</div><div class="atlas-basis">you paid ${state.costBasis[item.id]} D each (average)</div>`:'<div class="atlas-held"><b>0</b> held</div>';
+      // Move the engine's existing controls into equally weighted, labelled groups.
+      // Handlers, quantities and disabled states remain on the original buttons.
+      const cell=row.children[3];
+      if(!cell.querySelector('.atlas-trade-actions')){
+        const actions=document.createElement('div');actions.className='atlas-trade-actions';
+        for(const [action,title] of [['buy','Buy'],['sell','Sell']]){
+          const group=document.createElement('div');group.className='atlas-trade-group';group.setAttribute('role','group');group.setAttribute('aria-label',`${title} ${item.name}`);
+          const caption=document.createElement('span');caption.className='atlas-trade-group-label';caption.textContent=title;group.append(caption);
+          for(const button of [...cell.querySelectorAll('button')])if((button.getAttribute('onclick')||'').startsWith(`${action}CargoQty(`)){button.dataset.tradeAction=action;group.append(button);}
+          actions.append(group);
+        }
+        cell.append(actions);
+      }
     });
-    document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');if(button.classList.contains('atlas-good-chart')){button.setAttribute('aria-label',`${button.textContent.trim()}: prices through the year`);return;}button.setAttribute('aria-label',`${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
+    document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');if(button.classList.contains('atlas-good-chart')){button.setAttribute('aria-label',`${button.textContent.trim()}: prices through the year`);return;}button.setAttribute('aria-label',`${button.dataset.tradeAction==='sell'?'Sell':'Buy'} ${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
     document.querySelectorAll('#market-tbody tr').forEach((row,index)=>{const item=COMMODITIES[index];row.dataset.good=item.id;row.style.setProperty('--material',goods[item.id][0]);});
   };
   const renderOriginal=renderAll;renderAll=function(){renderOriginal();paint();placeTools();};
