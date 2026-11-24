@@ -535,31 +535,49 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-home-port:focus-visible{outline:3px solid var(--atlas-on-sea);outline-offset:2px}
   .atlas-home-port:focus-visible .atlas-home-dot,.atlas-home-port[aria-pressed=true]:focus-visible .atlas-home-dot{stroke:var(--atlas-on-sea);stroke-width:4}
 }
-/* From 768 px the actions sit in the third column beside the prices and the hold, so a row stays close to its
-   original height (it had grown from 129 to 199 px at 1440 px). */
-@media screen and (min-width:768px){
-  .atlas-trade tr{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) auto;row-gap:2px}
-  .atlas-trade thead th:nth-child(3){display:none}
-  .atlas-trade td{padding-block:4px}
-  .atlas-trade td:nth-child(3){grid-column:2;padding-top:0}
-  .atlas-trade td:last-child{grid-column:3;grid-row:1/span 2;padding-top:4px}
-  .atlas-trade .atlas-trade-actions{flex-direction:column;gap:6px}
-  .atlas-trade td:nth-child(3){text-align:right}.atlas-trade td:nth-child(3) .atlas-basis{margin-inline:auto 0}
+/* Waterfront trade rows (owner, 2026-11-24): the good, what you hold, Buy, then Sell, each action group with its price
+   and next month's arrow beside it. The price column is not shown (its prices are in the captions). Where the trade
+   panel is wide enough, the four parts are columns; where it is narrow (beside the map at 1440 px, or a phone), the
+   good and the hold sit over Buy and Sell; below 300 px everything stacks in the same order. */
+@media screen{
   .atlas-trade{container-type:inline-size}
+  .atlas-trade table td:nth-child(2),.atlas-trade table th:nth-child(2){display:none}
+  .atlas-trade table tr{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--atlas-space-4);row-gap:4px;align-items:start}
+  .atlas-trade table tr>:first-child{grid-column:auto}
+  .atlas-trade table td{padding-block:4px}
+  .atlas-trade table td:nth-child(3),.atlas-trade table th:nth-child(3){text-align:right;padding-left:0}
+  .atlas-trade table td:nth-child(3) .atlas-basis{margin-inline:auto 0}
+  .atlas-trade table td:last-child,.atlas-trade table th:last-child,.atlas-trade .atlas-trade-actions{display:contents}
+  .atlas-trade thead tr{display:none}
+  /* Three explicit button columns: the caption line spans exactly those (an implicit grid made 1/-1 cover only the first). */
+  .atlas-trade-group{display:grid;grid-template-columns:repeat(3,max-content);grid-template-rows:auto auto;gap:4px;align-items:center;justify-content:start;padding-bottom:6px}
+  /* Contained, so a long caption wraps instead of widening the first button's track. */
+  .atlas-trade-group-head{grid-row:1;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:2px 6px;align-items:baseline;contain:inline-size}
+  .atlas-trade-group-label{font-family:var(--f-body);font-size:.8125rem;font-weight:700}
+  .atlas-trade .atlas-next-arrow{font-size:.875rem;font-weight:700;color:var(--ink)}
+  .atlas-trade .atlas-trade-group-head .atlas-trend{margin-left:0}
+  .atlas-trade .atlas-trade-group>button{grid-row:2;min-width:var(--atlas-control-size);min-height:var(--atlas-control-size);margin:0!important;padding:var(--atlas-space-2);font-size:.8125rem;border:1px solid var(--line);border-radius:var(--atlas-radius);background:var(--surface);color:var(--ink)}
+  .atlas-trade .atlas-trade-group>button:hover:not(:disabled){background:var(--ink);color:var(--surface);border-color:var(--ink)}
+  .atlas-trade .atlas-trade-group[data-trade-action=sell]{justify-self:end}
 }
-/* Where the trade panel itself is wide (single-column layouts), each caption sits beside its buttons. */
-@container (min-width:640px){
-  .atlas-trade-group{grid-template-rows:auto}
-  .atlas-trade-group-label{grid-row:1;grid-column:auto;min-width:6.2em}
-  .atlas-trade-group>button{grid-row:1}
+/* Where the good and the hold share a line, the drawing sits beside the name, keeping the row short. */
+@container (max-width:599px){
+  .atlas-trade .atlas-row-icon{float:left;margin:2px 8px 0 -2px}
+  .atlas-trade table td:first-child{display:flow-root}
 }
-@media screen and (max-width:767px){
-  .atlas-trade tr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-  .atlas-trade td{padding-block:4px}
-  .atlas-trade td:last-child{padding-top:2px}
-  .atlas-trade tr>:first-child{grid-column:1/-1}
-  .atlas-trade td:nth-child(2),.atlas-trade th:nth-child(2){text-align:left}
-  .atlas-trade td:nth-child(3),.atlas-trade th:nth-child(3){text-align:right}
+/* Columns of the same width in every row, so the groups and the header line up. */
+@container (min-width:600px){
+  .atlas-trade table tr{grid-template-columns:minmax(0,1fr) 7.5rem 9.75rem 9.75rem;align-items:center}
+  .atlas-trade table td:nth-child(3),.atlas-trade table th:nth-child(3){text-align:left}
+  .atlas-trade thead tr{display:grid}
+  .atlas-trade thead th{font-family:var(--f-body);font-size:.75rem}
+  .atlas-trade thead th:last-child span{display:block;text-align:left}
+  .atlas-trade .atlas-trade-group[data-trade-action=sell]{justify-self:start}
+}
+@container (max-width:299px){
+  .atlas-trade table tr{grid-template-columns:minmax(0,1fr)}
+  .atlas-trade table td:nth-child(3){text-align:left}
+  .atlas-trade .atlas-trade-group[data-trade-action=sell]{justify-self:start}
 }
 @media screen and (max-width:640px){
   .atlas-source-dialog,.atlas-chart-dialog,#intel-modal>div,#physics-modal>div,

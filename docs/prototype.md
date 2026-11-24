@@ -231,3 +231,12 @@ The design commit (shared dialog frame, unified close buttons, labelled trade ac
 - **Home port.** Gold on the setup map, like the current port on the voyage map; a selected route stays pink.
 - **Focus on the setup map.** A 3 px outline in `--atlas-on-sea` and a white stroke on the port, which also applies to the selected port (the selected style used to win). The global ring is about 1.3:1 against the sea.
 - **Backdrop.** `--atlas-backdrop`, derived from `--atlas-map-outline`.
+
+### Waterfront trade rows (2026-11-24)
+
+Owner decision. Each row has four parts: the good, what you hold, then Buy and Sell, in that order everywhere (the price column used to read Sell, Buy while the buttons read Buy, Sell).
+
+- **Prices.** The separate price column is no longer shown. Each action group's caption gives the price it trades at ("Buy · 40 D", "Sell · 38 D"), with next month's arrow beside it (↑ rising, ↓ falling, – steady; the tooltip gives next month's price). The ▲ high / ▼ low marker sits beside the sell price.
+- **Controls.** Buy: +1, +5, Max. Sell: −1, −5 (new), Max. Max's accessible names are "Buy as many <good> as you can afford and fit" and "Sell all <good> you hold".
+- **Max no longer stops at 99.** The engine's market template passes 99 to `buyCargoQty` and `sellCargoQty` for MAX and ALL, so a junk holding 217 cloves sold 99 and kept 118. The Atlas now builds its own trade controls, and they call the same engine functions with the quantity shown; Max passes `Infinity`. `buyCargoQty` caps it by weight and cash, and `sellCargoQty` by what is held. Whether buying or selling is possible still comes from the engine (its own buttons' disabled state), and its buttons are then removed. The engine script is unchanged; its template still says 99, for the combined engine change.
+- **Layout.** Where the trade panel is at least 600 px wide (the single-column layouts, 768–1279 px), the four parts are columns of the same width in every row, under a header (Good, In your hold, Buy, Sell). Where it is narrower (beside the map at 1440 px, and phones), the good and the hold sit over Buy and Sell, with the drawing beside the name. Below 300 px everything stacks in the same order. Row heights: 137 px at 1440, 89 px at 768–1024, 156 px at 375, 252 px at 320. All targets stay 44 px.

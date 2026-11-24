@@ -130,7 +130,7 @@
   narrow?.addEventListener?.('change',placeMarket);placeMarket();
   market.querySelector('h3').textContent='Trade at the waterfront';market.querySelector('span').textContent='Trade / material ecology';
   const marketScroll=market.querySelector('.overflow-x-auto');marketScroll.tabIndex=0;marketScroll.setAttribute('role','region');marketScroll.setAttribute('aria-label','Commodity market');
-  const tableHint=document.createElement('p');tableHint.className='atlas-table-hint';tableHint.textContent='Prices at this port this month, per game lot. Sell here: what you receive for each lot you sell. Buy here: what each lot costs, including the port’s tariff. ▲ high / ▼ low: the sell price is more than 2 D above / below this port’s usual price. Next month: which way this port’s prices move next month (↑ rising, ↓ falling, – steady), from the game’s fixed seasonal cycle. Buy directions assume today’s tariff: if your standing here reaches 50, the tariff drops a point and the buy price with it. Select a good’s name for its prices through the year at every port.';marketScroll.before(tableHint);
+  const tableHint=document.createElement('p');tableHint.className='atlas-table-hint';tableHint.textContent='Prices at this port this month, per game lot. Buy · N D: what each lot costs, including the port’s tariff. Sell · N D: what you receive for each lot you sell. The arrow beside a price: which way it moves next month (↑ rising, ↓ falling, – steady), from the game’s fixed seasonal cycle. ▲ high / ▼ low: the sell price is more than 2 D above / below this port’s usual price. Max buys as many as you can afford and fit; Max on the sell side sells all you hold. Buy directions assume today’s tariff: if your standing here reaches 50, the tariff drops a point and the buy price with it. Select a good’s name for its prices through the year at every port.';marketScroll.before(tableHint);
   // One trade panel. The lower "collection in transit" panel duplicated the market's hold line; its unique
   // parts (drawn icons, tonnes aboard, the per-good weight bar and legend, tonnes available, the weight note)
   // move here and the panel is hidden. It stays in the page because the engine still writes its cargo shelf.
@@ -140,7 +140,7 @@
   holdLine.append(holdManifest);
   const holdSplit=document.createElement('p');holdSplit.id='atlas-hold-split';holdSplit.className='atlas-hold-split';holdLine.append(holdSplit);
   const holdNote=document.createElement('p');holdNote.className='atlas-hold-note';holdNote.textContent='Game weight, not hull volume. The drawings are schematic material studies.';holdLine.append(holdNote);
-  const marketHead=market.querySelectorAll('thead th');if(marketHead.length===4){marketHead[1].textContent='Prices here';marketHead[2].textContent='In your hold';}
+  const marketHead=market.querySelectorAll('thead th');if(marketHead.length===4){marketHead[0].textContent='Good (wt)';marketHead[1].textContent='Prices here';marketHead[2].textContent='In your hold';marketHead[3].innerHTML='<span>Buy</span><span>Sell</span>';}
   // Prices straight from the engine: getLivePortPrice is a fixed seasonal wave (no random term, no market depth);
   // the buy price adds the port's effective tariff exactly as buyCargoQty does.
   const sellAt=(item,port,month)=>getLivePortPrice(item,port,month);
@@ -368,11 +368,12 @@
       const item=COMMODITIES[index];if(!item||row.children.length<4)return;
       const sell=getLivePortPrice(item,state.currentPort,state.monthIndex),buy=Math.round(sell*(1+tariffHere)),usual=item.prices[state.currentPort];
       const trend=sell-usual>2?'<span class="atlas-trend" data-level="high" title="More than 2 D above this port’s usual price">▲ high</span>':sell-usual<-2?'<span class="atlas-trend" data-level="low" title="More than 2 D below this port’s usual price">▼ low</span>':'';
-      let next='<div class="atlas-next">Next month: the campaign ends</div>';
+      let next='<div class="atlas-next">Next month: the campaign ends</div>',nextOf=null;
       if(state.monthIndex+1<CAMPAIGN_MONTHS){
         const buyNext=buyAt(item,state.currentPort,state.monthIndex+1),sellNext=sellAt(item,state.currentPort,state.monthIndex+1);
         const b=direction(buy,buyNext),sl=direction(sell,sellNext);
         next=`<div class="atlas-next" data-buy-next="${b}" data-sell-next="${sl}" title="Next month here: buy ${buyNext} D, sell ${sellNext} D">Next month: ${b===sl?directionWord[b]:`buy ${directionWord[b]}, sell ${directionWord[sl]}`}</div>`;
+        nextOf={buy:[b,buyNext],sell:[sl,sellNext]};
       }
       row.children[1].innerHTML=`<div class="atlas-price-sell"><span class="atlas-price-label">Sell here</span> <b>${sell} D</b>${trend}</div><div class="atlas-price-buy"><span class="atlas-price-label">Buy here</span> <b>${buy} D</b></div>${next}`;
       const nameCell=row.children[0].firstElementChild;
@@ -380,23 +381,42 @@
       if(nameCell)nameCell.innerHTML=`<span class="atlas-row-icon" style="color:${goods[item.id][0]}">${svg(goods[item.id][1],'0 0 140 110')}</span><button type="button" class="atlas-good-chart" data-good="${item.id}" aria-haspopup="dialog" title="Prices through the year at every port">${item.name}</button> <span class="font-mono text-[10px] text-slate-400">(${item.weight}T)</span>`;
       const held=state.cargo[item.id];
       row.children[2].innerHTML=held>0?`<div class="atlas-held"><b>${held}</b> held</div><div class="atlas-held-tons">${held*item.weight} t aboard</div><div class="atlas-basis">you paid ${state.costBasis[item.id]} D each (average)</div>`:'<div class="atlas-held"><b>0</b> held</div>';
-      // Move the engine's existing controls into equally weighted, labelled groups.
-      // Handlers, quantities and disabled states remain on the original buttons.
+      // Buy and Sell groups, Buy first, each with the price it trades at and next month's direction beside it. The Atlas
+      // builds these controls; the engine decides as before whether buying or selling is possible (its own buttons'
+      // disabled state), and its buttons are then removed.
       const cell=row.children[3];
       if(!cell.querySelector('.atlas-trade-actions')){
+        const engine=[...cell.querySelectorAll('button[onclick]')],can=action=>engine.some(b=>(b.getAttribute('onclick')||'').startsWith(`${action}CargoQty(`)&&!b.disabled);
         const actions=document.createElement('div');actions.className='atlas-trade-actions';
+        const spec={buy:[['+1','1',`Buy 1 ${item.name}`],['+5','5',`Buy 5 ${item.name}`],['Max','Infinity',`Buy as many ${item.name} as you can afford and fit`]],
+          sell:[['−1','1',`Sell 1 ${item.name}`],['−5','5',`Sell 5 ${item.name}`],['Max','Infinity',`Sell all ${item.name} you hold`]]};
         for(const [action,title] of [['buy','Buy'],['sell','Sell']]){
-          const group=document.createElement('div');group.className='atlas-trade-group';group.setAttribute('role','group');group.setAttribute('aria-label',`${title} ${item.name}`);
-          const caption=document.createElement('span');caption.className='atlas-trade-group-label';caption.dataset.tradeAction=action;caption.textContent=title;group.append(caption);
-          for(const button of [...cell.querySelectorAll('button')])if((button.getAttribute('onclick')||'').startsWith(`${action}CargoQty(`)){button.dataset.tradeAction=action;group.append(button);}
+          const group=document.createElement('div');group.className='atlas-trade-group';group.dataset.tradeAction=action;group.setAttribute('role','group');group.setAttribute('aria-label',`${title} ${item.name}`);
+          const head=document.createElement('span');head.className='atlas-trade-group-head';
+          const caption=document.createElement('span');caption.className='atlas-trade-group-label';caption.dataset.tradeAction=action;head.append(caption);
+          const arrow=document.createElement('span');arrow.className='atlas-next-arrow';arrow.dataset.tradeAction=action;head.append(arrow);
+          if(action==='sell'&&trend){const t=document.createElement('span');t.innerHTML=trend;head.append(t.firstElementChild||t);}
+          group.append(head);
+          for(const [text,qty,label] of spec[action]){
+            const button=document.createElement('button');button.type='button';button.textContent=text;button.dataset.tradeAction=action;button.dataset.tradeQty=qty;
+            button.setAttribute('onclick',`${action}CargoQty('${item.id}', ${qty})`);button.setAttribute('aria-label',label);button.disabled=!can(action);group.append(button);
+          }
           actions.append(group);
         }
+        for(const b of engine)b.remove();
         cell.append(actions);
       }
-      // The price each action trades at, beside its buttons: the same values as the price column (buy includes the tariff).
+      // The price each action trades at (the same values buyCargoQty and sellCargoQty use; buy includes the tariff), and
+      // next month's direction beside it.
       for(const caption of cell.querySelectorAll('.atlas-trade-group-label'))caption.textContent=caption.dataset.tradeAction==='buy'?`Buy · ${buy} D`:`Sell · ${sell} D`;
+      for(const arrow of cell.querySelectorAll('.atlas-next-arrow')){
+        const n=nextOf?.[arrow.dataset.tradeAction];
+        arrow.textContent=n?{up:'↑',down:'↓',steady:'–'}[n[0]]:'';arrow.dataset.next=n?n[0]:'end';
+        arrow.title=n?`Next month here: ${n[1]} D (${{up:'rising',down:'falling',steady:'steady'}[n[0]]})`:'The campaign ends next month';
+        arrow.setAttribute('aria-label',n?`next month ${{up:'rising',down:'falling',steady:'steady'}[n[0]]}, ${n[1]} D`:'campaign ends');
+      }
     });
-    document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');if(button.classList.contains('atlas-good-chart')){button.setAttribute('aria-label',`${button.textContent.trim()}: prices through the year`);return;}button.setAttribute('aria-label',`${button.dataset.tradeAction==='sell'?'Sell':'Buy'} ${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
+    document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');if(button.classList.contains('atlas-good-chart')){button.setAttribute('aria-label',`${button.textContent.trim()}: prices through the year`);return;}if(button.dataset.tradeQty)return;button.setAttribute('aria-label',`${button.dataset.tradeAction==='sell'?'Sell':'Buy'} ${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
     document.querySelectorAll('#market-tbody tr').forEach((row,index)=>{const item=COMMODITIES[index];row.dataset.good=item.id;row.style.setProperty('--material',goods[item.id][0]);});
   };
   const renderOriginal=renderAll;renderAll=function(){renderOriginal();paint();placeTools();};
