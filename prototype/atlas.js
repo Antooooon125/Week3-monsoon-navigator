@@ -387,12 +387,14 @@
         const actions=document.createElement('div');actions.className='atlas-trade-actions';
         for(const [action,title] of [['buy','Buy'],['sell','Sell']]){
           const group=document.createElement('div');group.className='atlas-trade-group';group.setAttribute('role','group');group.setAttribute('aria-label',`${title} ${item.name}`);
-          const caption=document.createElement('span');caption.className='atlas-trade-group-label';caption.textContent=title;group.append(caption);
+          const caption=document.createElement('span');caption.className='atlas-trade-group-label';caption.dataset.tradeAction=action;caption.textContent=title;group.append(caption);
           for(const button of [...cell.querySelectorAll('button')])if((button.getAttribute('onclick')||'').startsWith(`${action}CargoQty(`)){button.dataset.tradeAction=action;group.append(button);}
           actions.append(group);
         }
         cell.append(actions);
       }
+      // The price each action trades at, beside its buttons: the same values as the price column (buy includes the tariff).
+      for(const caption of cell.querySelectorAll('.atlas-trade-group-label'))caption.textContent=caption.dataset.tradeAction==='buy'?`Buy · ${buy} D`:`Sell · ${sell} D`;
     });
     document.querySelectorAll('#market-tbody button').forEach(button=>{const row=button.closest('tr');if(button.classList.contains('atlas-good-chart')){button.setAttribute('aria-label',`${button.textContent.trim()}: prices through the year`);return;}button.setAttribute('aria-label',`${button.dataset.tradeAction==='sell'?'Sell':'Buy'} ${button.textContent.trim()} ${row.querySelector('td').textContent.trim().replace(/\s+/g,' ')}`);});
     document.querySelectorAll('#market-tbody tr').forEach((row,index)=>{const item=COMMODITIES[index];row.dataset.good=item.id;row.style.setProperty('--material',goods[item.id][0]);});

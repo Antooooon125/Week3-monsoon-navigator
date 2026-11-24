@@ -221,3 +221,13 @@ Display only; the engine script is unchanged, and nothing here draws randomness 
 - **Print and PDF.** The replay is hidden in print (`@media print`) and carries `data-html2canvas-ignore`, so the printed and exported audit are unchanged.
 - **Tests.** KVIS `tests/03/atlas-replay.test.mjs` plays seeded campaigns to the end and checks the steps against the engine (one per voyage or wait, ports, months, turn-backs, storms and pirates from the engine's outcome), the highlighted log row for every step, purity while stepping and playing to the end, reduced motion, and the print opt-outs; it also plays a campaign shaped like a real one (single-unit trades, a five-month crossing, two mutinies, the corsairs, liquidation) and checks that every grouped row's count, quantity and total equal its raw lines. It fails on eighteen planted defects. `engine/preview-purity.test.mjs` also covers the replay.
 - **Review fixes.** Narration joins only identical trades (same quantity and cash), as the log view does. Nothing is announced until you use a control. During play the panel's log list keeps the current row in view without scrolling the page. The PDF export (html2canvas) runs with the dated log's highlight cleared, and the highlight uses a plain colour, because html2canvas 1.4.1 cannot parse `color-mix`.
+
+### Visual consistency, on the replay (2026-11-24)
+
+The design commit (shared dialog frame, unified close buttons, labelled trade action groups, ledger presentation) is carried onto the replay builder (`0207682`), with these changes from review:
+
+- **Trade rows.** Each action group shows the price it trades at ("Buy · 40 D", "Sell · 38 D"), from the same values as the price column, so the price order and the button order can't disagree. The caption sits above its buttons; where the trade panel is at least 640 px wide (a container query), beside them.
+- **Market height.** From 768 px the actions sit in the third column beside the prices, with the hold under the prices, and cell padding is trimmed. A row is 139–149 px at 1440 px (129 before the design commit, 199 with it), 119 px at 768–1024 px, and 241 px at 375 px (262 before).
+- **Home port.** Gold on the setup map, like the current port on the voyage map; a selected route stays pink.
+- **Focus on the setup map.** A 3 px outline in `--atlas-on-sea` and a white stroke on the port, which also applies to the selected port (the selected style used to win). The global ring is about 1.3:1 against the sea.
+- **Backdrop.** `--atlas-backdrop`, derived from `--atlas-map-outline`.
