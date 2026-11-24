@@ -125,6 +125,10 @@ const coastline=JSON.parse(readFileSync(resolve(root,'prototype/coastline.json')
 const landGroup=/(<g fill="#243950"[^>]*>)[\s\S]*?(<\/g>)/;
 if(!landGroup.test(original))throw new Error('Land group not found in index.html');
 const landPaths=coastline.paths.map(d=>`<path d="${d}" />`).join('');
+// The ITCZ panel draws on the same land, so the adapter gets the same fit: x = a·lon + b, y = c·lat + d.
+const projection=JSON.stringify({x:coastline.projection.x,y:coastline.projection.y});
+if(adapter.split('__ATLAS_PROJECTION__').length!==2)throw new Error('the adapter must hold __ATLAS_PROJECTION__ exactly once');
+const adapterBuilt=adapter.replace('__ATLAS_PROJECTION__',projection);
 const landNote=`<!-- Coastlines: ${coastline.source.dataset} ${coastline.source.version} (public domain), axis-wise linear fit to the five ports, Douglas-Peucker ${coastline.simplification.toleranceMapUnits} map units -->`;
 let output=original
   .replace(landGroup,(_,open,close)=>`${open}${landNote}${landPaths}${close}`)
@@ -135,6 +139,6 @@ let output=original
   .replace('<html lang="en" class="dark">','<html lang="en">')
   .replace(/<title>.*?<\/title>/,'<title>Monsoon Navigator — An Atlas of Moving Worlds</title>')
   .replace('</head>',`<meta name="description" content="Plan a merchant voyage through the seasonal Indian Ocean. Monsoon Navigator, presented as An Atlas of Moving Worlds.">\n<style id="atlas-fonts">${fontLicences}\n${fontCSS}</style>\n${sharedStyle}<style id="atlas-utilities">${utility}</style>\n<style id="atlas-style">${styles}</style>\n</head>`)
-  .replace('</body>',`<script id="atlas-adapter">${adapter}</script>\n</body>`);
+  .replace('</body>',`<script id="atlas-adapter">${adapterBuilt}</script>\n</body>`);
 writeFileSync(resolve(root,'prototype.html'),output);
 console.log('Built prototype.html; original simulation script preserved verbatim.');

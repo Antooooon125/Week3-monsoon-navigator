@@ -273,3 +273,15 @@ KVIS #53 (upstream #19). A fixed block of text after the sailing calendar, so it
 - **Print.** The spec asked for the notebook to print with Sources open. The page's print stylesheet hides the whole voyage screen and prints only the audit, so the notebook never prints; changing that would change the audit print, which is left as it is.
 
 KVIS `tests/03/atlas-notebook.test.mjs` checks the copy's rules and ties every number in the game-rule box to the engine; `engine/preview-purity.test.mjs` paints the notebook in every state and requires the same HTML each time.
+
+### ITCZ panel (2026-11-25)
+
+KVIS #52 (upstream #18). A closed `<details>`, "Show ITCZ · real atmosphere, simplified; not used by the game", under the month planner and its caveat line, outside `#ocean-svg`. It is display only: built on first open, never repainted, no random numbers, no game state.
+
+- **Rebuilt after a pre-PR review.** The first build drew the game's wind arrows inside the "real atmosphere" figures, and painted the ITCZ as a hatched band across 65–95° E. Schneider et al. (2014) Fig. 2b is an average over that sector by latitude and month, so a band put the summer rain belt on the dry northern Arabian Sea and the edge of the Thar Desert. The owner chose a rebuild:
+  - the arrows are gone, and so is the month table; nothing in the panel comes from `getWindState`. One line points to the main map's arrows;
+  - each season's map shows the land, dashed meridians at 65° and 95° E, and, beside the map's right edge, a text marker at the cited latitude: "ITCZ 20° N" (June–August) and "ITCZ 8° S" (December–February), from p. 45 of the paper;
+  - a key under the maps reads "ITCZ marker: sector average, 65–95° E (Schneider et al. 2014, Fig. 2b)" and says these are two seasonal positions, not a path.
+- **Projection.** The builder now replaces `__ATLAS_PROJECTION__` in the adapter with `coastline.json`'s own fit, so the land, the meridians and the markers use the game map's projection. `tests/itcz.test.mjs` checks the injection and the cited positions.
+- **Copy.** "typically shifts toward the hemisphere that is warming", the paper's wording, not "warmer". The Thailand sidebar and the six sources are as specified; nothing is redrawn from Moron et al. (CC BY-NC-ND).
+- **Layout.** The two maps sit side by side from 1100 px and stack below that, so text inside the maps stays at 12 px or more from 375 px up (about 10 px at 320 px). Fixed near-achromatic colours on the planner's ground, in both reading themes. Nothing moves.
