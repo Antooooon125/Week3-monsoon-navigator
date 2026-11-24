@@ -263,13 +263,13 @@ After review of the KVIS rebuild (#49), four more changes:
 
 ### Pilot's notebook (2026-11-24)
 
-KVIS #53 (upstream #19). A fixed block of text after the "Sail now or wait" card and before the sailing calendar, so it sits beside the voyage decision. It is display only: written once when the adapter loads, never repainted, no random numbers, and hidden after the campaign ends, like the calendar.
+KVIS #53 (upstream #19). A fixed block of text after the sailing calendar, so it does not separate the "Sail now or wait" card from the calendar. It is display only: written once when the adapter loads, never repainted, no random numbers, and hidden when the campaign ends. `finishCampaign` does not call `renderAll`, so the adapter hides it there too.
 
-- **History**, in four short parts: keeping a heading and checking position (Zhu Yu, early 1100s, on pilots at Guangzhou), choosing a safe window (two Geniza letters, 1103 and the 1130s: a wish and an instruction, neither a voyage), and later comparisons (Ibn Mājid, c. 1490; the Mao Kun chart, with its year marked unresolved). Landmarks appear only under Ibn Mājid; Zhu Yu's pilots are given no nationality.
+- **History**, in four short parts: keeping a heading and checking position (Zhu Yu, early 1100s, on pilots at Guangzhou), choosing a safe window (two Geniza letters, 1103 and the 1130s: a wish and an instruction, neither a voyage; the 1130s ship was to sail for the islands, not to Aden), and later comparisons (Ibn Mājid, c. 1490; the Mao Kun chart, from a treatise of c. 1621 as dated by Oxford's Cabinet page, its printing date unconfirmed). Landmarks appear only under Ibn Mājid; Zhu Yu's pilots are given no nationality.
 - **Game rule**, in its own `<aside>` with no dates, places or sources: 180 D once, for the whole campaign; every leg 15% faster, with some legs saving no month after rounding; the storm chance 35% → 18% in transition months; headwinds and the 35% turn-back chance unchanged; stars, needles and soundings not modelled. A per-passage pilot is not mentioned: that change has not shipped.
 - **Sources (5)** in a closed native `<details>`, each with a date and a locator.
 - `h3` with `h4` sub-heads; the Chinese phrase in `lang="zh-Hant"`; reading order is DOM order at every width; theme tokens only, no season colours.
-- **Fonts.** The embedded Atkinson, Archivo and Plex Mono files have ā and ū but not ḍ, ʾ or Ḥ (checked from their `cmap` tables), so Maḍmūn b. Ḥasan, Ḥeshvan and *al-Fawāʾid* are spelled Madmun b. Hasan, Heshvan and *al-Fawa'id*. Ibn Mājid keeps his ā.
+- **Fonts.** The embedded Atkinson files have ā and ū but not ḍ, ḥ, ṣ, ʾ, ʿ or Ḥ (checked from their `cmap` tables; the KVIS test reads the same tables from the page), so Maḍmūn b. Ḥasan, Ḥeshvan and *al-Fawāʾid* are spelled Madmun b. Hasan, Heshvan and *al-Fawa'id*. Ibn Mājid keeps his ā.
 - **Print.** The spec asked for the notebook to print with Sources open. The page's print stylesheet hides the whole voyage screen and prints only the audit, so the notebook never prints; changing that would change the audit print, which is left as it is.
 
 KVIS `tests/03/atlas-notebook.test.mjs` checks the copy's rules and ties every number in the game-rule box to the engine; `engine/preview-purity.test.mjs` paints the notebook in every state and requires the same HTML each time.
