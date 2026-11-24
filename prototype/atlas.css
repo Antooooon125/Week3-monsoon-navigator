@@ -87,7 +87,7 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   .atlas-departure{background:transparent!important;border:0;border-radius:0;padding:18px 0 0!important;box-shadow:none}
   .atlas-departure>div:first-child{align-items:center;margin-bottom:14px}
   .atlas-departure>div:first-child h3{font-size:1.3rem!important;margin-top:4px}
-  .atlas-departure button[onclick="waitInPort()"]{border:1px solid var(--line);padding:10px 14px;background:var(--surface);color:var(--ink)}
+  .atlas-departure button[onclick="waitInPort()"]{border:1px solid var(--line);padding:10px 14px;gap:.35em;background:var(--surface);color:var(--ink)}
   #routes-container{gap:12px}
   #routes-container button{border-top:3px solid var(--accent);border-bottom:1px solid var(--line);border-inline:0;border-radius:0;min-height:112px;background:var(--surface);padding:16px 18px}
   #routes-container button:hover{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
@@ -587,6 +587,8 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
 
 /* UX audit fixes (2026-11-24): mobile sticky HUD, 1/24 divider fit, chart trigger target, touch & modal scroll. */
 @media screen{
+  /* Focus scrolls clear of what is pinned at the top: the sticky header and, up to 1099 px, the strip's numbers (atlas.js). */
+  html{scroll-padding-top:calc(var(--atlas-header-h,0px) + var(--atlas-status-h,0px) + 8px);scroll-padding-bottom:8px}
   /* A 48 px tall target (36 px minimum) whose negative vertical margins keep it out of the row height (#50's rows). */
   .atlas-trade .atlas-good-chart{display:inline-flex;align-items:center;min-height:36px!important;padding:6px 4px!important;margin:-14px -4px!important}
   .atlas-trade button,.atlas-months button,.atlas-departure button,#hud-bar button{touch-action:manipulation}
@@ -596,7 +598,13 @@ body[data-paused=true] .wind-stream-fast,body[data-paused=true] .wind-stream-slo
   body[data-theme=dark] .atlas-trade td:last-child .atlas-trade-group>button:disabled{opacity:1;color:#8aa09a;background:transparent;border:1px dashed #5b7a73}
 }
 @media screen and (max-width:1099px){
-  .atlas-status{position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid var(--line);padding-block:8px}
+  /* Only the numbers stay pinned (review of #49, A: the whole strip hid focused controls and took 41% of a 320x568 screen).
+     The tools and the crew alert come first and scroll away; the numbers row is last, and the negative top equal to the
+     height above it leaves only that row on screen. atlas.js keeps both variables current. */
+  .atlas-status{position:sticky;top:calc(var(--atlas-header-h,0px) - var(--atlas-status-hide,0px));z-index:4;background:var(--bg);border-bottom:1px solid var(--line);padding-block:8px}
+  .atlas-status .atlas-toolbar,.atlas-status .atlas-crew-alert{order:-1}
+  .atlas-status #hud-bar>button:nth-of-type(n){order:0}
+  .atlas-status #hud-bar>div{order:3}
 }
 @media screen and (max-width:767px){
   .atlas-status #hud-bar>div:first-child{flex:1.35 1 0!important}

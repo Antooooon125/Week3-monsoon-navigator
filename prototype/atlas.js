@@ -93,7 +93,11 @@
   status.append($('hud-bar'));left.prepend(status);
   // The page tools also serve the setup and audit screens, so they join the strip only while the voyage screen shows.
   const headerRow=document.querySelector('header>div');
-  const placeTools=()=>{const toolbar=document.querySelector('.atlas-toolbar');if(!toolbar)return;const target=$('phase-sim').classList.contains('hidden')?headerRow:status;if(toolbar.parentElement!==target)target.append(toolbar);};
+  // Up to 1099 px only the strip's numbers stay pinned (review of #49, A): the tools come first, in the DOM as on screen,
+  // and scroll away above them.
+  const stripNarrow=typeof matchMedia==='function'?matchMedia('(max-width: 1099px)'):null;
+  const placeTools=()=>{const toolbar=document.querySelector('.atlas-toolbar');if(!toolbar)return;const target=$('phase-sim').classList.contains('hidden')?headerRow:status;
+    if(target===status&&stripNarrow?.matches){if(status.firstElementChild!==toolbar)status.prepend(toolbar);}else if(toolbar.parentElement!==target||(target===status&&status.lastElementChild!==toolbar))target.append(toolbar);};
   const mapKey=map.querySelector('p');mapKey.className='atlas-map-key';mapKey.innerHTML='<span><i class="atlas-key-wind" aria-hidden="true"></i>Game wind (one wind for the whole map)</span><span><i class="atlas-key-route" aria-hidden="true"></i>Selected route, drawn by this month’s wind:</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="tailwind"/></svg>tailwind</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="crosswind"/></svg>crosswind</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="headwind"/></svg>headwind</span><span><svg class="atlas-key-line" viewBox="0 0 28 6" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" data-wind="transition"/></svg>transition month</span><span><i class="atlas-key-port" aria-hidden="true"></i>Current port</span>';
   const calendar=document.createElement('section');calendar.className='atlas-calendar';calendar.setAttribute('aria-label','Departure month planner');
   calendar.innerHTML='<div class="atlas-calendar-head"><strong id="atlas-actual-date"></strong><span id="atlas-forecast-date"></span></div><div class="atlas-months" id="atlas-months"></div><p class="atlas-calendar-note">Outlined month = actual date. Pink month = comparison only. Sailing always uses the actual date.</p>';
@@ -103,7 +107,7 @@
   const departure=$('routes-container').parentElement;departure.classList.add('atlas-departure');map.after(departure);
   departure.querySelector('h3').textContent='Choose your next port';
   departure.querySelector('span').textContent='Sail or stay';
-  departure.querySelector('button[onclick="waitInPort()"] span').textContent='Wait one month ';
+  departure.querySelector('button[onclick="waitInPort()"] span').textContent='Wait one month';
   // A16: keyboard focus previews a route, as hover does. setHoveredLane only redraws the map.
   $('routes-container').addEventListener('focusin',event=>{const button=event.target.closest?.('button[onclick^="sailTo"]');const id=button?.getAttribute('onclick').match(/'(\w+)'/)?.[1];if(id)setHoveredLane(id);});
   $('routes-container').addEventListener('focusout',()=>setHoveredLane(null));
@@ -437,39 +441,58 @@
     $('phase-audit').scrollIntoView?.({block:'start'});$('phase-audit').focus({preventScroll:true});};
   // Student Mode validation accessibility: alert role, aria-invalid, focus-first-error, and form attributes.
   $('setup-error')?.setAttribute?.('role','alert');
-  $('setup-error')?.setAttribute?.('aria-live','polite');
   $('input-name')?.setAttribute?.('name','studentName');
   $('input-name')?.setAttribute?.('autocomplete','name');
   $('input-id')?.setAttribute?.('name','studentId');
   $('input-id')?.setAttribute?.('autocomplete','off');
   [$('input-hypothesis'),$('input-reflection')].forEach(el=>{if(el?.placeholder)el.placeholder=el.placeholder.replace(/\.\.\./g,'…');});
-  [$('input-name'),$('input-id'),$('input-target-profit'),$('input-hypothesis')].forEach(el=>el?.addEventListener?.('input',()=>el.removeAttribute?.('aria-invalid')));
+  [$('input-name'),$('input-id'),$('input-target-profit'),$('input-hypothesis')].forEach(el=>el?.addEventListener?.('input',()=>{el.removeAttribute?.('aria-invalid');el.removeAttribute?.('aria-describedby');}));
   // A9: start the voyage at the top of the page.
   const startOriginal=startSimulation;startSimulation=function(...args){
     startOriginal(...args);
     const err=$('setup-error');
-    if(err&&!err.classList.contains('hidden')){
-      const checks=[
-        [$('input-name'),!$('input-name')?.value.trim()],
-        [$('input-id'),!$('input-id')?.value.trim()],
-        [$('input-target-profit'),!(Number($('input-target-profit')?.value)>=100)],
-        [$('input-hypothesis'),!$('input-hypothesis')?.value.trim()]
-      ];
-      let firstInvalid=null;
-      checks.forEach(([el,bad])=>{if(!el)return;if(bad){el.setAttribute?.('aria-invalid','true');if(!firstInvalid)firstInvalid=el;}else el.removeAttribute?.('aria-invalid');});
-      firstInvalid?.focus?.();
-      return;
-    }
+    // Each field is checked with the engine's own condition (startSimulation): name and student number non-empty after
+    // trim, parseInt(target, 10) a number of at least 100, the prediction at least 15 characters after trim. Exactly the
+    // failing fields are marked, and the first takes focus (review of #49, B).
+    const fields=[
+      [$('input-name'),v=>!v.trim()],
+      [$('input-id'),v=>!v.trim()],
+      [$('input-target-profit'),v=>{const n=parseInt(v,10);return isNaN(n)||n<100;}],
+      [$('input-hypothesis'),v=>v.trim().length<15]
+    ];
+    const failed=err&&!err.classList.contains('hidden');
+    let firstInvalid=null;
+    fields.forEach(([el,bad])=>{if(!el)return;if(failed&&bad(el.value||'')){el.setAttribute?.('aria-invalid','true');el.setAttribute?.('aria-describedby','setup-error');firstInvalid??=el;}else{el.removeAttribute?.('aria-invalid');el.removeAttribute?.('aria-describedby');}});
+    if(failed){firstInvalid?.focus?.();return;}
     if(state.logs.length&&typeof scrollTo==='function'){scrollTo(0,0);stageHeading.querySelector('h2').tabIndex=-1;stageHeading.querySelector('h2').focus?.({preventScroll:true});}
   };
   // Prevent accidental refresh/tab close mid-voyage.
   if(typeof window!=='undefined'&&window.addEventListener){
-    window.addEventListener('beforeunload',event=>{if(!state.ended&&state.monthIndex>0){event.preventDefault();event.returnValue='';}});
+    // Anything played counts, trades in month 0 included: the log holds more than the opening entry (review of #49).
+    window.addEventListener('beforeunload',event=>{if(!state.ended&&!$('phase-sim').classList.contains('hidden')&&(state.monthIndex>0||state.logs.length>1)){event.preventDefault();event.returnValue='';}});
   }
   // Keep browser theme-color meta synced with Atlas light/dark theme.
   const syncThemeMeta=()=>{let m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.append(m);}m.content=document.body.dataset.theme==='dark'?'#101821':'#f1f0e8';};
   syncThemeMeta();
   $('atlas-theme')?.addEventListener('click',syncThemeMeta);
+  // What stays pinned at the top: the engine's header where it is sticky (69 px from 768 px up, drawn above the strip),
+  // and, up to 1099 px, the strip's numbers. --atlas-status-hide is the part of the strip that scrolls away above them,
+  // --atlas-status-h the part that stays. html's scroll-padding-top adds the header and that part, so a control that
+  // takes focus scrolls clear of both.
+  const pageHeader=document.querySelector('body>header');
+  const measureStrip=()=>{const root=document.documentElement.style;const hs=pageHeader&&getComputedStyle(pageHeader).position;
+    root.setProperty('--atlas-header-h',(hs==='sticky'||hs==='fixed'?Math.ceil(pageHeader.getBoundingClientRect().height):0)+'px');
+    const pinned=stripNarrow?.matches&&!$('phase-sim').classList.contains('hidden');
+    if(!pinned){root.setProperty('--atlas-status-hide','0px');root.setProperty('--atlas-status-h','0px');return;}
+    const top=status.getBoundingClientRect().top,first=[...$('hud-bar').children].find(e=>e.tagName==='DIV'&&e.getBoundingClientRect().height>0);
+    const pad=parseFloat(getComputedStyle(status).paddingTop)||0,hide=first?Math.max(0,Math.round(first.getBoundingClientRect().top-top-pad)):0;
+    root.setProperty('--atlas-status-hide',hide+'px');root.setProperty('--atlas-status-h',Math.ceil(status.getBoundingClientRect().height-hide)+'px');};
+  if(typeof ResizeObserver==='function'){const ro=new ResizeObserver(measureStrip);ro.observe(status);if(pageHeader)ro.observe(pageHeader);}
+  stripNarrow?.addEventListener?.('change',()=>{placeTools();measureStrip();});
+  // A tool that takes focus while the strip is pinned is above the screen: bring the strip back to where it starts.
+  status.addEventListener('focusin',event=>{if(!stripNarrow?.matches)return;const r=event.target.getBoundingClientRect?.();if(!r||r.top>=0)return;
+    const parent=status.parentElement,start=parent.getBoundingClientRect().top+scrollY+(parseFloat(getComputedStyle(parent).paddingTop)||0);
+    scrollTo(scrollX,Math.max(0,start-8-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--atlas-header-h'))||0)));});
   // A5: keep keyboard focus on the trade button after the market re-renders.
   for(const name of ['buyCargoQty','sellCargoQty']){
     const original=globalThis[name];

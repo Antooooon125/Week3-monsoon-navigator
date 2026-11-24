@@ -248,3 +248,15 @@ The owner's UX audit commit (sticky status strip on narrow screens, the market u
 
 - **Disabled trade controls in dark mode.** The audit's rule targeted the old −1/ALL buttons. On the waterfront controls it gave 3.28:1 (3.34:1 before), so disabled buttons in dark mode now have no fill, a dashed border (3.16:1 on the panel) and muted text at full opacity (5.35:1). Enabled buttons stay filled (11.6:1). Light mode is unchanged.
 - **Chart-name targets.** They keep the audit's 36 px minimum (48 px rendered), with negative vertical margins so they add nothing to the row height: rows stay at 137 px at 1440 px and 89 px at 768–1024 px.
+
+After review of the KVIS rebuild (#49), four more changes:
+
+- **Only the strip's numbers stay pinned (up to 1099 px).** The whole strip was sticky: it hid focused controls (WCAG 2.4.11) and took 41% of a 320×568 screen. From 768 px it also sat under the engine's own sticky header (69 px, drawn above it), which hid its numbers. Now the page tools and the crew alert come first in the strip, in the DOM as on screen, and scroll away. The numbers row stays below the header, through a negative `top` equal to the height above it. That is 60 px at 320–375 px and 74 px below the header at 768–1099 px. `html` gets `scroll-padding-top` equal to the header plus that row plus 8 px, so a control that takes focus scrolls clear of both. `atlas.js` keeps the variables current with a `ResizeObserver`. A page tool that takes focus while the strip is pinned brings the strip back into view. Above 1099 px nothing changes.
+- **Student Mode marks the fields the engine rejects.** Each field is checked with `startSimulation`'s own condition:
+  - name and student number non-empty after trimming;
+  - `parseInt(target, 10)` a number of at least 100;
+  - the prediction at least 15 characters after trimming.
+
+  Exactly the failing fields get `aria-invalid="true"` and `aria-describedby="setup-error"`, and the first takes focus. `#setup-error` keeps `role="alert"` without a second `aria-live`.
+- **`beforeunload`** also guards a voyage where something was traded in month 0, since the log holds more than its opening entry. It stays off on the setup screen and after the campaign ends.
+- **"Wait one month"** gets its spacing from `gap: .35em` on the button. A trailing space in a flex item has no effect.
