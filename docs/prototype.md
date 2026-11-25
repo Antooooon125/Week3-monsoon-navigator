@@ -284,4 +284,10 @@ KVIS #52 (upstream #18). A closed `<details>`, "Show ITCZ · real atmosphere, si
   - a key under the maps reads "ITCZ marker: sector average, 65–95° E (Schneider et al. 2014, Fig. 2b)" and says these are two seasonal positions, not a path.
 - **Projection.** The builder now replaces `__ATLAS_PROJECTION__` in the adapter with `coastline.json`'s own fit, so the land, the meridians and the markers use the game map's projection. `tests/itcz.test.mjs` checks the injection and the cited positions.
 - **Copy.** "typically shifts toward the hemisphere that is warming", the paper's wording, not "warmer". The Thailand sidebar and the six sources are as specified; nothing is redrawn from Moron et al. (CC BY-NC-ND).
-- **Layout.** The two maps sit side by side from 1100 px and stack below that, so text inside the maps stays at 12 px or more from 375 px up (about 10 px at 320 px). Fixed near-achromatic colours on the planner's ground, in both reading themes. Nothing moves.
+- **After the independent review of `0afe587`:**
+  - land is lighter (`#5b6b86`, 3.1:1 against the sea), the meridians stay at 3:1 or more against both, and the map's text has a ground-coloured halo;
+  - at 400 px and below, the map text is larger (52 units, about 14 px at 320 px), and so are the meridians (5 units);
+  - the key adds "The marker gives a latitude only, not a place";
+  - the Thailand box keeps only what the Moron et al. abstract supports ("on average, significant rain begins one to four weeks before the winds settle"). The body claims, out of step in some years and the Gulf side wettest October–December, are dropped because §3.1 and §4.1 could not be read;
+  - the NWS physics is phrased generally, and the southwesterlies are attributed to the Arabian Sea and the Indian Ocean, as Penn State has them.
+- **Layout.** The two maps sit side by side from 1100 px and stack below that. Fixed near-achromatic colours on the planner's ground, in both reading themes. Nothing moves.
